@@ -52,9 +52,31 @@ function initHeroSlider() {
     const indicators = document.querySelectorAll('.indicator');
     const prevBtn = document.querySelector('.slider-prev');
     const nextBtn = document.querySelector('.slider-next');
+    const heroTitle = document.getElementById('hero-title');
+    const heroDescription = document.getElementById('hero-description');
     
     let currentSlide = 0;
     const totalSlides = slides.length;
+    
+    // Hero messages for each slide
+    const heroMessages = [
+        {
+            title: "Bridging Trust in Malawi's Social Media Market",
+            description: "We verify products and services across social media to make online trade safer and more reliable."
+        },
+        {
+            title: "Verified Sellers, Trusted Products",
+            description: "Connect with authenticated sellers and discover quality products verified by our team."
+        },
+        {
+            title: "Safe Transactions, Happy Customers",
+            description: "Shop with confidence knowing every transaction is protected and every seller is verified."
+        },
+        {
+            title: "Join Malawi's Trusted Marketplace",
+            description: "Be part of a growing community of verified sellers and satisfied buyers across Malawi."
+        }
+    ];
     
     // Auto-slide interval
     let slideInterval = setInterval(nextSlide, 5000);
@@ -68,7 +90,26 @@ function initHeroSlider() {
         slides[index].classList.add('active');
         indicators[index].classList.add('active');
         
+        // Update hero text with fade effect
+        updateHeroText(heroMessages[index]);
+        
         currentSlide = index;
+    }
+    
+    function updateHeroText(message) {
+        // Add fade out effect
+        heroTitle.style.opacity = '0';
+        heroDescription.style.opacity = '0';
+        
+        // Update text after fade out
+        setTimeout(() => {
+            heroTitle.textContent = message.title;
+            heroDescription.textContent = message.description;
+            
+            // Add fade in effect
+            heroTitle.style.opacity = '1';
+            heroDescription.style.opacity = '1';
+        }, 300);
     }
     
     function nextSlide() {

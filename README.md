@@ -1,6 +1,6 @@
-# Sogolo.com - Static Website
+# Sogolo.com
 
-A fully functional static website for Sogolo.com, converted from React TypeScript to pure HTML, CSS, and JavaScript.
+A fully functional website for Sogolo.com.
 
 ## 🚀 Features
 
@@ -81,23 +81,12 @@ sogolo/
 
 1. **Download/Clone** the sogolo folder
 2. **Open** `index.html` in any web browser
-3. **That's it!** No installation or build process required
-
-### Local Development
-```bash
-# Simply open the HTML file in your browser
-open index.html
-
-# Or use a local server (optional)
-python -m http.server 8000
-# Then visit http://localhost:8000
-```
 
 ## 📧 Contact Information
 
 - **Email**: info@sogolo.com
-- **WhatsApp**: +123 456 7890
-- **Location**: Lagos, Nigeria
+- **WhatsApp**: +265 883 31 12 48
+- **Location**: Blantyre, Malawi
 
 ## 🔧 Customization
 
@@ -151,31 +140,16 @@ Edit the CSS custom properties in `style.css`:
 - **Structured Data**: Ready for schema markup
 - **Fast Loading**: Core Web Vitals optimized
 
-## 🎯 Conversion Notes
-
-### From React to Static
-- **Components**: Converted to HTML sections
-- **State Management**: Replaced with vanilla JavaScript
-- **Props**: Converted to HTML attributes and data attributes
-- **Effects**: Replaced with event listeners and timers
-- **Routing**: Converted to standard anchor links
-
-### Preserved Features
-- **Design**: Identical visual appearance
-- **Functionality**: All interactive elements work
-- **Responsiveness**: Mobile-first design maintained
-- **Accessibility**: Keyboard navigation and screen reader support
-
 ## 📝 License
 
-This static website is created for Sogolo.com. All rights reserved.
+This website is created for Sogolo.com. All rights reserved.
 
 ## 🤝 Support
 
-For technical support or questions about this static website:
+For support or questions about this website:
 - **Email**: info@sogolo.com
-- **WhatsApp**: +123 456 7890
+- **WhatsApp**: +265 883 31 12 48
 
 ---
 
-**Built with ❤️ for Africa's digital marketplace**
+**Built with ❤️ for Malawi's digital marketplace**

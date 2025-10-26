@@ -1137,6 +1137,124 @@ body {
     color: #9CA3AF;
 }
 
+/* FAQ Section */
+.faq-section {
+    padding: 80px 0;
+    background: #F9FAFB;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.faq-question {
+    padding: 24px 28px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+    background-color: #F3F4F6;
+}
+
+.faq-question h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    flex: 1;
+}
+
+.faq-icon {
+    color: #00AEEF;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(180deg);
+    color: #0A2463;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+}
+
+.faq-answer p {
+    padding: 0 28px 24px 28px;
+    color: #6B7280;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 16px;
+}
+
+.faq-footer {
+    text-align: center;
+    margin-top: 48px;
+}
+
+.faq-more-link {
+    display: inline-block;
+    color: #00AEEF;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.faq-more-link:hover {
+    color: #0A2463;
+    transform: translateX(5px);
+}
+
+/* Responsive adjustments for FAQ */
+@media (max-width: 768px) {
+    .faq-section {
+        padding: 60px 0;
+    }
+    
+    .faq-question h3 {
+        font-size: 16px;
+    }
+    
+    .faq-question {
+        padding: 20px 20px;
+    }
+    
+    .faq-answer p {
+        padding: 0 20px 20px 20px;
+        font-size: 15px;
+    }
+    
+    .faq-icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 /* Animations */
 @keyframes fadeInUp {
     from {

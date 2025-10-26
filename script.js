@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initContactForm();
     initSmoothScrolling();
     initMobileMenu();
+    initFAQAccordion();
 });
 
 // Header functionality
@@ -181,7 +182,8 @@ function initScrollAnimations() {
         .reason-card,
         .testimonial-card,
         .contact-form-container,
-        .contact-info
+        .contact-info,
+        .faq-item
     `);
     
     animatedElements.forEach(el => {
@@ -386,6 +388,27 @@ function initMobileMenu() {
             }
         });
     }
+}
+
+// FAQ Accordion functionality
+function initFAQAccordion() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', function() {
+            // Close all other items (only one open at a time)
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle current item
+            item.classList.toggle('active');
+        });
+    });
 }
 
 // Utility functions

@@ -183,7 +183,8 @@ function initScrollAnimations() {
         .testimonial-card,
         .contact-form-container,
         .contact-info,
-        .faq-item
+        .faq-item,
+        .trading-cta-content
     `);
     
     animatedElements.forEach(el => {

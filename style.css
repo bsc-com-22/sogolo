@@ -800,51 +800,6 @@ body {
     color: #6B7280;
 }
 
-/* CTA Section */
-.CTA {
-    background: linear-gradient(135deg, rgba(62, 146, 204, 0.05), white);
-    padding: 3rem 2rem;
-}
-
-.CTA-Section {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    padding: 3rem 2rem;
-    text-align: center;
-    border-radius: 1rem;
-    max-width: 900px;
-    margin: 3rem auto;
-    border: 1px solid #E5E7EB;
-}
-
-.CTA-Section:hover {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.CTA-Button {
-    align-items: center;
-    padding: 16px 32px;
-    background: #3E92CC;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    font-size: larger;
-    border: none;
-    cursor: pointer;
-    margin-top: 30px;
-}
-
-.CTA-Button:hover {
-    background: #2A6FA8;
-    transform: scale(1.05);
-}
-
-.cta-button:active {
-    transform: scale(0.95);
-}
 /* Contact Section */
 .contact-section {
     padding: 80px 24px;
@@ -1226,7 +1181,7 @@ body {
 }
 
 .faq-more-link:hover {
-    color: #0A2463;
+    color: #E53935;
     transform: translateX(5px);
 }
 
@@ -1252,6 +1207,134 @@ body {
     .faq-icon {
         width: 20px;
         height: 20px;
+    }
+}
+
+/* Trading CTA Section */
+.trading-cta-section {
+    padding: 100px 24px;
+    background: #F9FAFB;
+    position: relative;
+}
+
+.trading-cta-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    background: white;
+    border-radius: 24px;
+    padding: 64px 48px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.trading-cta-headline {
+    font-size: 48px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 24px;
+    line-height: 1.2;
+}
+
+.trading-cta-subtext {
+    font-size: 20px;
+    color: #6B7280;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.trading-cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.btn-primary-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 40px;
+    background: #3E92CC;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(62, 146, 204, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary-cta:hover {
+    background: #2E7CB0;
+    box-shadow: 0 6px 20px rgba(62, 146, 204, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-secondary-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 40px;
+    color: #0A2463;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: 2px solid #0A2463;
+}
+
+.btn-secondary-cta:hover {
+    background: #0A2463;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Responsive adjustments for Trading CTA */
+@media (min-width: 768px) {
+    .trading-cta-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .trading-cta-headline {
+        font-size: 56px;
+    }
+    
+    .trading-cta-subtext {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 767px) {
+    .trading-cta-section {
+        padding: 60px 16px;
+    }
+    
+    .trading-cta-content {
+        padding: 48px 24px;
+        border-radius: 20px;
+    }
+    
+    .trading-cta-headline {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+    
+    .trading-cta-subtext {
+        font-size: 18px;
+        margin-bottom: 32px;
+    }
+    
+    .btn-primary-cta,
+    .btn-secondary-cta {
+        width: 100%;
+        max-width: 320px;
+        padding: 14px 32px;
+        font-size: 16px;
     }
 }
 

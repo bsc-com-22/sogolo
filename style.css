@@ -800,6 +800,51 @@ body {
     color: #6B7280;
 }
 
+/* CTA Section */
+.CTA {
+    background: linear-gradient(135deg, rgba(62, 146, 204, 0.05), white);
+    padding: 3rem 2rem;
+}
+
+.CTA-Section {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 1rem;
+    max-width: 900px;
+    margin: 3rem auto;
+    border: 1px solid #E5E7EB;
+}
+
+.CTA-Section:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.CTA-Button {
+    align-items: center;
+    padding: 16px 32px;
+    background: #3E92CC;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: larger;
+    border: none;
+    cursor: pointer;
+    margin-top: 30px;
+}
+
+.CTA-Button:hover {
+    background: #2A6FA8;
+    transform: scale(1.05);
+}
+
+.cta-button:active {
+    transform: scale(0.95);
+}
 /* Contact Section */
 .contact-section {
     padding: 80px 24px;

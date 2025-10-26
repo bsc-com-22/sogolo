@@ -184,7 +184,9 @@ function initScrollAnimations() {
         .contact-form-container,
         .contact-info,
         .faq-item,
-        .trading-cta-content
+        .faq-item-full,
+        .trading-cta-content,
+        .faq-cta-content
     `);
     
     animatedElements.forEach(el => {
@@ -394,13 +396,32 @@ function initMobileMenu() {
 // FAQ Accordion functionality
 function initFAQAccordion() {
     const faqItems = document.querySelectorAll('.faq-item');
+    const faqItemsFull = document.querySelectorAll('.faq-item-full');
     
+    // Handle homepage FAQ
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
         
         question.addEventListener('click', function() {
             // Close all other items (only one open at a time)
             faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle current item
+            item.classList.toggle('active');
+        });
+    });
+    
+    // Handle FAQ page accordion
+    faqItemsFull.forEach(item => {
+        const question = item.querySelector('.faq-question-full');
+        
+        question.addEventListener('click', function() {
+            // Close all other items (only one open at a time)
+            faqItemsFull.forEach(otherItem => {
                 if (otherItem !== item && otherItem.classList.contains('active')) {
                     otherItem.classList.remove('active');
                 }

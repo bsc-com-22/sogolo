@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup Page</title>
+    <style>
+        /* Embedded CSS */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .back-link {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .back-button {
+            color: #1d9bf0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .back-button:hover {
+            color: #0c84d6;
+        }
+
+        .auth-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .login-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000000;
+            margin: 0 0 8px 0;
+        }
+
+        .signup-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000000;
+            margin: 0 0 8px 0;
+        }
+
+        .login-subtitle {
+            font-size: 16px;
+            color: #71767b;
+            margin: 0 0 32px 0;
+        }
+
+        .signup-subtitle {
+            font-size: 16px;
+            color: #71767b;
+            margin: 0 0 32px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1d9bf0;
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: right;
+            color: #1d9bf0;
+            font-size: 14px;
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password:hover {
+            color: #0c84d6;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .login-button:hover {
+            background-color: #333333;
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .signup-button:hover {
+            background-color: #333333;
+        }
+
+        .google-signin {
+            margin-bottom: 24px;
+        }
+
+        .google-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        .google-button:hover {
+            border-color: #1d9bf0;
+        }
+
+        .google-logo {
+            width: 18px;
+            height: 18px;
+        }
+
+        .switch-link {
+            font-size: 14px;
+            color: #71767b;
+            margin: 0;
+        }
+
+        .switch-link a {
+            color: #1d9bf0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .switch-link a:hover {
+            color: #0c84d6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 24px;
+                margin: 0 10px;
+            }
+            
+            .back-link {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home Link -->
+    <div class="back-link">
+        <a href="index.html" class="back-button">&larr; Go back to home page</a>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form active">
+            <h1 class="login-title">Welcome back</h1>
+            <p class="login-subtitle">Welcome back! Please enter your details.</p>
+            
+            <form id="loginSubmitForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="Password" required>
+                </div>
+                
+                <a href="#" class="forgot-password">Forgot password</a>
+                
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            
+            <div class="google-signin">
+                <button type="button" class="google-button" id="googleLogin">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-logo">
+                    Sign in with Google
+                </button>
+            </div>
+            
+            <p class="switch-link">
+                Don't have an account? <a href="#" id="showSignup">Sign up for free</a>
+            </p>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="auth-form">
+            <h1 class="signup-title">Create account</h1>
+            <p class="signup-subtitle">Sign up to get started!</p>
+            
+            <form id="signupSubmitForm">
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="password" placeholder="Password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="signup-button">Sign up</button>
+            </form>
+            
+            <div class="google-signin">
+                <button type="button" class="google-button" id="googleSignup">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-logo">
+                    Sign up with Google
+                </button>
+            </div>
+            
+            <p class="switch-link">
+                Already have an account? <a href="#" id="showLogin">Log in</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Embedded JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const showSignup = document.getElementById('showSignup');
+            const showLogin = document.getElementById('showLogin');
+            const loginSubmitForm = document.getElementById('loginSubmitForm');
+            const signupSubmitForm = document.getElementById('signupSubmitForm');
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPassword = document.getElementById('loginPassword');
+            const signupEmail = document.getElementById('signupEmail');
+            const signupPassword = document.getElementById('signupPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const googleLogin = document.getElementById('googleLogin');
+            const googleSignup = document.getElementById('googleSignup');
+
+            // Toggle forms
+            showSignup.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+            });
+
+            showLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                signupForm.classList.remove('active');
+                loginForm.classList.add('active');
+            });
+
+            // Login form submission
+            loginSubmitForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const email = loginEmail.value.trim();
+                const password = loginPassword.value.trim();
+                
+                if (!email || !password) {
+                    alert('Please enter both email and password.');
+                    return;
+                }
+                
+                if (!isValidEmail(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+                
+                // Simulate login
+                console.log('Login attempt:', { email, password });
+                alert('Login successful! (This is a demo)');
+            });
+
+            // Signup form submission
+            signupSubmitForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const email = signupEmail.value.trim();
+                const password = signupPassword.value.trim();
+                const confirm = confirmPassword.value.trim();
+                
+                if (!email || !password || !confirm) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+                
+                if (!isValidEmail(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+                
+                if (password !== confirm) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters long.');
+                    return;
+                }
+                
+                // Simulate signup
+                console.log('Signup attempt:', { email, password });
+                alert('Signup successful! (This is a demo)');
+            });
+
+            // Google handlers (demo)
+            googleLogin.addEventListener('click', function() {
+                alert('Google sign-in clicked! (This is a demo - integrate with Google OAuth in production)');
+            });
+
+            googleSignup.addEventListener('click', function() {
+                alert('Google sign-up clicked! (This is a demo - integrate with Google OAuth in production)');
+            });
+
+            // Validation helpers
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Real-time validation for login
+            loginEmail.addEventListener('blur', validateEmail(loginEmail, 'login'));
+            loginPassword.addEventListener('blur', validateRequired(loginPassword, 'login'));
+
+            // Real-time validation for signup
+            signupEmail.addEventListener('blur', validateEmail(signupEmail, 'signup'));
+            signupPassword.addEventListener('blur', validateRequired(signupPassword, 'signup'));
+            confirmPassword.addEventListener('blur', validateConfirmPassword);
+
+            function validateEmail(input, form) {
+                return function() {
+                    if (input.value && !isValidEmail(input.value)) {
+                        input.style.borderColor = '#ff0000';
+                    } else {
+                        input.style.borderColor = '#d9d9d9';
+                    }
+                };
+            }
+
+            function validateRequired(input, form) {
+                return function() {
+                    if (!input.value) {
+                        input.style.borderColor = '#ff0000';
+                    } else {
+                        input.style.borderColor = '#d9d9d9';
+                    }
+                };
+            }
+
+            function validateConfirmPassword() {
+                if (confirmPassword.value && signupPassword.value && confirmPassword.value !== signupPassword.value) {
+                    confirmPassword.style.borderColor = '#ff0000';
+                } else {
+                    confirmPassword.style.borderColor = '#d9d9d9';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

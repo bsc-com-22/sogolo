@@ -134,7 +134,7 @@ body {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.header.scrolled .mobile-menu-btn:hover {
+.header .mobile-menu-btn:hover {
     background: #F3F4F6;
 }
 
@@ -145,7 +145,7 @@ body {
     transition: color 0.3s ease;
 }
 
-.header.scrolled .menu-svg {
+.header .menu-svg {
     color: #0A2463;
 }
 
@@ -237,11 +237,7 @@ body {
     background-position: center;
 }
 
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, rgba(10, 36, 99, 0.95), rgba(10, 36, 99, 0.85), rgba(62, 146, 204, 0.8));
-}
+
 
 .slider-btn {
     position: absolute;
@@ -277,12 +273,12 @@ body {
     transform: translateX(-50%);
     z-index: 20;
     display: flex;
-    gap: 8px;
+    gap: 5px;
 }
 
 .indicator {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     border: none;
@@ -292,7 +288,7 @@ body {
 
 .indicator.active {
     background: white;
-    width: 32px;
+    width: 20px;
 }
 
 .hero-content {
@@ -416,5 +412,18 @@ body {
     }
     60% {
         transform: translateX(-50%) translateY(5px);
+    }
+}
+.hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 1024px;
+    text-align: left;
+    padding: 80px 24px;
+}
+
+@media (min-width: 768px) {
+    .hero-content {
+        text-align: center;
     }
 }

@@ -156,3 +156,69 @@ function initHeroSlider() {
         slideInterval = setInterval(nextSlide, 5000);
     });
 }
+
+// Mobile menu functionality - Place this at the end of body or in main.js
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileMenuLinks = document.querySelectorAll('.mobile-nav-link, .mobile-cta-button');
+    
+    if (mobileMenuBtn && mobileMenu) {
+        // Toggle menu on button click
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            mobileMenu.classList.toggle('open');
+            
+            // Update button icon
+            const menuIcon = this.querySelector('.menu-svg');
+            if (mobileMenu.classList.contains('open')) {
+                // Change to X icon
+                menuIcon.innerHTML = `
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                `;
+            } else {
+                // Change back to menu icon
+                menuIcon.innerHTML = `
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                `;
+            }
+        });
+        
+        // Close mobile menu when clicking on links
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('open');
+                
+                // Reset button icon
+                const menuIcon = mobileMenuBtn.querySelector('.menu-svg');
+                if (menuIcon) {
+                    menuIcon.innerHTML = `
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    `;
+                }
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.remove('open');
+                
+                // Reset button icon
+                const menuIcon = mobileMenuBtn.querySelector('.menu-svg');
+                if (menuIcon) {
+                    menuIcon.innerHTML = `
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    `;
+                }
+            }
+        });
+    }
+});

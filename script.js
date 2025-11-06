@@ -1,5 +1,4 @@
 // Sogolo.com Static Website JavaScript
-// Converted from React components to vanilla JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality

@@ -221,6 +221,76 @@
         .whatsapp-cta:hover {
             background: #20BA5A;
         }
+        /* Contact Page Styles */
+.contact-page {
+    padding: 80px 24px;
+    background: #FAFAFA;
+}
+
+.contact-page .section-header {
+    margin-bottom: 48px;
+}
+
+.contact-methods {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-bottom: 64px;
+}
+
+@media (min-width: 768px) {
+    .contact-methods {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.contact-method {
+    background: white;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.contact-method:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.contact-method-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #3E92CC, #0A2463);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: white;
+}
+
+.contact-method h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0A2463;
+    margin-bottom: 8px;
+}
+
+.contact-method p {
+    color: #6B7280;
+    margin-bottom: 16px;
+}
+
+.contact-method a {
+    color: #3E92CC;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-method a:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 

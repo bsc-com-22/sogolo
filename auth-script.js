@@ -1,3 +1,12 @@
+// Supabase Initialization (CDN exposes createClient globally)
+const supabase = createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
+
+// Auth State Listener & Initial Load
+supabase.auth.onAuthStateChange(async (event, session) => {
+    // ... rest unchanged
+});
+
+// ... continue with checkSession() and the rest
 // Supabase Initialization
 const supabase = Supabase.createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
 

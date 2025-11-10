@@ -7,6 +7,290 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ===== Floating Chat Widget Styles ===== */
+        .floating-chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+
+        /* Main Chat Button */
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3e92cc 0%, #0a2463 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(62, 146, 204, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(62, 146, 204, 0.5);
+        }
+
+        .chat-button svg {
+            stroke: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .chat-button.active svg {
+            transform: rotate(180deg);
+        }
+
+        /* Notification Badge */
+        .chat-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b35;
+            color: #ffffff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffffff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Contact Options Container */
+        .contact-options {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .contact-options.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Contact Option Buttons */
+        .contact-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: #ffffff;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: #1f2937;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            cursor: pointer;
+            border: none;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        .contact-option:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .contact-option:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .contact-option:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* WhatsApp Styling */
+        .contact-option.whatsapp .contact-option-icon {
+            background: #25D366;
+        }
+
+        .contact-option.whatsapp:hover {
+            background: #f0fdf4;
+            border: 1px solid #25D366;
+        }
+
+        /* Email Styling */
+        .contact-option.email .contact-option-icon {
+            background: #3e92cc;
+        }
+
+        .contact-option.email:hover {
+            background: #eff6ff;
+            border: 1px solid #3e92cc;
+        }
+
+        .contact-option-icon svg {
+            stroke: #ffffff;
+            fill: none;
+        }
+
+        .contact-option-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .contact-option-title {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .contact-option-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Tooltip */
+        .chat-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #1f2937;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .chat-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #1f2937;
+        }
+
+        .chat-button:hover .chat-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .contact-options.show ~ .chat-button .chat-tooltip {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .floating-chat-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .chat-button {
+                width: 56px;
+                height: 56px;
+            }
+
+            .contact-options {
+                bottom: 75px;
+            }
+
+            .contact-option {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .contact-option-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .contact-option-text {
+                display: none;
+            }
+
+            .contact-option {
+                padding: 12px;
+                border-radius: 50%;
+            }
+
+            .chat-tooltip {
+                display: none;
+            }
+        }
+
+        /* Overlay for mobile */
+        .chat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 9998;
+        }
+
+        .chat-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+
 </head>
 <body>
     <!-- Navigation -->
@@ -455,6 +739,128 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating Chat Widget -->
+    <div class="floating-chat-widget">
+        <!-- Contact Options -->
+        <div class="contact-options" id="contactOptions">
+            <!-- WhatsApp Option -->
+            <a href="https://wa.me/265883311248" target="_blank" class="contact-option whatsapp">
+                <div class="contact-option-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                </div>
+                <div class="contact-option-text">
+                    <span class="contact-option-title">WhatsApp</span>
+                    <span class="contact-option-subtitle">Chat with us</span>
+                </div>
+            </a>
+
+            <!-- Email Option -->
+            <a href="mailto:info@sogolo.com" class="contact-option email">
+                <div class="contact-option-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+                <div class="contact-option-text">
+                    <span class="contact-option-title">Email</span>
+                    <span class="contact-option-subtitle">Send us a message</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Main Chat Button -->
+        <button class="chat-button" id="chatButton" aria-label="Contact us">
+            <span class="chat-badge">2</span>
+            <div class="chat-tooltip">Need help? Contact us!</div>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div class="chat-overlay" id="chatOverlay"></div>
+     <script>
+        // Get elements
+        const chatButton = document.getElementById('chatButton');
+        const contactOptions = document.getElementById('contactOptions');
+        const chatOverlay = document.getElementById('chatOverlay');
+
+        // Toggle contact options
+        chatButton.addEventListener('click', function() {
+            const isActive = contactOptions.classList.contains('show');
+            
+            if (isActive) {
+                closeContactOptions();
+            } else {
+                openContactOptions();
+            }
+        });
+
+        // Open contact options
+        function openContactOptions() {
+            contactOptions.classList.add('show');
+            chatButton.classList.add('active');
+            chatOverlay.classList.add('show');
+        }
+
+        // Close contact options
+        function closeContactOptions() {
+            contactOptions.classList.remove('show');
+            chatButton.classList.remove('active');
+            chatOverlay.classList.remove('show');
+        }
+
+        // Close when clicking overlay
+        chatOverlay.addEventListener('click', closeContactOptions);
+
+        // Close when pressing Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && contactOptions.classList.contains('show')) {
+                closeContactOptions();
+            }
+        });
+
+        // Track clicks on contact options
+        const contactOptionLinks = document.querySelectorAll('.contact-option');
+        
+        contactOptionLinks.forEach(option => {
+            option.addEventListener('click', function() {
+                const type = this.classList.contains('whatsapp') ? 'WhatsApp' : 'Email';
+                console.log(`User clicked ${type} contact option`);
+                
+                // Close the widget after clicking
+                setTimeout(() => {
+                    closeContactOptions();
+                }, 300);
+            });
+        });
+
+        // Optional: Auto-show tooltip on first visit
+        let hasSeenTooltip = localStorage.getItem('hasSeenChatTooltip');
+        
+        if (!hasSeenTooltip) {
+            setTimeout(() => {
+                // Pulse animation for first-time visitors
+                chatButton.style.animation = 'pulse 1s ease-in-out 3';
+                localStorage.setItem('hasSeenChatTooltip', 'true');
+            }, 3000);
+        }
+
+        // Optional: Remove notification badge on click
+        chatButton.addEventListener('click', function() {
+            const badge = this.querySelector('.chat-badge');
+            if (badge) {
+                setTimeout(() => {
+                    badge.style.display = 'none';
+                }, 1000);
+            }
+        }, { once: true });
+    </script>
 
     <script src="script.js"></script>
 </body>

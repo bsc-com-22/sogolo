@@ -11,7 +11,7 @@
     <p id="user-info"></p>
     <button id="logout">Logout</button>
     <script>
-        const supabase = Supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+        const supabase = Supabase.createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
             document.getElementById('user-info').textContent = `Logged in as ${session.user.email}`;

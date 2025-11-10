@@ -3,15 +3,6 @@ const supabase = createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhb
 
 // Auth State Listener & Initial Load
 supabase.auth.onAuthStateChange(async (event, session) => {
-    // ... rest unchanged
-});
-
-// ... continue with checkSession() and the rest
-// Supabase Initialization
-const supabase = Supabase.createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
-
-// Auth State Listener & Initial Load
-supabase.auth.onAuthStateChange(async (event, session) => {
     const loginPage = document.getElementById('loginPage');
     const signupPage = document.getElementById('signupPage');
     
@@ -59,7 +50,7 @@ function switchToLogin() {
     document.getElementById('loginPage').style.display = 'flex';
 }
 
-// Password toggle functionality (unchanged)
+// Password toggle functionality
 const togglePasswordButtons = document.querySelectorAll('.toggle-password');
 
 togglePasswordButtons.forEach(button => {
@@ -84,7 +75,7 @@ togglePasswordButtons.forEach(button => {
     });
 });
 
-// Password strength indicator (unchanged)
+// Password strength indicator
 const signupPassword = document.getElementById('signupPassword');
 const passwordStrength = document.getElementById('passwordStrength');
 const strengthBar = passwordStrength ? passwordStrength.querySelector('.strength-bar') : null;
@@ -146,7 +137,7 @@ if (loginForm) {
             existingMessage.remove();
         }
         
-        // Basic validation (unchanged)
+        // Basic validation
         if (!email || !password) {
             showMessage(loginForm, 'Please fill in all fields', 'error');
             return;
@@ -198,7 +189,7 @@ if (signupForm) {
             existingMessage.remove();
         }
         
-        // Validation (unchanged)
+        // Validation
         if (!firstName || !lastName || !email || !phone || !password || !confirmPassword) {
             showMessage(signupForm, 'Please fill in all fields', 'error');
             return;
@@ -269,7 +260,7 @@ if (signupForm) {
     });
 }
 
-// Helper functions (unchanged)
+// Helper functions
 function showMessage(form, message, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
@@ -348,7 +339,7 @@ if (forgotPasswordLink && forgotPasswordLink.textContent === 'Forgot Password?')
     });
 }
 
-// Terms and privacy policy links (unchanged)
+// Terms and privacy policy links
 const termsLinks = document.querySelectorAll('.checkbox-label .link-text');
 
 termsLinks.forEach(link => {
@@ -359,7 +350,7 @@ termsLinks.forEach(link => {
     });
 });
 
-// Prevent form submission on Enter key (unchanged)
+// Prevent form submission on Enter key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.type !== 'submit') {
         if (e.target.tagName === 'TEXTAREA') return;
@@ -372,7 +363,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Add smooth transitions to messages (unchanged)
+// Add smooth transitions to messages
 const style = document.createElement('style');
 style.textContent = `
     .message {

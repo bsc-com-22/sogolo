@@ -5,22 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sogolo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        #user-info { font-size: 1.2em; margin: 20px 0; }
+    </style>
 </head>
 <body>
     <h1>Welcome to Your Dashboard!</h1>
-    <p id="user-info"></p>
+    <p id="user-info">Loading...</p>
     <button id="logout">Logout</button>
+
     <script>
-        const supabase = Supabase.createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            document.getElementById('user-info').textContent = `Logged in as ${session.user.email}`;
-        } else {
-            window.location.href = 'index.html'; // Back to auth
-        }
+        // Supabase Initialization (CDN exposes createClient globally)
+        const supabase = createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
+
+        // Load session async (wrapped in IIFE to use await)
+        (async () => {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error('Session error:', error);
+                    document.getElementById('user-info').textContent = 'Error loading session. Redirecting...';
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+                if (session) {
+                    document.getElementById('user-info').textContent = `Logged in as ${session.user.email}`;
+                } else {
+                    window.location.href = 'index.html'; // Back to auth
+                }
+            } catch (err) {
+                console.error('Dashboard load error:', err);
+                document.getElementById('user-info').textContent = 'Failed to load. Please try again.';
+            }
+        })();
+
+        // Logout handler
         document.getElementById('logout').addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Logout error:', err);
+                alert('Logout failed: ' + err.message);
+            }
+        });
+
+        // Optional: Listen for auth changes (e.g., signed out in another tab)
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_OUT' || !session) {
+                window.location.href = 'index.html';
+            }
         });
     </script>
 </body>

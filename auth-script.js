@@ -1,4 +1,45 @@
+// Supabase Initialization
+const supabase = Supabase.createClient('https://nwmhyhbgrfexugpggupm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWh5aGJncmZleHVncGdndXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MjU5ODEsImV4cCI6MjA3ODMwMTk4MX0.YmtdcLLBvQS_gs7KRi3Y2JxCTj-sgNLPy5CiwsQZV-Q');
+
+// Auth State Listener & Initial Load
+supabase.auth.onAuthStateChange(async (event, session) => {
+    const loginPage = document.getElementById('loginPage');
+    const signupPage = document.getElementById('signupPage');
+    
+    if (event === 'SIGNED_IN' && session) {
+        // Redirect to dashboard on sign-in
+        window.location.href = 'dashboard.html';
+    } else if (event === 'SIGNED_OUT') {
+        // Show login by default
+        loginPage.style.display = 'flex';
+        signupPage.style.display = 'none';
+    }
+});
+
+// Check session on page load
+async function checkSession() {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) console.error('Session check error:', error);
+    if (session) {
+        window.location.href = 'dashboard.html'; // Already signed in
+    } else {
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('signupPage').style.display = 'none';
+    }
+}
+checkSession();
+
 // Switch between Login and Signup pages
+document.getElementById('signupLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    switchToSignup();
+});
+
+document.getElementById('loginLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    switchToLogin();
+});
+
 function switchToSignup() {
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('signupPage').style.display = 'flex';
@@ -9,7 +50,7 @@ function switchToLogin() {
     document.getElementById('loginPage').style.display = 'flex';
 }
 
-// Password toggle functionality
+// Password toggle functionality (unchanged)
 const togglePasswordButtons = document.querySelectorAll('.toggle-password');
 
 togglePasswordButtons.forEach(button => {
@@ -34,7 +75,7 @@ togglePasswordButtons.forEach(button => {
     });
 });
 
-// Password strength indicator
+// Password strength indicator (unchanged)
 const signupPassword = document.getElementById('signupPassword');
 const passwordStrength = document.getElementById('passwordStrength');
 const strengthBar = passwordStrength ? passwordStrength.querySelector('.strength-bar') : null;
@@ -79,11 +120,11 @@ if (signupPassword && passwordStrength && strengthBar) {
     });
 }
 
-// Login Form Submission
+// Updated Login Form Submission with Supabase
 const loginForm = document.getElementById('loginForm');
 
 if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const email = document.getElementById('loginEmail').value;
@@ -96,7 +137,7 @@ if (loginForm) {
             existingMessage.remove();
         }
         
-        // Basic validation
+        // Basic validation (unchanged)
         if (!email || !password) {
             showMessage(loginForm, 'Please fill in all fields', 'error');
             return;
@@ -108,25 +149,30 @@ if (loginForm) {
             return;
         }
         
-        // Here you would typically send the data to a server
-        console.log('Login attempt:', { email, password, rememberMe });
+        // Supabase Sign In
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+            options: {
+                data: { rememberMe } // Optional: Store in session
+            }
+        });
         
-        // Show success message
-        showMessage(loginForm, 'Login successful! Redirecting...', 'success');
-        
-        // Simulate redirect after 2 seconds
-        setTimeout(() => {
-            alert('Login successful! You would be redirected to the dashboard.');
-            loginForm.reset();
-        }, 2000);
+        if (error) {
+            showMessage(loginForm, error.message, 'error');
+            console.error('Login error:', error);
+        } else if (data.user) {
+            showMessage(loginForm, 'Login successful! Redirecting...', 'success');
+            // Listener handles redirect
+        }
     });
 }
 
-// Signup Form Submission
+// Updated Signup Form Submission with Supabase
 const signupForm = document.getElementById('signupForm');
 
 if (signupForm) {
-    signupForm.addEventListener('submit', function(e) {
+    signupForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const firstName = document.getElementById('firstName').value;
@@ -143,58 +189,78 @@ if (signupForm) {
             existingMessage.remove();
         }
         
-        // Validation
+        // Validation (unchanged)
         if (!firstName || !lastName || !email || !phone || !password || !confirmPassword) {
             showMessage(signupForm, 'Please fill in all fields', 'error');
             return;
         }
         
-        // Email validation
         if (!isValidEmail(email)) {
             showMessage(signupForm, 'Please enter a valid email address', 'error');
             return;
         }
         
-        // Phone validation
         if (!isValidPhone(phone)) {
             showMessage(signupForm, 'Please enter a valid phone number', 'error');
             return;
         }
         
-        // Password validation
         if (password.length < 8) {
             showMessage(signupForm, 'Password must be at least 8 characters long', 'error');
             return;
         }
         
-        // Password match validation
         if (password !== confirmPassword) {
             showMessage(signupForm, 'Passwords do not match', 'error');
             return;
         }
         
-        // Terms agreement validation
         if (!agreeTerms) {
             showMessage(signupForm, 'You must agree to the Terms of Service and Privacy Policy', 'error');
             return;
         }
         
-        // Here you would typically send the data to a server
-        console.log('Signup attempt:', { firstName, lastName, email, phone, password });
+        // Supabase Sign Up
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone: phone
+                },
+                emailRedirectTo: window.location.origin // Redirect after confirmation
+            }
+        });
         
-        // Show success message
-        showMessage(signupForm, 'Account created successfully! Redirecting to login...', 'success');
-        
-        // Simulate redirect after 2 seconds
-        setTimeout(() => {
-            alert('Account created successfully! Please login with your credentials.');
-            switchToLogin();
-            signupForm.reset();
-        }, 2000);
+        if (authError) {
+            showMessage(signupForm, authError.message, 'error');
+            console.error('Signup error:', authError);
+        } else if (authData.user) {
+            // Insert profile (if email confirmation is disabled, or handle post-confirmation)
+            const { error: profileError } = await supabase.from('profiles').insert({
+                id: authData.user.id,
+                first_name: firstName,
+                last_name: lastName,
+                phone: phone
+            });
+            
+            if (profileError) {
+                console.error('Profile insert error:', profileError);
+                // Still show success, but log error
+            }
+            
+            showMessage(signupForm, 'Account created! Check your email to verify and login.', 'success');
+            setTimeout(() => {
+                switchToLogin();
+                signupForm.reset();
+            }, 2000);
+        }
     });
 }
 
-// Helper function to show messages
+// Helper functions (unchanged)
 function showMessage(form, message, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
@@ -222,47 +288,58 @@ function showMessage(form, message, type) {
     }, 5000);
 }
 
-// Email validation helper
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-// Phone validation helper (basic)
 function isValidPhone(phone) {
-    // Remove all non-digit characters
     const digits = phone.replace(/\D/g, '');
-    // Check if it has at least 9 digits (adjust based on your requirements)
     return digits.length >= 9;
 }
 
-// Social login button handlers
+// Social login button handlers (Supabase OAuth)
 const socialButtons = document.querySelectorAll('.btn-social');
 
 socialButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const platform = this.textContent.includes('Facebook') ? 'Facebook' : 'Google';
-        alert(`${platform} authentication would be handled here. This requires backend integration.`);
+    button.addEventListener('click', async function() {
+        const platform = this.textContent.includes('Facebook') ? 'facebook' : 'google';
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: platform,
+            options: {
+                redirectTo: window.location.origin + '/dashboard.html'
+            }
+        });
+        if (error) {
+            showMessage(this.closest('form'), error.message, 'error');
+        }
     });
 });
 
-// Forgot password handler
+// Forgot password handler (Supabase)
 const forgotPasswordLink = document.querySelector('.link-text[href="#"]');
 
 if (forgotPasswordLink && forgotPasswordLink.textContent === 'Forgot Password?') {
-    forgotPasswordLink.addEventListener('click', function(e) {
+    forgotPasswordLink.addEventListener('click', async function(e) {
         e.preventDefault();
         const email = prompt('Please enter your email address to reset your password:');
         
         if (email && isValidEmail(email)) {
-            alert(`A password reset link has been sent to ${email}`);
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/reset-password.html' // Create this page if needed
+            });
+            if (error) {
+                alert('Error: ' + error.message);
+            } else {
+                alert(`A password reset link has been sent to ${email}`);
+            }
         } else if (email) {
             alert('Please enter a valid email address');
         }
     });
 }
 
-// Terms and privacy policy links
+// Terms and privacy policy links (unchanged)
 const termsLinks = document.querySelectorAll('.checkbox-label .link-text');
 
 termsLinks.forEach(link => {
@@ -273,13 +350,11 @@ termsLinks.forEach(link => {
     });
 });
 
-// Prevent form submission on Enter key in specific scenarios
+// Prevent form submission on Enter key (unchanged)
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.type !== 'submit') {
-        // Allow Enter in textareas
         if (e.target.tagName === 'TEXTAREA') return;
         
-        // Submit the form if Enter is pressed in an input field
         const form = e.target.closest('form');
         if (form) {
             e.preventDefault();
@@ -288,7 +363,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Add smooth transitions to messages
+// Add smooth transitions to messages (unchanged)
 const style = document.createElement('style');
 style.textContent = `
     .message {

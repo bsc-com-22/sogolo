@@ -3,249 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sogolo.com</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="auth-styles.css">
+    <title>Sign Up - Sogolo</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <!-- Login Page -->
-    <div class="auth-container" id="loginPage">
-        <div class="auth-wrapper">
-            <!-- Left Side - Branding -->
-            <div class="auth-brand">
-                <div class="brand-content">
-                    <div class="logo-large">
-                        <img src="logo.png" alt="Sogolo Logo" height="60">
-                    </div>
-                    <h1>Welcome Back!</h1>
-                    <p>Login to continue your secure trading journey</p>
-                    <div class="brand-features">
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            <span>Secure Escrow Protection</span>
-                        </div>
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                            <span>Verified Transactions</span>
-                        </div>
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <span>24/7 Support</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side - Login Form -->
-            <div class="auth-form-container">
-                <div class="auth-form-wrapper">
-                    <div class="form-header">
-                        <h2>Login to Your Account</h2>
-                        <p>Enter your credentials to access your account</p>
-                    </div>
-
-                    <form class="auth-form" id="loginForm">
-                        <div class="form-group">
-                            <label for="loginEmail">Email Address</label>
-                            <input type="email" id="loginEmail" placeholder="your@email.com" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loginPassword">Password</label>
-                            <div class="password-input">
-                                <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                                <button type="button" class="toggle-password" data-target="loginPassword">
-                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-options">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="rememberMe">
-                                <span>Remember me</span>
-                            </label>
-                            <a href="#" class="link-text">Forgot Password?</a>
-                        </div>
-
-                        <button type="submit" class="btn-auth">Login</button>
-
-                        <div class="divider">
-                            <span>OR</span>
-                        </div>
-
-                        <div class="social-login">
-                            <button type="button" class="btn-social">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                                </svg>
-                                Continue with Facebook
-                            </button>
-                            <button type="button" class="btn-social">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                                </svg>
-                                Continue with Google
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="form-footer">
-                        <p>Don't have an account? <a href="#" class="link-primary" onclick="switchToSignup()">Sign Up</a></p>
-                    </div>
+<body class="antialiased text-gray-900 bg-gray-50">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center">
+                    <img src="logo.png" alt="Sogolo" class="h-8 w-auto">
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Back to Home</a>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Signup Page -->
-    <div class="auth-container" id="signupPage" style="display: none;">
-        <div class="auth-wrapper">
-            <!-- Left Side - Branding -->
-            <div class="auth-brand">
-                <div class="brand-content">
-                    <div class="logo-large">
-                        <img src="logo.png" alt="Sogolo Logo" height="60">
-                    </div>
-                    <h1>Join Sogolo Today!</h1>
-                    <p>Create your account and start trading securely</p>
-                    <div class="brand-features">
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            <span>Secure Escrow Protection</span>
-                        </div>
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                            <span>Verified Transactions</span>
-                        </div>
-                        <div class="brand-feature">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <span>24/7 Support</span>
-                        </div>
-                    </div>
-                </div>
+    <!-- Signup Form -->
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <img src="logo.png" alt="Sogolo" class="mx-auto h-12 w-auto">
+                <h2 class="mt-6 text-3xl font-bold text-gray-900">Create your account</h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Already have an account? 
+                    <a href="login.html" class="font-medium text-blue-600 hover:text-blue-500">Sign in here</a>
+                </p>
             </div>
-
-            <!-- Right Side - Signup Form -->
-            <div class="auth-form-container">
-                <div class="auth-form-wrapper">
-                    <div class="form-header">
-                        <h2>Create Your Account</h2>
-                        <p>Sign up to start your secure trading journey</p>
+            
+            <form id="signup-form" class="mt-8 space-y-6">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="first-name" class="block text-sm font-medium text-gray-700 mb-2">First name</label>
+                            <input 
+                                id="first-name" 
+                                name="first-name" 
+                                type="text" 
+                                autocomplete="given-name" 
+                                required 
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                placeholder="John"
+                            >
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-medium text-gray-700 mb-2">Last name</label>
+                            <input 
+                                id="last-name" 
+                                name="last-name" 
+                                type="text" 
+                                autocomplete="family-name" 
+                                required 
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                placeholder="Doe"
+                            >
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email address</label>
+                        <input 
+                            id="email" 
+                            name="email" 
+                            type="email" 
+                            autocomplete="email" 
+                            required 
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            placeholder="john@example.com"
+                        >
                     </div>
 
-                    <form class="auth-form" id="signupForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" placeholder="John" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" placeholder="Doe" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="signupEmail">Email Address</label>
-                            <input type="email" id="signupEmail" placeholder="your@email.com" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phoneNumber">Phone Number</label>
-                            <input type="tel" id="phoneNumber" placeholder="+265 888 123 456" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="signupPassword">Password</label>
-                            <div class="password-input">
-                                <input type="password" id="signupPassword" placeholder="Create a strong password" required>
-                                <button type="button" class="toggle-password" data-target="signupPassword">
-                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="password-strength" id="passwordStrength">
-                                <div class="strength-bar"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <div class="password-input">
-                                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                                <button type="button" class="toggle-password" data-target="confirmPassword">
-                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-options">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="agreeTerms" required>
-                                <span>I agree to the <a href="#" class="link-text">Terms of Service</a> and <a href="#" class="link-text">Privacy Policy</a></span>
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn-auth">Create Account</button>
-
-                        <div class="divider">
-                            <span>OR</span>
-                        </div>
-
-                        <div class="social-login">
-                            <button type="button" class="btn-social">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+                        <input 
+                            id="phone" 
+                            name="phone" 
+                            type="tel" 
+                            autocomplete="tel" 
+                            required 
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            placeholder="+265 123 456 789"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                autocomplete="new-password" 
+                                required 
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors pr-10"
+                                placeholder="Create a strong password"
+                            >
+                            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <svg id="eye-open" class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
-                                Sign up with Facebook
-                            </button>
-                            <button type="button" class="btn-social">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                <svg id="eye-closed" class="h-5 w-5 text-gray-400 hover:text-gray-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
                                 </svg>
-                                Sign up with Google
                             </button>
                         </div>
-                    </form>
+                        <div class="mt-2">
+                            <div class="text-xs text-gray-500">
+                                Password must contain:
+                                <ul class="mt-1 space-y-1">
+                                    <li id="length-check" class="flex items-center">
+                                        <svg class="w-3 h-3 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        At least 8 characters
+                                    </li>
+                                    <li id="uppercase-check" class="flex items-center">
+                                        <svg class="w-3 h-3 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        One uppercase letter
+                                    </li>
+                                    <li id="number-check" class="flex items-center">
+                                        <svg class="w-3 h-3 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        One number
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="form-footer">
-                        <p>Already have an account? <a href="#" class="link-primary" onclick="switchToLogin()">Login</a></p>
+                    <div>
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm password</label>
+                        <input 
+                            id="confirm-password" 
+                            name="confirm-password" 
+                            type="password" 
+                            autocomplete="new-password" 
+                            required 
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            placeholder="Confirm your password"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="user-type" class="block text-sm font-medium text-gray-700 mb-2">I want to</label>
+                        <select 
+                            id="user-type" 
+                            name="user-type" 
+                            required 
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                        >
+                            <option value="">Select an option</option>
+                            <option value="buyer">Buy products safely</option>
+                            <option value="seller">Sell products with protection</option>
+                            <option value="both">Both buy and sell</option>
+                        </select>
                     </div>
                 </div>
-            </div>
+
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input 
+                            id="terms" 
+                            name="terms" 
+                            type="checkbox" 
+                            required
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        >
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="text-gray-700">
+                            I agree to the 
+                            <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> 
+                            and 
+                            <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input 
+                            id="marketing" 
+                            name="marketing" 
+                            type="checkbox" 
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        >
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="marketing" class="text-gray-700">
+                            I'd like to receive updates about new features and promotions
+                        </label>
+                    </div>
+                </div>
+
+                <div id="signup-status" class="hidden p-4 rounded-lg border">
+                    <p class="text-sm font-medium"></p>
+                </div>
+
+                <div>
+                    <button 
+                        type="submit" 
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                        </span>
+                        Create account
+                    </button>
+                </div>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-gray-50 text-gray-500">Or sign up with</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                            <svg class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            <span class="ml-2">Facebook</span>
+                        </button>
+
+                        <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span class="ml-2">Google</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="auth-script.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>

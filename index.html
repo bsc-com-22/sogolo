@@ -3,866 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sogolo.com - Bridging Trust in Malawi's Social Media Market</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sogolo - Trade Safely on Social Media</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* ===== Floating Chat Widget Styles ===== */
-        .floating-chat-widget {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-        }
-
-        /* Main Chat Button */
-        .chat-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3e92cc 0%, #0a2463 100%);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(62, 146, 204, 0.4);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .chat-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(62, 146, 204, 0.5);
-        }
-
-        .chat-button svg {
-            stroke: #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        .chat-button.active svg {
-            transform: rotate(180deg);
-        }
-
-        /* Notification Badge */
-        .chat-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff6b35;
-            color: #ffffff;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #ffffff;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        /* Contact Options Container */
-        .contact-options {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-
-        .contact-options.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        /* Contact Option Buttons */
-        .contact-option {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: #ffffff;
-            border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            text-decoration: none;
-            color: #1f2937;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            cursor: pointer;
-            border: none;
-            animation: slideIn 0.3s ease forwards;
-        }
-
-        .contact-option:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-
-        .contact-option:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .contact-option:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .contact-option-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* WhatsApp Styling */
-        .contact-option.whatsapp .contact-option-icon {
-            background: #25D366;
-        }
-
-        .contact-option.whatsapp:hover {
-            background: #f0fdf4;
-            border: 1px solid #25D366;
-        }
-
-        /* Email Styling */
-        .contact-option.email .contact-option-icon {
-            background: #3e92cc;
-        }
-
-        .contact-option.email:hover {
-            background: #eff6ff;
-            border: 1px solid #3e92cc;
-        }
-
-        .contact-option-icon svg {
-            stroke: #ffffff;
-            fill: none;
-        }
-
-        .contact-option-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .contact-option-title {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 14px;
-        }
-
-        .contact-option-subtitle {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        /* Tooltip */
-        .chat-tooltip {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            background: #1f2937;
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .chat-tooltip::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            right: 20px;
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 6px solid #1f2937;
-        }
-
-        .chat-button:hover .chat-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .contact-options.show ~ .chat-button .chat-tooltip {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .floating-chat-widget {
-                bottom: 20px;
-                right: 20px;
-            }
-
-            .chat-button {
-                width: 56px;
-                height: 56px;
-            }
-
-            .contact-options {
-                bottom: 75px;
-            }
-
-            .contact-option {
-                padding: 10px 16px;
-                font-size: 14px;
-            }
-
-            .contact-option-icon {
-                width: 36px;
-                height: 36px;
-            }
-
-            .contact-option-text {
-                display: none;
-            }
-
-            .contact-option {
-                padding: 12px;
-                border-radius: 50%;
-            }
-
-            .chat-tooltip {
-                display: none;
-            }
-        }
-
-        /* Overlay for mobile */
-        .chat-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 9998;
-        }
-
-        .chat-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-    </style>
-
 </head>
-<body>
-    <!-- Navigation -->
-    <header>
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="logo">
-                    <a href="index.html">
-                        <img src="logo.png" alt="Sogolo Logo" height="40">
-                    </a>
+<body class="antialiased text-gray-900">
+    
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <a href="#" class="flex items-center">
+                    <img src="logo.png" alt="Sogolo" class="h-10 w-auto">
+                </a>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">About</a>
+                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">How it Works</a>
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Features</a>
+                    <a href="#testimonials" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Testimonials</a>
+                    <a href="#faqs" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">FAQs</a>
+                    <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="login.html" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">Login</a>
+                    <a href="signup.html" class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Get Started</a>
                 </div>
-                
-                <ul class="nav-menu">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#how-it-works">How it Works</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#faqs">FAQs</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li class="mobile-nav-buttons">
-                        <a href="signup.html#signupPage" class="btn-login">Sign Up</a>
-                        <a href="signup.html#loginPage" class="btn-get-started">Login</a>
-                    </li>
-                </ul>
-                
-                <div class="nav-buttons">
-                    <a href="signup.html#signupPage" class="btn-login">Sign Up</a>
-                    <a href="signup.html#loginPage" class="btn-get-started">Login</a>
-                </div>
-                
-                <div class="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                    <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-        </nav>
+            <div id="mobile-menu" class="md:hidden py-4 border-t border-gray-100 bg-white">
+                <nav class="flex flex-col space-y-4">
+                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">About</a>
+                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">How it Works</a>
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">Features</a>
+                    <a href="#testimonials" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">Testimonials</a>
+                    <a href="#faqs" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">FAQs</a>
+                    <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">Contact</a>
+                    <div class="pt-4 border-t border-gray-100 flex flex-col space-y-3">
+                        <a href="login.html" class="text-sm font-medium text-gray-600 hover:text-blue-600 mobile-link">Login</a>
+                        <a href="signup.html" class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 text-center mobile-link">Get Started</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="carousel">
-            <div class="slide active" style="background-image: url('Desktop - 2.png');"></div>
-            <div class="slide" style="background-image: url('Desktop - 3.png');"></div>
-            <div class="slide" style="background-image: url('Desktop - 4.png');"></div>
+    <section class="pt-24 md:pt-32 pb-16 md:pb-24 bg-gradient-to-b from-blue-50 to-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-6">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span>Secure Escrow Protection</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">Trade Safely on Social Media</h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">Sogolo bridges trust between buyers and sellers in Malawi's social media marketplace with verified transactions and secure payments.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                        <a href="signup.html" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors group">
+                            Start Trading
+                            <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
+                        <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 font-medium rounded-lg border-2 border-gray-200 hover:border-blue-600 hover:text-blue-600 transition-colors">Learn More</a>
+                    </div>
+                    <div class="grid grid-cols-3 gap-8 pt-8 border-t border-gray-200">
+                        <div><div class="text-3xl font-bold text-gray-900 mb-1">1,000+</div><div class="text-sm text-gray-600">Verified Sellers</div></div>
+                        <div><div class="text-3xl font-bold text-gray-900 mb-1">5,000+</div><div class="text-sm text-gray-600">Safe Transactions</div></div>
+                        <div><div class="text-3xl font-bold text-gray-900 mb-1">98%</div><div class="text-sm text-gray-600">Satisfaction</div></div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="aspect-square lg:aspect-auto lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1572246612281-38567e78054f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" alt="African man using mobile phone for shopping" class="w-full h-full object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-30 -z-10"></div>
+                    <div class="absolute -top-6 -left-6 w-72 h-72 bg-purple-200 rounded-full blur-3xl opacity-30 -z-10"></div>
+                </div>
+            </div>
         </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Bridging Trust in Malawi's Social Media Market</h1>
-            <p>We verify products and services across social media to make online trade safer and more reliable</p>
-            <a href="signin.html" class="btn-hero">Get Started</a>
-        </div>
-        <div class="carousel-dots">
-            <span class="dot active" data-slide="0"></span>
-            <span class="dot" data-slide="1"></span>
-            <span class="dot" data-slide="2"></span>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <div class="order-2 lg:order-1">
+                    <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1689152496131-9cecc95cde25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" alt="Business handshake" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">About Sogolo</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Building Trust in Malawi's Digital Marketplace</h2>
+                    <p class="text-lg text-gray-900 font-medium mb-4">We're on a mission to make online trading safer and more reliable for everyone in Malawi.</p>
+                    <p class="text-gray-600 mb-8 leading-relaxed">Social media has become the marketplace of choice for thousands of Malawians, but trust remains a challenge. Sogolo solves this by providing secure escrow services, product verification, and buyer protectionâ€”ensuring every transaction is safe and transparent.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-gray-900 font-medium">Verified product inspections</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-gray-900 font-medium">Secure payment escrow</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-gray-900 font-medium">24/7 customer support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <h2>How It Works</h2>
-                <p>Four simple steps to ensure safe and secure transactions between buyers and sellers</p>
+    <section id="how-it-works" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Simple Process</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-lg text-gray-600">Four easy steps to secure transactions</p>
             </div>
-            
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-header">
-                        <div class="step-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                            </svg>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="relative">
+                    <div class="hidden lg:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-blue-200 to-transparent"></div>
+                    <div class="relative bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                        <div class="text-sm font-semibold text-blue-600 mb-4">01</div>
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                         </div>
-                        <span class="step-number">01</span>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Create Link</h3>
+                        <p class="text-gray-600 leading-relaxed">Buyer creates a verification link and shares with seller</p>
                     </div>
-                    <h3>Create Link</h3>
-                    <p>Buyer creates a secure verification link and shares it with the seller from social media.</p>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-header">
-                        <div class="step-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
+                <div class="relative">
+                    <div class="hidden lg:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-blue-200 to-transparent"></div>
+                    <div class="relative bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                        <div class="text-sm font-semibold text-blue-600 mb-4">02</div>
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         </div>
-                        <span class="step-number">02</span>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Verify Details</h3>
+                        <p class="text-gray-600 leading-relaxed">Seller uploads product details and images for verification</p>
                     </div>
-                    <h3>Verify Seller</h3>
-                    <p>Seller fills in product details and uploads images for verification and trust scoring.</p>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-header">
-                        <div class="step-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                                <line x1="2" y1="10" x2="22" y2="10"></line>
-                            </svg>
+                <div class="relative">
+                    <div class="hidden lg:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-blue-200 to-transparent"></div>
+                    <div class="relative bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                        <div class="text-sm font-semibold text-blue-600 mb-4">03</div>
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                         </div>
-                        <span class="step-number">03</span>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Secure Payment</h3>
+                        <p class="text-gray-600 leading-relaxed">Buyer pays securely. Funds held in escrow until delivery</p>
                     </div>
-                    <h3>Escrow Payment</h3>
-                    <p>Buyer pays securely. Funds are held in escrow until product inspection is complete.</p>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-header">
-                        <div class="step-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                            </svg>
+                <div class="relative">
+                    <div class="relative bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                        <div class="text-sm font-semibold text-blue-600 mb-4">04</div>
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="step-number">04</span>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Confirm & Release</h3>
+                        <p class="text-gray-600 leading-relaxed">Product verified and delivered. Funds released to seller</p>
                     </div>
-                    <h3>Deliver & Release</h3>
-                    <p>Product is verified by inspector. Once approved, funds are released to the seller.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Why Choose Sogolo</h2>
-                <p>Complete protection and peace of mind for all your social commerce transactions</p>
+    <section id="features" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Why Choose Us</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Everything You Need</h2>
+                <p class="text-lg text-gray-600">Complete protection for your online transactions</p>
             </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     </div>
-                    <h3>Escrow Protection</h3>
-                    <p>Your payment is held securely until product verification is complete.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Escrow Protection</h3>
+                    <p class="text-gray-600 leading-relaxed">Payment held securely until product verification</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-                            <circle cx="12" cy="16" r="1"></circle>
-                            <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
-                        </svg>
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3>Secure Payments</h3>
-                    <p>Multiple payment methods including mobile money, cards, and bank transfers.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Product Inspection</h3>
+                    <p class="text-gray-600 leading-relaxed">Expert verification of items before delivery</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                     </div>
-                    <h3>Product Verification</h3>
-                    <p>Expert inspection ensures you receive exactly what you paid for.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Secure Payments</h3>
+                    <p class="text-gray-600 leading-relaxed">Multiple payment options with encryption</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </div>
-                    <h3>Real-time Tracking</h3>
-                    <p>Track every step of your transaction from start to finish.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Trust Scores</h3>
+                    <p class="text-gray-600 leading-relaxed">Verified sellers with reputation badges</p>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3>24/7 Support</h3>
-                    <p>Our support team is always here to help resolve any issues.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Real-time Tracking</h3>
+                    <p class="text-gray-600 leading-relaxed">Monitor your transaction at every step</p>
                 </div>
-
-                <div class="feature-card featured">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-lg transition-all duration-300 group border border-transparent hover:border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                        <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     </div>
-                    <h3>Trust Score</h3>
-                    <p>Verified sellers earn trust badges for reliable transactions.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">24/7 Support</h3>
+                    <p class="text-gray-600 leading-relaxed">Always here to help resolve any issues</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Testimonials</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+                <p class="text-lg text-gray-600">Real stories from buyers and sellers across Malawi</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="flex space-x-1 mb-6">
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed italic">"Sogolo made buying my first phone online so easy! The verification process gave me confidence, and I got exactly what I paid for."</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-lg">T</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Thabo Mwale</div>
+                            <div class="text-sm text-gray-600">Buyer, Blantyre</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="flex space-x-1 mb-6">
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed italic">"As a seller, Sogolo protects both me and my customers. The trust score system has helped grow my business significantly."</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-lg">C</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Chisomo Banda</div>
+                            <div class="text-sm text-gray-600">Verified Seller, Lilongwe</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="flex space-x-1 mb-6">
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed italic">"Finally, a safe way to shop on social media! The escrow service means I never have to worry about losing money to scammers."</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-lg">G</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Grace Phiri</div>
+                            <div class="text-sm text-gray-600">Buyer, Mzuzu</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FAQs Section -->
-    <section id="faqs" class="faqs">
-        <div class="container">
-            <div class="section-header">
-                <h2>Frequently Asked Questions</h2>
-                <p>Everything you need to know about using Sogolo for secure transactions</p>
+    <section id="faqs" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">FAQs</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600">Everything you need to know about using Sogolo</p>
             </div>
-            
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How does the escrow service work?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-button w-full px-6 py-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors">
+                        <span class="text-lg font-semibold text-gray-900 pr-4">How does Sogolo protect my money?</span>
+                        <svg class="chevron flex-shrink-0 text-blue-600 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="faq-answer">
-                        <p>When you make a purchase, your payment is held securely by Sogolo until the product is verified and delivered. Once you confirm receipt and satisfaction, the funds are released to the seller. This protects both parties in the transaction.</p>
+                    <div class="faq-answer active">
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                            <p class="text-gray-700 leading-relaxed">Sogolo uses an escrow system that holds your payment securely until you confirm receipt of the product. The seller only receives payment after you verify that the item matches the description and meets your expectations. If there's any issue, our team steps in to resolve the dispute fairly.</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What payment methods do you accept?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-button w-full px-6 py-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors">
+                        <span class="text-lg font-semibold text-gray-900 pr-4">How long does the verification process take?</span>
+                        <svg class="chevron flex-shrink-0 text-blue-600 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>We accept multiple payment methods including Airtel Money, TNM Mpamba, bank transfers, and major credit/debit cards. All payments are processed securely through encrypted channels.</p>
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                            <p class="text-gray-700 leading-relaxed">Product verification typically takes 1-2 business days. Our team carefully inspects photos, product details, and seller information to ensure authenticity. Once verified, you'll receive a notification and can proceed with payment. For high-value items, we may conduct additional checks for your protection.</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How long does the verification process take?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-button w-full px-6 py-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors">
+                        <span class="text-lg font-semibold text-gray-900 pr-4">What happens if the product is not as described?</span>
+                        <svg class="chevron flex-shrink-0 text-blue-600 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Product verification typically takes 24-48 hours depending on the item and location. Our inspectors work efficiently to ensure quick turnaround while maintaining thorough quality checks.</p>
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                            <p class="text-gray-700 leading-relaxed">If the product doesn't match the verified description, you can reject it and receive a full refund. Simply contact our support team within 24 hours of delivery with photos and details. We'll investigate the issue and ensure you're protected. Your satisfaction and safety are our top priorities.</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What if the product doesn't match the description?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-button w-full px-6 py-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors">
+                        <span class="text-lg font-semibold text-gray-900 pr-4">Are there any fees for using Sogolo?</span>
+                        <svg class="chevron flex-shrink-0 text-blue-600 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div class="faq-answer">
-                        <p>If our inspector finds that the product doesn't match the seller's description, the transaction can be cancelled and your funds will be returned in full. Your satisfaction and safety are our top priorities.</p>
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                            <p class="text-gray-700 leading-relaxed">Sogolo charges a small service fee (typically 2-5% of the transaction value) to cover verification, escrow services, and customer support. The exact fee is shown before you confirm payment, so there are no surprises. Both buyers and sellers benefit from the security and peace of mind our platform provides.</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Is there a fee for using Sogolo?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>We charge a small service fee that covers escrow protection, product verification, and secure payment processing. The fee is transparently displayed before you complete any transaction.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How do I become a verified seller?</span>
-                        <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Sign up for a seller account, complete your profile with valid identification, and start accepting verification links from buyers. As you complete successful transactions, you'll earn trust scores and verification badges.</p>
-                    </div>
-                </div>
+            </div>
+            <div class="mt-16 text-center">
+                <p class="text-gray-600 mb-4">Still have questions? We're here to help!</p>
+                <a href="#contact" class="inline-flex items-center justify-center px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">Contact Support</a>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to Trade Safely?</h2>
-                <p>Join thousands of Malawians buying and selling with confidence</p>
-                <div class="cta-buttons">
-                    <a href="#get-started" class="btn-cta-primary">Get Started Now</a>
-                    <a href="#how-it-works" class="btn-cta-secondary">Learn More</a>
-                </div>
+    <section class="py-16 md:py-24 bg-blue-600">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">Ready to Trade with Confidence?</h2>
+                <p class="text-xl text-blue-100 mb-10">Join thousands of Malawians buying and selling safely on social media</p>
+                <a href="signup.html" class="inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors group">
+                    Get Started Free
+                    <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <h2>Get in Touch</h2>
-                    <p>Have questions? We're here to help. Reach out to us through any of these channels.</p>
-                    
-                    <div class="contact-methods">
-                        <div class="contact-method">
-                            <div class="contact-method-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                                </svg>
+    <section id="contact" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-block px-4 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">Get in Touch</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contact Us</h2>
+                <p class="text-lg text-gray-600">We're here to help with any questions</p>
+            </div>
+            <div class="max-w-6xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 md:p-10">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Send us a message</h3>
+                        <p class="text-gray-600 mb-8">Fill out the form below and we'll get back to you as soon as possible.</p>
+                        <form id="contact-form" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Full Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="name" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="John Doe">
                             </div>
                             <div>
-                                <h3>WhatsApp</h3>
-                                <a href="https://wa.me/265883311248" target="_blank">+265 883 311 248</a>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Email Address <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="john@example.com">
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Phone Number</label>
+                                <input type="tel" name="phone" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="+265 123 456 789">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Subject</label>
+                                <input type="text" name="subject" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="How can we help?">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Message <span class="text-red-500">*</span></label>
+                                <textarea name="message" required rows="5" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder="Tell us more..."></textarea>
+                            </div>
+                            <div id="form-status" class="hidden p-4 rounded-lg border">
+                                <p class="text-sm font-medium"></p>
+                            </div>
+                            <button type="submit" class="w-full px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                <span>Send Message</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in touch</h3>
+                            <p class="text-gray-600 leading-relaxed mb-8">Have questions about Sogolo? We're here to help you trade safely and securely.</p>
                         </div>
-
-                        <div class="contact-method">
-                            <div class="contact-method-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
-                                </svg>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-1">WhatsApp</h4>
+                                    <p class="text-gray-600">Chat with our team</p>
+                                    <a href="https://wa.me/265883311248" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">+265 883 311 248</a>
+                                </div>
                             </div>
-                            <div>
-                                <h3>Email</h3>
-                                <a href="mailto:info@sogolo.com">info@sogolo.com</a>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-1">Email</h4>
+                                    <p class="text-gray-600">Send us a message</p>
+                                    <a href="mailto:info@sogolo.com" class="text-blue-600 hover:text-blue-700 font-medium">info@sogolo.com</a>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="contact-method">
-                            <div class="contact-method-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-1">Location</h4>
+                                    <p class="text-gray-600">Visit our office</p>
+                                    <p class="text-blue-600 font-medium">Blantyre, Malawi</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3>Location</h3>
-                                <p>Blantyre, Malawi</p>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-1">Business Hours</h4>
+                                    <p class="text-gray-600">We're here to help</p>
+                                    <div class="text-blue-600 font-medium space-y-1">
+                                        <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+                                        <p>Saturday: 9:00 AM - 4:00 PM</p>
+                                        <p>Sunday: Closed</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="contact-form-wrapper">
-                    <form class="contact-form">
-                        <h3>Send us a Message</h3>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" placeholder="Your name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" placeholder="your@email.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" placeholder="How can we help?" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" rows="4" placeholder="Your message..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn-submit">Send Message</button>
-                    </form>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Elfsight AI Chatbot | Untitled AI Chatbot -->
+<script src="https://elfsightcdn.com/platform.js" async></script>
+<div class="elfsight-app-e41befc6-25d0-4ad4-bd42-34b291485fe4" data-elfsight-app-lazy></div>
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <h3 class="footer-logo">Sogolo.com</h3>
-                    <p>Bridging trust in Malawi's social media market through verified connections.</p>
-                    <div class="social-links">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                            </svg>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                            </svg>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                            </svg>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                                <rect x="2" y="9" width="4" height="12"></rect>
-                                <circle cx="4" cy="4" r="2"></circle>
-                            </svg>
-                        </a>
+    <footer class="bg-gray-50 border-t border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+                <div class="lg:col-span-2">
+                    <div class="mb-4">
+                        <img src="logo.png" alt="Sogolo" class="h-10 w-auto">
                     </div>
+                    <p class="text-gray-600 leading-relaxed max-w-sm">Bridging trust in Malawi's social media marketplace</p>
                 </div>
-
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#faqs">FAQs</a></li>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Product</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">How it Works</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Pricing</a></li>
                     </ul>
                 </div>
-
-                <div class="footer-links">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">About</a></li>
+                        <li><a href="#testimonials" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Testimonials</a></li>
+                        <li><a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Contact</a></li>
                     </ul>
                 </div>
-
-                <div class="footer-links">
-                    <h4>Contact Us</h4>
-                    <ul>
-                        <li><a href="mailto:info@sogolo.com">info@sogolo.com</a></li>
-                        <li><a href="https://wa.me/265883311248" target="_blank">+265 883 311 248</a></li>
-                        <li>Blantyre, Malawi</li>
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Legal</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
-
-            <div class="footer-bottom">
-                <p>&copy; <span id="year"></span> Sogolo.com. All rights reserved.</p>
+            <div class="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+                    <p class="text-sm text-gray-600">&copy; <span id="current-year">2024</span> Sogolo. All rights reserved.</p>
+                    <p class="text-sm text-gray-600">Developed by <a href="https://nyasacreatives.netlify.app" target="_blank" class="text-blue-600 hover:text-blue-700 font-medium">Nyasa Creatives</a></p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="w-9 h-9 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="#" class="w-9 h-9 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                    </a>
+                    <a href="#" class="w-9 h-9 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                    </a>
+                </div>
             </div>
         </div>
     </footer>
-
-    <!-- Floating Chat Widget -->
-    <div class="floating-chat-widget">
-        <!-- Contact Options -->
-        <div class="contact-options" id="contactOptions">
-            <!-- WhatsApp Option -->
-            <a href="https://wa.me/265883311248" target="_blank" class="contact-option whatsapp">
-                <div class="contact-option-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                    </svg>
-                </div>
-                <div class="contact-option-text">
-                    <span class="contact-option-title">WhatsApp</span>
-                    <span class="contact-option-subtitle">Chat with us</span>
-                </div>
-            </a>
-
-            <!-- Email Option -->
-            <a href="mailto:info@sogolo.com" class="contact-option email">
-                <div class="contact-option-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                </div>
-                <div class="contact-option-text">
-                    <span class="contact-option-title">Email</span>
-                    <span class="contact-option-subtitle">Send us a message</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- Main Chat Button -->
-        <button class="chat-button" id="chatButton" aria-label="Contact us">
-            <span class="chat-badge">2</span>
-            <div class="chat-tooltip">Need help? Contact us!</div>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Overlay for mobile -->
-    <div class="chat-overlay" id="chatOverlay"></div>
-     <script>
-        // Get elements
-        const chatButton = document.getElementById('chatButton');
-        const contactOptions = document.getElementById('contactOptions');
-        const chatOverlay = document.getElementById('chatOverlay');
-
-        // Toggle contact options
-        chatButton.addEventListener('click', function() {
-            const isActive = contactOptions.classList.contains('show');
-            
-            if (isActive) {
-                closeContactOptions();
-            } else {
-                openContactOptions();
-            }
-        });
-
-        // Open contact options
-        function openContactOptions() {
-            contactOptions.classList.add('show');
-            chatButton.classList.add('active');
-            chatOverlay.classList.add('show');
-        }
-
-        // Close contact options
-        function closeContactOptions() {
-            contactOptions.classList.remove('show');
-            chatButton.classList.remove('active');
-            chatOverlay.classList.remove('show');
-        }
-
-        // Close when clicking overlay
-        chatOverlay.addEventListener('click', closeContactOptions);
-
-        // Close when pressing Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && contactOptions.classList.contains('show')) {
-                closeContactOptions();
-            }
-        });
-
-        // Track clicks on contact options
-        const contactOptionLinks = document.querySelectorAll('.contact-option');
-        
-        contactOptionLinks.forEach(option => {
-            option.addEventListener('click', function() {
-                const type = this.classList.contains('whatsapp') ? 'WhatsApp' : 'Email';
-                console.log(`User clicked ${type} contact option`);
-                
-                // Close the widget after clicking
-                setTimeout(() => {
-                    closeContactOptions();
-                }, 300);
-            });
-        });
-
-        // Optional: Auto-show tooltip on first visit
-        let hasSeenTooltip = localStorage.getItem('hasSeenChatTooltip');
-        
-        if (!hasSeenTooltip) {
-            setTimeout(() => {
-                // Pulse animation for first-time visitors
-                chatButton.style.animation = 'pulse 1s ease-in-out 3';
-                localStorage.setItem('hasSeenChatTooltip', 'true');
-            }, 3000);
-        }
-
-        // Optional: Remove notification badge on click
-        chatButton.addEventListener('click', function() {
-            const badge = this.querySelector('.chat-badge');
-            if (badge) {
-                setTimeout(() => {
-                    badge.style.display = 'none';
-                }, 1000);
-            }
-        }, { once: true });
-    </script>
-
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
+

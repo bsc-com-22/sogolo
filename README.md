@@ -1,155 +1,70 @@
-# Sogolo.com
+# Sogolo -- Social Commerce Trust & Escrow Platform
 
-A fully functional website for Sogolo.com.
+### *Safe Transactions for Buyers & Sellers on Social Media*
 
-## 🚀 Features
+## Overview
 
-- **Fully Static**: No build tools, no dependencies, runs directly in any browser
-- **Responsive Design**: Mobile-first approach with beautiful responsive layouts
-- **Interactive Elements**: Hero slider, mobile menu, contact form, scroll animations
-- **Modern UI**: Clean, professional design with smooth animations and transitions
-- **Accessibility**: Keyboard navigation, focus management, and semantic HTML
-- **Performance**: Optimized images, lazy loading, and efficient CSS/JS
+Sogolo is a social commerce trust and escrow service that makes buying
+and selling on platforms like Facebook Marketplace, WhatsApp, and
+Instagram safe. It verifies sellers, confirms product authenticity, and
+holds payments securely until delivery is confirmed.
 
-## 📁 File Structure
+## Core Features
 
-```
-sogolo/
-├── index.html          # Main homepage
-├── about.html          # About page
-├── style.css           # All CSS styles (converted from Tailwind)
-├── script.js           # All JavaScript functionality
-├── README.md           # This file
-└── assets/             # Asset folders
-    ├── images/         # Image assets
-    ├── icons/          # Icon assets
-    └── fonts/          # Font assets
-```
+-   Deal Verification
+-   Escrow Payments
+-   Seller Product Submission
+-   Transaction Tracking
+-   Shareable Verification Links
+-   Secure Storage
+-   Notifications
+-   Admin Dashboard
 
-## 🎨 Design Features
+## Tech Stack
 
-### Color Scheme
-- **Primary Blue**: #0A2463
-- **Secondary Blue**: #3E92CC
-- **Accent Colors**: Various gradients and hover states
-- **Text Colors**: #111827 (dark), #6B7280 (gray)
+**Frontend:** HTML, CSS, JavaScript\
+**Backend:** Supabase (Auth, DB, Storage, Edge Functions)\
+**Payments:** Paychangu
 
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Weights**: 300, 400, 500, 600, 700, 800, 900
-- **Responsive**: Scales appropriately on all devices
+## Database Structure
 
-### Components
-- **Header**: Fixed navigation with scroll effects
-- **Hero Section**: Image slider with auto-play and controls
-- **Features**: Card-based layout with icons
-- **How It Works**: Step-by-step process visualization
-- **Categories**: Grid layout with hover effects
-- **Testimonials**: Customer reviews with ratings
-- **Contact**: Form with validation and contact info
-- **Footer**: Comprehensive links and social media
+-   users\
+-   products\
+-   transactions\
+-   verifications\
+-   payments
 
-## ⚡ JavaScript Features
+## How It Works
 
-### Interactive Elements
-- **Hero Slider**: Auto-play, manual controls, indicators
-- **Mobile Menu**: Hamburger menu with smooth animations
-- **Scroll Effects**: Header background change on scroll
-- **Form Validation**: Real-time validation with notifications
-- **Smooth Scrolling**: Anchor link navigation
-- **Animations**: Scroll-triggered fade-in effects
+1.  Buyer Creates Verification\
+2.  Seller Fills Verification Form\
+3.  Buyer Makes Payment\
+4.  Product Verified\
+5.  Funds Released
 
-### Performance Optimizations
-- **Debounced Scroll Events**: Prevents excessive function calls
-- **Intersection Observer**: Efficient scroll animations
-- **Lazy Loading**: Images load only when needed
-- **Event Delegation**: Efficient event handling
+## Project Structure
 
-## 📱 Responsive Breakpoints
+    /sogolo
+    ├── public/
+    ├── src/
+    ├── database/
+    ├── supabase/
+    └── README.md
 
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1023px
-- **Desktop**: 1024px+
+## Environment Variables
 
-## 🌐 Browser Support
+    SUPABASE_URL=
+    SUPABASE_ANON_KEY=
+    PAYCHANGU_SECRET_KEY=
+    SUPABASE_SERVICE_ROLE_KEY=
 
-- **Modern Browsers**: Chrome, Firefox, Safari, Edge
-- **Mobile Browsers**: iOS Safari, Chrome Mobile
-- **Features**: CSS Grid, Flexbox, ES6+ JavaScript
+## Development Setup
 
-## 🚀 Getting Started
+    git clone https://github.com/yourname/sogolo.git
+    cd sogolo
+    npm install
+    npm run dev
 
-1. **Download/Clone** the sogolo folder
-2. **Open** `index.html` in any web browser
+## License
 
-## 📧 Contact Information
-
-- **Email**: info@sogolo.com
-- **WhatsApp**: +265 883 31 12 48
-- **Location**: Blantyre, Malawi
-
-## 🔧 Customization
-
-### Colors
-Edit the CSS custom properties in `style.css`:
-```css
-:root {
-    --primary-color: #0A2463;
-    --secondary-color: #3E92CC;
-    --text-color: #111827;
-    --gray-color: #6B7280;
-}
-```
-
-### Content
-- **Text**: Edit directly in HTML files
-- **Images**: Replace URLs in HTML or add to assets folder
-- **Contact Info**: Update in footer and contact sections
-
-### Styling
-- **Layout**: Modify CSS Grid and Flexbox properties
-- **Animations**: Adjust transition durations and effects
-- **Responsive**: Update media queries for different breakpoints
-
-## 📊 Performance
-
-### Optimizations Included
-- **Minified CSS**: Consolidated stylesheet
-- **Efficient JavaScript**: Event delegation and throttling
-- **Image Optimization**: Proper sizing and lazy loading
-- **Font Loading**: Preconnect to Google Fonts
-- **Critical CSS**: Above-the-fold styles prioritized
-
-### Loading Times
-- **First Paint**: < 1 second
-- **Interactive**: < 2 seconds
-- **Fully Loaded**: < 3 seconds
-
-## 🔒 Security
-
-- **No External Dependencies**: All code is self-contained
-- **No Build Process**: Reduces attack surface
-- **HTTPS Ready**: Works with SSL certificates
-- **Content Security Policy**: Can be easily implemented
-
-## 📈 SEO Features
-
-- **Semantic HTML**: Proper heading structure and landmarks
-- **Meta Tags**: Title, description, viewport
-- **Alt Text**: All images have descriptive alt attributes
-- **Structured Data**: Ready for schema markup
-- **Fast Loading**: Core Web Vitals optimized
-
-## 📝 License
-
-This website is created for Sogolo.com. All rights reserved.
-
-## 🤝 Support
-
-For support or questions about this website:
-- **Email**: info@sogolo.com
-- **WhatsApp**: +265 883 31 12 48
-
----
-
-**Built with ❤️ for Malawi's digital marketplace**
+MIT License.

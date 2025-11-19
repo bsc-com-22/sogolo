@@ -1257,8 +1257,10 @@
                 <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
             </a>
             <nav class="nav-menu">
+                <a href="#about" class="nav-link">About</a>
                 <a href="#how-it-works" class="nav-link">How It Works</a>
                 <a href="#features" class="nav-link">Features</a>
+                <a href="#FAQs" class="nav-link">FAQs</a>
                 <a href="support.html" class="nav-link">Support</a>
             </nav>
             <div class="nav-actions">
@@ -1289,8 +1291,10 @@
             </div>
 
             <div class="mobile-nav-links">
+                <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
                 <a href="#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
                 <a href="#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
+                <a href="#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
                 <a href="support.html" class="mobile-nav-link">Support</a>
             </div>
 
@@ -1343,7 +1347,7 @@
     </section>
 
     <!-- About Section -->
-    <section class="about">
+    <section class="about" id="about">
         <div class="container">
             <div class="about-image-wrapper">
                 <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&auto=format&fit=crop"
@@ -1388,7 +1392,7 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works">
+    <section class="how-it-works" id="how-it-works">
         <div class="container">
             <div class="section-header">
                 <span class="section-label">Simple Process</span>
@@ -1447,7 +1451,7 @@
     </section>
 
     <!-- Why Choose Us Section -->
-    <section class="why-choose-us">
+    <section class="why-choose-us" id="features">
         <div class="container">
             <div class="section-header">
                 <span class="section-label">Everything You Need</span>
@@ -1536,7 +1540,7 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq">
+    <section class="faq" id="FAQs">
         <div class="container">
             <div class="section-header">
                 <span class="section-label">FAQs</span>
@@ -1624,7 +1628,7 @@
                 <!-- FAQ CTA -->
                 <div class="faq-cta">
                     <h3>Still have questions? We're here to help!</h3>
-                    <a href="#contact" class="btn btn-primary">Contact Support</a>
+                    <a href="support.html#contact" class="btn btn-primary">Contact Support</a>
                 </div>
             </div>
         </div>
@@ -1636,14 +1640,14 @@
             <h2>Ready to Start Trading Safely?</h2>
             <p>Join thousands of buyers and sellers who trust Sogolo for secure social commerce transactions.</p>
             <div class="cta-buttons">
-                <a href="#start" class="btn-cta-primary">
+                <a href="signin.html#login" class="btn-cta-primary">
                     Start Your First Transaction
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
                 </a>
-                <a href="#account" class="btn-cta-secondary">Create Free Account</a>
+                <a href="signin.html#signup" class="btn-cta-secondary">Create Free Account</a>
             </div>
         </div>
     </section>
@@ -1724,28 +1728,27 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Sogolo</h3>
+                <img src="logo2.png" alt="sogolo logo" height="50px">
                 <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
                     verified products, and complete buyer protection.</p>
             </div>
 
             <div class="footer-section">
-                <h3>Services</h3>
+                <h3>Platform</h3>
                 <div class="footer-links">
-                    <a href="#escrow">Escrow Protection</a>
-                    <a href="#verification">Product Verification</a>
-                    <a href="#tracking">Real-time Tracking</a>
-                    <a href="#support">24/7 Support</a>
+                    <a href="#about">About Us</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#features">Features</a>
+                    <a href="pricing.html">Pricing</a>
                 </div>
             </div>
 
             <div class="footer-section">
-                <h3>Company</h3>
+                <h3>Support</h3>
                 <div class="footer-links">
-                    <a href="#about">About Us</a>
-                    <a href="#how-it-works">How It Works</a>
-                    <a href="#faq">FAQ</a>
-                    <a href="#contact">Contact</a>
+                    <a href="#ai">Help Center</a>
+                    <a href="support.html">Contact Support</a>
+                    <a href="#FAQs">FAQ</a>
                 </div>
             </div>
 
@@ -1764,7 +1767,7 @@
                 &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
             </p>
             <p class="footer-credit" style="margin-top: 0.5rem;">
-                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.com" target="_blank">Nyasa
+                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
                     Creatives</a>
             </p>
         </div>

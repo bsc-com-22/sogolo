@@ -723,13 +723,15 @@
                 <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
             </a>
             <nav class="nav-menu">
+                <a href="index.html#about" class="nav-link">About</a>
                 <a href="index.html#how-it-works" class="nav-link">How It Works</a>
                 <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#FAQs" class="nav-link">FAQs</a>
                 <a href="support.html" class="nav-link">Support</a>
             </nav>
             <div class="nav-actions">
-                <a href="signin.html" class="btn btn-login">Login</a>
-                <a href="signin.html" class="btn btn-primary">Get Started</a>
+                <a href="signin.html#loginForm" class="btn btn-login">Login</a>
+                <a href="signin.html#signupForm" class="btn btn-primary">Get Started</a>
             </div>
         </div>
     </header>
@@ -748,15 +750,17 @@
                 <div class="mobile-menu-logo">Sogolo</div>
                 <button class="mobile-menu-close" onclick="closeMobileMenu()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
 
             <div class="mobile-nav-links">
-                <a href="index.html" class="mobile-nav-link">Home</a>
-                <a href="index.html#how-it-works" class="mobile-nav-link">How It Works</a>
-                <a href="index.html#features" class="mobile-nav-link">Features</a>
+                <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+                <a href="index.html#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
+                <a href="index.html#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
+                <a href="index.html#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
                 <a href="support.html" class="mobile-nav-link">Support</a>
             </div>
 
@@ -959,30 +963,30 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Sogolo</h3>
-                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions, verified products, and complete buyer protection.</p>
+                <img src="logo2.png" alt="sogolo logo" height="50px">
+                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
+                    verified products, and complete buyer protection.</p>
             </div>
-            
+
             <div class="footer-section">
-                <h3>Services</h3>
-                <div class="footer-links">
-                    <a href="index.html#escrow">Escrow Protection</a>
-                    <a href="index.html#verification">Product Verification</a>
-                    <a href="index.html#tracking">Real-time Tracking</a>
-                    <a href="support.html">24/7 Support</a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Company</h3>
+                <h3>Platform</h3>
                 <div class="footer-links">
                     <a href="index.html#about">About Us</a>
                     <a href="index.html#how-it-works">How It Works</a>
-                    <a href="index.html#faq">FAQ</a>
-                    <a href="support.html">Contact</a>
+                    <a href="index.html#features">Features</a>
+                    <a href="pricing.html">Pricing</a>
                 </div>
             </div>
-            
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <div class="footer-links">
+                    <a href="index.html#ai">Help Center</a>
+                    <a href="support.html">Contact Support</a>
+                    <a href="index.html#FAQs">FAQ</a>
+                </div>
+            </div>
+
             <div class="footer-section">
                 <h3>Legal</h3>
                 <div class="footer-links">
@@ -992,13 +996,14 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
             <p class="footer-credit">
                 &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
             </p>
             <p class="footer-credit" style="margin-top: 0.5rem;">
-                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.com" target="_blank">Nyasa Creatives</a>
+                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
+                    Creatives</a>
             </p>
         </div>
     </footer>

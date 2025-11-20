@@ -53,41 +53,108 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
             text-decoration: none;
         }
 
-        .logo-icon {
-            width: 82px;
-            height: 82px;
-            object-fit: contain;
+        .logo img {
+            height: 40px;
+            margin-right: 12px;
         }
 
-        .nav-menu {
+        .nav-links {
             display: flex;
-            gap: 40px;
+            gap: 32px;
             align-items: center;
         }
 
-        .nav-link {
+        .nav-links a {
             text-decoration: none;
-            color: #6b7280;
-            font-size: 15px;
+            color: #1f2937;
             font-weight: 500;
             transition: color 0.2s ease;
         }
 
-        .nav-link:hover {
-            color: #1f2937;
+        .nav-links a:hover {
+            color: #3b82f6;
         }
 
         .nav-actions {
             display: flex;
             gap: 12px;
             align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn span {
+            width: 100%;
+            height: 3px;
+            background-color: #1f2937;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background-color: #ffffff;
+            padding: 72px 24px 24px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu .nav-links {
+            flex-direction: column;
+            gap: 24px;
+            justify-content: flex-start;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .profile-avatar:hover {
+            background-color: #d1d5db;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* Buttons */
@@ -1099,12 +1166,16 @@
         /* Responsive Design */
         @media (max-width: 768px) {
 
-            .nav-menu,
-            .nav-actions {
+            .nav-links,
+            .header-actions {
                 display: none;
             }
 
             .mobile-menu-btn {
+                display: flex;
+            }
+
+            .mobile-menu {
                 display: block;
             }
 
@@ -1261,20 +1332,35 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <a href="#" class="logo">
-                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo Logo">
+                Sogolo
             </a>
-            <nav class="nav-menu">
-                <a href="#about" class="nav-link">About</a>
-                <a href="#how-it-works" class="nav-link">How It Works</a>
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#FAQs" class="nav-link">FAQs</a>
-                <a href="support.html" class="nav-link">Support</a>
+            <nav class="nav-links" id="navLinks">
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#faq">FAQ</a>
+                <a href="support.html">Support</a>
             </nav>
-            <div class="nav-actions">
-                <a href="signin.html" class="btn btn-login">Login</a>
+            <div class="header-actions">
+                <a href="signin.html" class="btn btn-login">Sign In</a>
                 <a href="signin.html" class="btn btn-primary">Get Started</a>
             </div>
+            <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#faq">FAQ</a>
+                <a href="support.html">Support</a>
+                <a href="signin.html" class="btn btn-login">Sign In</a>
+                <a href="signin.html" class="btn btn-primary">Get Started</a>
+            </nav>
         </div>
     </header>
 
@@ -1438,7 +1524,7 @@
                     <div class="step-number">03</div>
                     <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3zm10-10V7a4 4 0 00-8 0v4h8z">
                         </path>
                     </svg>
                     <h3 class="step-title">Secure Payment</h3>
@@ -1813,16 +1899,39 @@
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
             mobileMenu.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         }
 
         function closeMobileMenu(event) {
             const mobileMenu = document.getElementById('mobileMenu');
-            if (event && event.target === mobileMenu) {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (event && !mobileMenu.contains(event.target) && event.target !== mobileMenuBtn && !mobileMenuBtn.contains(event.target)) {
                 mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
             } else if (!event) {
                 mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
             }
         }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', closeMobileMenu);
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
 
         // Update copyright year automatically
         function updateCopyrightYear() {

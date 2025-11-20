@@ -77,6 +77,20 @@ class AuthService {
         }
     }
 
+    // Update user metadata (e.g., full_name, phone, avatar_url)
+    async updateUserMetadata(updates) {
+        try {
+            const { data, error } = await this.supabase.auth.updateUser({
+                data: updates
+            });
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            console.error('Update user metadata error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     // Listen to auth state changes
     onAuthStateChange(callback) {
         return this.supabase.auth.onAuthStateChange((event, session) => {

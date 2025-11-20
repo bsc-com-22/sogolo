@@ -823,6 +823,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/services/auth-service.js"></script>
+    <script src="js/services/database-service.js"></script>
     <script>
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -897,22 +898,75 @@
 
         async function loadUserData() {
             const userResult = await authService.getCurrentUser();
-            if (userResult.success && userResult.user) {
-                const meta = userResult.user.user_metadata || {};
-                // Name fallbacks: full_name (email/pass signup), name (Google), else email prefix
-                const displayName = meta.full_name || meta.name || (userResult.user.email ? userResult.user.email.split('@')[0] : 'User');
-                document.getElementById('profileName').textContent = displayName;
-                document.getElementById('profileEmail').textContent = userResult.user.email || '';
-                document.getElementById('fullName').value = meta.full_name || meta.name || '';
-                document.getElementById('phone').value = meta.phone || '';
-                // Avatar fallbacks: avatar_url (Supabase), picture (Google)
-                const avatar = meta.avatar_url || meta.picture;
-                if (avatar) {
-                    document.getElementById('avatarImg').src = avatar;
-                    document.getElementById('avatarImg').style.display = 'block';
+            if (!(userResult.success && userResult.user)) return;
+
+            const user = userResult.user;
+            const meta = user.user_metadata || {};
+
+            // Try DB profile first
+            let profileData = null;
+            try {
+                const prof = await databaseService.getUserProfile(user.id);
+                if (prof.success && prof.data) {
+                    profileData = prof.data;
+                } else {
+                    // Create initial profile from auth metadata
+                    const initial = {
+                        full_name: meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : 'User'),
+                        email: user.email || '',
+                        phone: meta.phone || '',
+                        avatar_url: meta.avatar_url || meta.picture || ''
+                    };
+                    await databaseService.createUserProfile(user.id, initial);
+                    profileData = initial;
                 }
+            } catch (_) {
+                // If DB unavailable, fall back to auth metadata only
+                profileData = {
+                    full_name: meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : 'User'),
+                    email: user.email || '',
+                    phone: meta.phone || '',
+                    avatar_url: meta.avatar_url || meta.picture || ''
+                };
+            }
+
+            // Populate UI
+            document.getElementById('profileName').textContent = profileData.full_name || 'User';
+            document.getElementById('profileEmail').textContent = profileData.email || '';
+            document.getElementById('fullName').value = profileData.full_name || '';
+            document.getElementById('phone').value = profileData.phone || '';
+            if (profileData.avatar_url) {
+                document.getElementById('avatarImg').src = profileData.avatar_url;
+                document.getElementById('avatarImg').style.display = 'block';
             }
         }
+
+        // Handle profile form submit: update auth metadata and DB profile
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('profileForm');
+            if (!form) return;
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('fullName').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const userResult = await authService.getCurrentUser();
+                if (!(userResult.success && userResult.user)) return;
+                const user = userResult.user;
+
+                // Update auth metadata
+                await authService.updateUserMetadata({ full_name: name, phone });
+
+                // Update DB profile
+                try {
+                    await databaseService.updateUserProfile(user.id, { full_name: name, phone });
+                } catch (_) {}
+
+                // Update UI and close modal
+                document.getElementById('profileName').textContent = name || document.getElementById('profileName').textContent;
+                closeProfileModal();
+                alert('Profile updated successfully');
+            });
+        });
 
         function startTransaction() {
             alert('Start new transaction functionality coming soon.');

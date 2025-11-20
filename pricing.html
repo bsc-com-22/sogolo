@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Sogolo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #f3f4f6;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .header.scrolled {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 82px;
+            height: 82px;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #1f2937;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #6b7280;
+        }
+
+        .btn-login:hover {
+            color: #1f2937;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            padding-bottom: 80px;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 80px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e40af;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-card.featured {
+            border-color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3b82f6;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        .plan-description {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .plan-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .plan-price .currency {
+            font-size: 24px;
+            vertical-align: top;
+        }
+
+        .plan-period {
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .plan-cta {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .plan-cta.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .plan-cta.primary:hover {
+            background: #2563eb;
+        }
+
+        .plan-cta.secondary {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .plan-cta.secondary:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .faq-grid {
+            display: grid;
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px;
+            background: #f9fafb;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #f3f4f6;
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 20px;
+            max-height: 200px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            padding: 3rem 2rem 2rem;
+            color: white;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: #3b82f6;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-credit {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .footer-credit a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-credit a:hover {
+            color: #60a5fa;
+        }
+
+        .heart {
+            color: #ef4444;
+            margin: 0 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu,
+            .nav-actions {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+            </a>
+            <nav class="nav-menu">
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#how-it-works" class="nav-link">How It Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="support.html" class="nav-link">Support</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="signin.html" class="btn btn-login">Login</a>
+                <a href="signin.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Simple, Transparent Pricing</h1>
+            <p class="hero-subtitle">Choose the plan that works best for your trading needs. No hidden fees, no surprises.</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <!-- Pricing Section -->
+        <section class="pricing-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Choose Your Plan</h2>
+                    <p class="section-subtitle">All plans include our core escrow protection and secure payment processing</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Basic Plan -->
+                    <div class="pricing-card">
+                        <h3 class="plan-name">Basic</h3>
+                        <p class="plan-description">Perfect for occasional traders</p>
+                        <div class="plan-price">
+                            <span class="currency">MWK</span>500
+                        </div>
+                        <p class="plan-period">per transaction</p>
+                        <ul class="plan-features">
+                            <li>Escrow protection</li>
+                            <li>Basic dispute resolution</li>
+                            <li>Email support</li>
+                            <li>Transaction history</li>
+                            <li>Mobile app access</li>
+                        </ul>
+                        <button class="plan-cta secondary">Get Started</button>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="pricing-card featured">
+                        <h3 class="plan-name">Pro</h3>
+                        <p class="plan-description">Best for regular traders</p>
+                        <div class="plan-price">
+                            <span class="currency">MWK</span>2,500
+                        </div>
+                        <p class="plan-period">per month</p>
+                        <ul class="plan-features">
+                            <li>Unlimited transactions</li>
+                            <li>Priority escrow processing</li>
+                            <li>Advanced dispute resolution</li>
+                            <li>Priority support</li>
+                            <li>Analytics dashboard</li>
+                            <li>Bulk transaction tools</li>
+                            <li>API access</li>
+                        </ul>
+                        <button class="plan-cta primary">Start Free Trial</button>
+                    </div>
+
+                    <!-- Business Plan -->
+                    <div class="pricing-card">
+                        <h3 class="plan-name">Business</h3>
+                        <p class="plan-description">For businesses and high-volume traders</p>
+                        <div class="plan-price">
+                            <span class="currency">MWK</span>8,500
+                        </div>
+                        <p class="plan-period">per month</p>
+                        <ul class="plan-features">
+                            <li>Everything in Pro</li>
+                            <li>Dedicated account manager</li>
+                            <li>Custom integration support</li>
+                            <li>Advanced reporting</li>
+                            <li>White-label options</li>
+                            <li>24/7 phone support</li>
+                            <li>Custom contract terms</li>
+                        </ul>
+                        <button class="plan-cta secondary">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Everything you need to know about our pricing</p>
+                </div>
+
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            How does the Basic plan work?
+                            <span>+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>With the Basic plan, you pay MWK 500 per transaction. This includes full escrow protection, dispute resolution, and access to all core platform features. Perfect for users who trade occasionally.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            What's included in the Pro plan free trial?
+                            <span>+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>The Pro plan includes a 14-day free trial with access to all Pro features: unlimited transactions, priority processing, advanced analytics, and priority support. No credit card required to start.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Can I switch between plans?
+                            <span>+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing differences.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Are there any hidden fees?
+                            <span>+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>No hidden fees! Our pricing is transparent. The only additional costs might be payment processing fees from your bank or mobile money provider, which are standard industry rates.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            What payment methods do you accept?
+                            <span>+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We accept mobile money (Airtel Money, TNM Mpamba), bank transfers, and major credit/debit cards. All payments are processed securely through our encrypted payment system.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="logo2.png" alt="sogolo logo" height="50px">
+                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions, verified products, and complete buyer protection.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Platform</h3>
+                <div class="footer-links">
+                    <a href="index.html#about">About Us</a>
+                    <a href="index.html#how-it-works">How It Works</a>
+                    <a href="index.html#features">Features</a>
+                    <a href="pricing.html">Pricing</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <div class="footer-links">
+                    <a href="support.html">Help Center</a>
+                    <a href="support.html">Contact Support</a>
+                    <a href="index.html#FAQs">FAQ</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#security">Security</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-credit">
+                &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
+            </p>
+            <p class="footer-credit" style="margin-top: 0.5rem;">
+                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa Creatives</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(button) {
+            const answer = button.nextElementSibling;
+            const icon = button.querySelector('span');
+            
+            answer.classList.toggle('active');
+            icon.textContent = answer.classList.contains('active') ? '−' : '+';
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 10) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Update copyright year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Plan selection handlers
+        document.querySelectorAll('.plan-cta').forEach(button => {
+            button.addEventListener('click', function() {
+                const planName = this.closest('.pricing-card').querySelector('.plan-name').textContent;
+                
+                if (this.textContent === 'Contact Sales') {
+                    window.location.href = 'support.html';
+                } else {
+                    window.location.href = 'signin.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

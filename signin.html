@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Sogolo</title>
     
-    <!-- Supabase CDN -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Supabase CDN (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     
     <style>
         * {
@@ -619,6 +619,12 @@
     <script src="js/utils/helpers.js"></script>
 
     <script>
+        // Ensure Supabase is initialized
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.supabaseClient && typeof window.supabase !== 'undefined') {
+                initializeSupabase();
+            }
+        });
         function showLogin() {
             document.getElementById('loginForm').classList.add('active');
             document.getElementById('signupForm').classList.remove('active');
@@ -721,6 +727,8 @@
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const fullName = document.getElementById('signupName').value;
+            const phone = document.getElementById('signupPhone').value;
             const submitBtn = document.getElementById('signupSubmitBtn');
             
             // Validate inputs
@@ -745,13 +753,18 @@
             Helpers.showLoading('signupSubmitBtn');
             
             try {
-                const result = await authService.signUp(email, password);
-                
+                // Attach user metadata so it appears in user.user_metadata
+                const result = await authService.signUp(email, password, {
+                    full_name: fullName,
+                    phone: phone
+                });
+
                 if (result.success) {
-                    // Hide form content and show confirmation message
-                    document.getElementById('signupFormContent').style.display = 'none';
-                    document.getElementById('signupConfirmationMessage').style.display = 'block';
-                    
+                    Helpers.showToast('Account created. Please check your email for a verification link.', 'success');
+                    // Switch to login after a short delay
+                    setTimeout(() => {
+                        showLogin();
+                    }, 1600);
                     // Clear form
                     document.getElementById('signupForm').reset();
                 } else {

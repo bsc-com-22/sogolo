@@ -898,12 +898,17 @@
         async function loadUserData() {
             const userResult = await authService.getCurrentUser();
             if (userResult.success && userResult.user) {
-                document.getElementById('profileName').textContent = userResult.user.user_metadata.full_name || userResult.user.email.split('@')[0];
-                document.getElementById('profileEmail').textContent = userResult.user.email;
-                document.getElementById('fullName').value = userResult.user.user_metadata.full_name || '';
-                document.getElementById('phone').value = userResult.user.user_metadata.phone || '';
-                if (userResult.user.user_metadata.avatar_url) {
-                    document.getElementById('avatarImg').src = userResult.user.user_metadata.avatar_url;
+                const meta = userResult.user.user_metadata || {};
+                // Name fallbacks: full_name (email/pass signup), name (Google), else email prefix
+                const displayName = meta.full_name || meta.name || (userResult.user.email ? userResult.user.email.split('@')[0] : 'User');
+                document.getElementById('profileName').textContent = displayName;
+                document.getElementById('profileEmail').textContent = userResult.user.email || '';
+                document.getElementById('fullName').value = meta.full_name || meta.name || '';
+                document.getElementById('phone').value = meta.phone || '';
+                // Avatar fallbacks: avatar_url (Supabase), picture (Google)
+                const avatar = meta.avatar_url || meta.picture;
+                if (avatar) {
+                    document.getElementById('avatarImg').src = avatar;
                     document.getElementById('avatarImg').style.display = 'block';
                 }
             }

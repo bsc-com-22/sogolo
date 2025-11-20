@@ -23,6 +23,8 @@
             margin: 0 auto;
             padding: 0 24px;
         }
+        
+        /* Header */
         .header {
             background: #ffffff;
             position: fixed;
@@ -33,9 +35,11 @@
             border-bottom: 1px solid #f3f4f6;
             transition: box-shadow 0.3s ease;
         }
+
         .header.scrolled {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+
         .header .container {
             display: flex;
             align-items: center;
@@ -43,66 +47,97 @@
             padding: 16px 24px;
             height: 72px;
         }
+
         .logo {
             display: flex;
             align-items: center;
-            font-size: 24px;
-            font-weight: 700;
-            color: #3b82f6;
-            text-decoration: none;
-        }
-        .logo img {
-            height: 40px;
-            margin-right: 12px;
-        }
-        .nav-links {
-            display: flex;
-            gap: 32px;
-        }
-        .nav-links a {
-            text-decoration: none;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
             color: #1f2937;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 82px;
+            height: 82px;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 15px;
             font-weight: 500;
             transition: color 0.2s ease;
         }
-        .nav-links a:hover {
-            color: #3b82f6;
+
+        .nav-link:hover {
+            color: #1f2937;
         }
-        .mobile-menu-btn {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            text-decoration: none;
         }
-        .mobile-menu-btn span {
-            width: 100%;
-            height: 3px;
-            background-color: #1f2937;
-            border-radius: 3px;
-            transition: all 0.3s ease;
+
+        .btn-login {
+            background: transparent;
+            color: #6b7280;
         }
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 280px;
-            height: 100vh;
-            background-color: #ffffff;
-            padding: 72px 24px 24px;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease;
-            z-index: 999;
+
+        .btn-login:hover {
+            color: #1f2937;
         }
-        .mobile-menu.active {
-            right: 0;
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
         }
-        .mobile-menu .nav-links {
-            flex-direction: column;
-            gap: 24px;
+
+        .btn-primary:hover {
+            background: #2563eb;
         }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-cta {
+            padding: 14px 28px;
+            font-size: 16px;
+        }
+
         .main-content {
             margin-top: 100px;
             padding-bottom: 40px;
@@ -316,113 +351,318 @@
         .file-upload input {
             display: none;
         }
-        .footer {
-            background-color: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            padding: 40px 0 20px;
-            margin-top: 40px;
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
-        .footer .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 32px;
-            margin-bottom: 40px;
-        }
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: 700;
-            color: #3b82f6;
-            text-decoration: none;
-            margin-bottom: 24px;
-        }
-        .footer-logo img {
-            height: 40px;
-            margin-right: 12px;
-        }
-        .footer-links h4 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #1e40af;
-        }
-        .footer-links ul {
-            list-style: none;
-        }
-        .footer-links li {
-            margin-bottom: 8px;
-        }
-        .footer-links a {
-            color: #1f2937;
-            text-decoration: none;
-        }
-        .footer-links a:hover {
-            color: #3b82f6;
-            text-decoration: underline;
-        }
-        .footer-bottom {
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-            text-align: center;
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
             color: #6b7280;
-            font-size: 14px;
         }
-        .footer-bottom a {
-            color: #3b82f6;
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            padding: 2rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active .mobile-menu-content {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .mobile-menu-logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-close svg {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-link {
+            color: #6b7280;
             text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            transition: color 0.2s ease;
         }
-        .footer-bottom a:hover {
-            text-decoration: underline;
+
+        .mobile-nav-link:hover {
+            color: #3b82f6;
         }
+
+        .mobile-auth-container {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .mobile-auth-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mobile-auth-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-auth-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .mobile-auth-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .mobile-auth-btn.secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .mobile-auth-btn.secondary:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .nav-links {
+            .nav-menu,
+            .nav-actions {
                 display: none;
             }
+
             .mobile-menu-btn {
-                display: flex;
+                display: block;
             }
+
             .mobile-menu {
                 display: block;
             }
-            .footer .container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .footer-logo {
-                justify-content: center;
+
+            .mobile-menu-content {
+                width: 300px;
             }
         }
+
+        @media (max-width: 480px) {
+            .mobile-menu-content {
+                width: 280px;
+            }
+        }
+       
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            padding: 3rem 2rem 2rem;
+            color: white;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: #3b82f6;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-credit {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .footer-credit a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-credit a:hover {
+            color: #60a5fa;
+        }
+
+        .heart {
+            color: #ef4444;
+            margin: 0 2px;
+        }
+
     </style>
 </head>
 <body>
+    <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo Logo">
-                Sogolo
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
             </a>
-            <nav class="nav-links" id="navLinks">
-                <a href="index.html">Home</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="support.html">Support</a>
-                <a href="#" onclick="authService.signOut(); window.location.href='index.html';">Logout</a>
+            <nav class="nav-menu">
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#how-it-works" class="nav-link">How It Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#FAQs" class="nav-link">FAQs</a>
+                <a href="support.html" class="nav-link">Support</a>
             </nav>
-            <div class="mobile-menu-btn" id="mobileMenuBtn">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="nav-actions">
+                <a href="signin.html#loginForm" class="btn btn-login">Login</a>
+                <a href="signin.html#signupForm" class="btn btn-primary">Get Started</a>
             </div>
         </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <nav class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="support.html">Support</a>
-                <a href="#" onclick="authService.signOut(); window.location.href='index.html';">Logout</a>
-            </nav>
-        </div>
     </header>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" onclick="closeMobileMenu(event)">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">Sogolo</div>
+                <button class="mobile-menu-close" onclick="closeMobileMenu()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mobile-nav-links">
+                <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+                <a href="index.html#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
+                <a href="index.html#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
+                <a href="index.html#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+
+            <div class="mobile-auth-container">
+                <div class="mobile-auth-title">Get Started</div>
+                <div class="mobile-auth-buttons">
+                    <a href="signin.html" class="mobile-auth-btn primary">Sign Up</a>
+                    <a href="signin.html" class="mobile-auth-btn secondary">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main class="main-content">
         <div class="container">
@@ -482,45 +722,56 @@
         </div>
     </main>
 
+    <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-e41befc6-25d0-4ad4-bd42-34b291485fe4" data-elfsight-app-lazy></div>
+
+    <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-col">
-                <a href="index.html" class="footer-logo">
-                    <img src="logo.png" alt="Sogolo Logo">
-                    Sogolo
-                </a>
-                <p style="color: #6b7280; margin-bottom: 24px;">Secure escrow service for social trading in Malawi.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="logo2.png" alt="sogolo logo" height="50px">
+                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
+                    verified products, and complete buyer protection.</p>
             </div>
-            <div class="footer-col">
+
+            <div class="footer-section">
+                <h3>Platform</h3>
                 <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
+                    <a href="#about">About Us</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#features">Features</a>
+                    <a href="pricing.html">Pricing</a>
                 </div>
             </div>
-            <div class="footer-col">
+
+            <div class="footer-section">
+                <h3>Support</h3>
                 <div class="footer-links">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="support.html">Contact Us</a></li>
-                        <li><a href="#">Help Center</a></li>
-                    </ul>
+                    <a href="#ai">Help Center</a>
+                    <a href="support.html">Contact Support</a>
+                    <a href="#FAQs">FAQ</a>
                 </div>
             </div>
-            <div class="footer-col">
+
+            <div class="footer-section">
+                <h3>Legal</h3>
                 <div class="footer-links">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#security">Security</a>
                 </div>
             </div>
         </div>
+
         <div class="footer-bottom">
-            <p>&copy; <span id="currentYear"></span> Sogolo. All rights reserved. Built by <a href="https://nyasacreatives.com">Nyasa Creatives</a></p>
+            <p class="footer-credit">
+                &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
+            </p>
+            <p class="footer-credit" style="margin-top: 0.5rem;">
+                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
+                    Creatives</a>
+            </p>
         </div>
     </footer>
 

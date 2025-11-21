@@ -507,6 +507,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/services/auth-service.js"></script>
+    <script src="js/services/database-service.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -966,6 +967,7 @@
         });
 
         let authService = new AuthService();
+        let databaseService = new DatabaseService();
         let currentUser = null;
         let kycData = {};
 
@@ -991,19 +993,22 @@
                 currentUser = userResult.user;
                 console.log('Current user:', currentUser);
 
-                // Check if KYC is already completed
-                const metadata = currentUser.user_metadata || {};
-                const kycStatus = metadata.kyc_status || 'pending';
-                
-                if (kycStatus === 'verified') {
-                    console.log('KYC already verified, redirecting to dashboard...');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 2000);
-                    return;
+                // Check KYC status from database
+                const kycResult = await databaseService.getKYCStatus(currentUser.id);
+                if (kycResult.success && kycResult.data) {
+                    const kycStatus = kycResult.data.status;
+                    
+                    if (kycStatus === 'verified') {
+                        console.log('KYC already verified, redirecting to dashboard...');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 2000);
+                        return;
+                    }
                 }
 
                 // Pre-fill form with existing user data
+                const metadata = currentUser.user_metadata || {};
                 prefillForm(metadata);
 
             } catch (error) {
@@ -1137,7 +1142,7 @@
                 submitBtn.innerHTML = 'Submitting...';
                 submitBtn.disabled = true;
 
-                // Prepare KYC data for submission
+                // Prepare KYC data for database submission
                 const kycSubmission = {
                     full_name: kycData.fullName,
                     phone: kycData.phone,
@@ -1149,26 +1154,38 @@
                     kin_relationship: kycData.kinRelationship,
                     kin_phone: kycData.kinPhone,
                     kin_address: kycData.kinAddress,
-                    kyc_status: 'pending',
-                    submitted_at: new Date().toISOString()
+                    consent_data: consentData,
+                    consent_terms: consentTerms,
+                    consent_accuracy: consentAccuracy
                 };
 
-                // Update user metadata with KYC data
-                const updateData = {
-                    ...currentUser.user_metadata,
+                // 1. Store KYC data in database
+                console.log('Submitting KYC to database...');
+                const dbResult = await databaseService.submitKYC(currentUser.id, kycSubmission);
+                
+                if (!dbResult.success) {
+                    throw new Error('Failed to submit KYC to database: ' + dbResult.error);
+                }
+
+                console.log('KYC submitted to database successfully');
+
+                // 2. Update user metadata with KYC status
+                const metadataUpdate = {
+                    kyc_status: 'pending',
+                    kyc_submitted_at: new Date().toISOString(),
                     ...kycSubmission
                 };
 
-                // Update user metadata in Supabase
-                const { error } = await authService.supabase.auth.updateUser({
-                    data: updateData
+                const { error: metadataError } = await authService.supabase.auth.updateUser({
+                    data: metadataUpdate
                 });
 
-                if (error) {
-                    throw error;
+                if (metadataError) {
+                    console.warn('Failed to update metadata:', metadataError);
+                    // Don't throw error - database submission is the important part
                 }
 
-                console.log('KYC data submitted successfully');
+                console.log('KYC process completed successfully');
                 
                 // Show success message
                 showSuccessMessage();
@@ -1180,7 +1197,7 @@
 
             } catch (error) {
                 console.error('KYC submission error:', error);
-                alert('Failed to submit KYC. Please try again.');
+                alert('Failed to submit KYC: ' + error.message + '. Please try again.');
                 
                 // Reset button state
                 const submitBtn = document.querySelector('#submitBtn');

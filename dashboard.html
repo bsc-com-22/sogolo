@@ -1265,10 +1265,17 @@
                 }
                 
                 const user = userResult.user;
-                const metadata = user.user_metadata || {};
-                const kycStatus = metadata.kyc_status || 'pending';
                 
-                console.log('Transaction KYC check - status:', kycStatus);
+                // Check KYC status from database
+                const kycResult = await databaseService.getKYCStatus(user.id);
+                let kycStatus = 'pending';
+                
+                if (kycResult.success && kycResult.data) {
+                    kycStatus = kycResult.data.status;
+                    console.log('Transaction KYC check - status from database:', kycStatus);
+                } else {
+                    console.log('No KYC record found for transaction check');
+                }
                 
                 if (kycStatus !== 'verified') {
                     // Show appropriate message based on status
@@ -1336,11 +1343,16 @@
                 
                 const user = userResult.user;
                 
-                // Check if user has KYC data in metadata
-                const metadata = user.user_metadata || {};
-                const kycStatus = metadata.kyc_status || 'pending';
+                // Check KYC status from database
+                const kycResult = await databaseService.getKYCStatus(user.id);
+                let kycStatus = 'pending';
                 
-                console.log('KYC status:', kycStatus);
+                if (kycResult.success && kycResult.data) {
+                    kycStatus = kycResult.data.status;
+                    console.log('KYC status from database:', kycStatus);
+                } else {
+                    console.log('No KYC record found, defaulting to pending');
+                }
                 
                 // Update KYC UI
                 updateKycUI(kycStatus);

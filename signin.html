@@ -543,6 +543,15 @@
                     <a href="#forgot">Forgot your password?</a>
                 </div>
 
+                <!-- Development mode toggle -->
+                <div style="text-align: center; margin: 10px 0; padding: 10px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                    <small style="color: #856404;">Development Mode:</small>
+                    <label style="margin-left: 10px;">
+                        <input type="checkbox" id="devMode" style="margin-right: 5px;">
+                        <small>Bypass email verification</small>
+                    </label>
+                </div>
+
                 <div class="divider">
                     <span>or continue with</span>
                 </div>
@@ -717,11 +726,11 @@
                     // Provide more specific error messages
                     let errorMessage = result.error || 'Login failed';
                     if (errorMessage.includes('Invalid login credentials')) {
-                        errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+                        errorMessage = 'Invalid email or password. If you just signed up, please check your email for the verification link first.';
                     } else if (errorMessage.includes('Email not confirmed')) {
-                        errorMessage = 'Please confirm your email address before signing in.';
+                        errorMessage = 'Please check your email and click the verification link before signing in.';
                     } else if (errorMessage.includes('Too many requests')) {
-                        errorMessage = 'Too many login attempts. Please try again later.';
+                        errorMessage = 'Too many login attempts. Please wait a moment and try again.';
                     }
                     Helpers.showToast(errorMessage, 'error');
                 }
@@ -765,18 +774,41 @@
             Helpers.showLoading('signupSubmitBtn');
             
             try {
+                // Check if development mode is enabled
+                const devMode = document.getElementById('devMode').checked;
+                
                 // Attach user metadata so it appears in user.user_metadata
-                const result = await authService.signUp(email, password, {
-                    full_name: fullName,
-                    phone: phone
-                });
+                let result;
+                if (devMode) {
+                    console.log('Using development mode for signup');
+                    result = await authService.signUpDevMode(email, password, {
+                        full_name: fullName,
+                        phone: phone
+                    });
+                } else {
+                    result = await authService.signUp(email, password, {
+                        full_name: fullName,
+                        phone: phone
+                    });
+                }
 
                 if (result.success) {
-                    Helpers.showToast('Account created. Please check your email for a verification link.', 'success');
-                    // Switch to login after a short delay
-                    setTimeout(() => {
-                        showLogin();
-                    }, 1600);
+                    if (result.needsConfirmation) {
+                        Helpers.showToast(result.message || 'Account created. Please check your email for a verification link.', 'success');
+                    } else {
+                        Helpers.showToast(result.message || 'Account created and signed in successfully! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
+                    }
+                    
+                    // Switch to login after a short delay if email confirmation is needed
+                    if (result.needsConfirmation) {
+                        setTimeout(() => {
+                            showLogin();
+                        }, 2000);
+                    }
+                    
                     // Clear form
                     document.getElementById('signupForm').reset();
                 } else {

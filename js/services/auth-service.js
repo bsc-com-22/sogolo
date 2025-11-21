@@ -23,9 +23,95 @@ class AuthService {
             }
             
             console.log('Sign up successful:', data);
-            return { success: true, data };
+            
+            // Check if user was created but needs email confirmation
+            if (data.user && !data.session) {
+                console.log('User created but needs email confirmation');
+                
+                // For development: try to sign in immediately after signup
+                // This works if email verification is disabled in Supabase
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const signInResult = await this.signIn(email, password);
+                    if (signInResult.success) {
+                        return { 
+                            success: true, 
+                            data: signInResult.data,
+                            needsConfirmation: false,
+                            message: 'Account created and signed in successfully!'
+                        };
+                    }
+                } catch (signInError) {
+                    console.log('Auto sign-in failed, email confirmation required');
+                }
+                
+                return { 
+                    success: true, 
+                    data: data,
+                    needsConfirmation: true,
+                    message: 'Account created successfully. Please check your email to verify your account.'
+                };
+            }
+            
+            return { success: true, data: data };
         } catch (error) {
             console.error('Sign up error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Development mode: Sign up without email verification
+    async signUpDevMode(email, password, userData = {}) {
+        try {
+            console.log('Attempting dev mode sign up for:', email);
+            
+            // First try to delete the user if they exist (for testing)
+            try {
+                const { data: { user } } = await this.supabase.auth.getUser();
+                if (user && user.email === email) {
+                    await this.supabase.auth.admin.deleteUser(user.id);
+                    console.log('Deleted existing user for clean signup');
+                }
+            } catch (deleteError) {
+                // Ignore delete errors, user might not exist
+            }
+            
+            // Create new user
+            const { data, error } = await this.supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: userData
+                }
+            });
+
+            if (error) {
+                console.error('Dev mode sign up error:', error);
+                throw error;
+            }
+            
+            console.log('Dev mode sign up successful:', data);
+            
+            // Try immediate sign in
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const signInResult = await this.signIn(email, password);
+            
+            if (signInResult.success) {
+                return { 
+                    success: true, 
+                    data: signInResult.data,
+                    needsConfirmation: false,
+                    message: 'Development mode: Account created and signed in successfully!'
+                };
+            } else {
+                return { 
+                    success: false, 
+                    error: 'Development mode failed. Email verification may be required.',
+                    needsConfirmation: true
+                };
+            }
+        } catch (error) {
+            console.error('Dev mode sign up error:', error);
             return { success: false, error: error.message };
         }
     }

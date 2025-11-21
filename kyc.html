@@ -1142,36 +1142,22 @@
                 submitBtn.innerHTML = 'Submitting...';
                 submitBtn.disabled = true;
 
-                // Prepare KYC data for database submission (using minimal required fields)
+                // Prepare KYC data for database submission (using standard field names)
                 const kycSubmission = {
                     full_name: kycData.fullName,
                     phone: kycData.phone,
                     date_of_birth: kycData.dob,
+                    address: kycData.address, // Use standard address field
                     district: kycData.district,
+                    national_id: kycData.nationalId, // Use standard national_id field
+                    kin_name: kycData.kinName, // Use standard kin_name field
+                    kin_relationship: kycData.kinRelationship, // Use standard kin_relationship field
+                    kin_phone: kycData.kinPhone, // Use standard kin_phone field
+                    kin_address: kycData.kinAddress, // Use standard kin_address field
                     consent_data: consentData,
                     consent_terms: consentTerms,
                     consent_accuracy: consentAccuracy
                 };
-
-                // Add optional fields only if they exist
-                if (kycData.address) {
-                    kycSubmission.residential_address = kycData.address;
-                }
-                if (kycData.nationalId) {
-                    kycSubmission.national_id_number = kycData.nationalId;
-                }
-                if (kycData.kinName) {
-                    kycSubmission.next_of_kin_name = kycData.kinName;
-                }
-                if (kycData.kinRelationship) {
-                    kycSubmission.next_of_kin_relationship = kycData.kinRelationship;
-                }
-                if (kycData.kinPhone) {
-                    kycSubmission.next_of_kin_phone = kycData.kinPhone;
-                }
-                if (kycData.kinAddress) {
-                    kycSubmission.next_of_kin_address = kycData.kinAddress;
-                }
 
                 // 1. Store KYC data in database
                 console.log('Submitting KYC to database...');

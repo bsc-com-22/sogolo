@@ -117,7 +117,7 @@ class DatabaseService {
             console.log('Submitting KYC data:', kycData);
             
             const { data, error } = await this.supabase
-                .from('kyc_submissions')
+                .from('kyc_verifications') // Changed from kyc_submissions to kyc_verifications
                 .insert([{
                     user_id: userId,
                     ...kycData,
@@ -138,7 +138,7 @@ class DatabaseService {
             // Provide more detailed error information
             let errorMessage = error.message;
             if (error.code === 'PGRST116') {
-                errorMessage = 'Column not found in database. Please check table schema.';
+                errorMessage = 'Table or column not found in database. Please check table schema.';
             } else if (error.code === '23505') {
                 errorMessage = 'Duplicate entry. KYC may already be submitted.';
             }
@@ -150,7 +150,7 @@ class DatabaseService {
     async getKYCStatus(userId) {
         try {
             const { data, error } = await this.supabase
-                .from('kyc_submissions')
+                .from('kyc_verifications') // Changed from kyc_submissions to kyc_verifications
                 .select('*')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false })

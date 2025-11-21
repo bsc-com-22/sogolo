@@ -543,15 +543,6 @@
                     <a href="#forgot">Forgot your password?</a>
                 </div>
 
-                <!-- Development mode toggle -->
-                <div style="text-align: center; margin: 10px 0; padding: 10px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
-                    <small style="color: #856404;">Development Mode:</small>
-                    <label style="margin-left: 10px;">
-                        <input type="checkbox" id="devMode" style="margin-right: 5px;">
-                        <small>Bypass email verification</small>
-                    </label>
-                </div>
-
                 <div class="divider">
                     <span>or continue with</span>
                 </div>
@@ -774,23 +765,11 @@
             Helpers.showLoading('signupSubmitBtn');
             
             try {
-                // Check if development mode is enabled
-                const devMode = document.getElementById('devMode').checked;
-                
                 // Attach user metadata so it appears in user.user_metadata
-                let result;
-                if (devMode) {
-                    console.log('Using development mode for signup');
-                    result = await authService.signUpDevMode(email, password, {
-                        full_name: fullName,
-                        phone: phone
-                    });
-                } else {
-                    result = await authService.signUp(email, password, {
-                        full_name: fullName,
-                        phone: phone
-                    });
-                }
+                const result = await authService.signUp(email, password, {
+                    full_name: fullName,
+                    phone: phone
+                });
 
                 if (result.success) {
                     if (result.needsConfirmation) {

@@ -1142,26 +1142,55 @@
                 submitBtn.innerHTML = 'Submitting...';
                 submitBtn.disabled = true;
 
-                // Prepare KYC data for database submission
+                // Prepare KYC data for database submission (using minimal required fields)
                 const kycSubmission = {
                     full_name: kycData.fullName,
                     phone: kycData.phone,
                     date_of_birth: kycData.dob,
-                    address: kycData.address,
                     district: kycData.district,
-                    national_id: kycData.nationalId,
-                    kin_name: kycData.kinName,
-                    kin_relationship: kycData.kinRelationship,
-                    kin_phone: kycData.kinPhone,
-                    kin_address: kycData.kinAddress,
                     consent_data: consentData,
                     consent_terms: consentTerms,
                     consent_accuracy: consentAccuracy
                 };
 
+                // Add optional fields only if they exist
+                if (kycData.address) {
+                    kycSubmission.residential_address = kycData.address;
+                }
+                if (kycData.nationalId) {
+                    kycSubmission.national_id_number = kycData.nationalId;
+                }
+                if (kycData.kinName) {
+                    kycSubmission.next_of_kin_name = kycData.kinName;
+                }
+                if (kycData.kinRelationship) {
+                    kycSubmission.next_of_kin_relationship = kycData.kinRelationship;
+                }
+                if (kycData.kinPhone) {
+                    kycSubmission.next_of_kin_phone = kycData.kinPhone;
+                }
+                if (kycData.kinAddress) {
+                    kycSubmission.next_of_kin_address = kycData.kinAddress;
+                }
+
                 // 1. Store KYC data in database
                 console.log('Submitting KYC to database...');
-                const dbResult = await databaseService.submitKYC(currentUser.id, kycSubmission);
+                let dbResult = await databaseService.submitKYC(currentUser.id, kycSubmission);
+                
+                // If full submission fails, try with minimal fields
+                if (!dbResult.success && dbResult.error.includes('Column not found')) {
+                    console.log('Full submission failed, trying minimal fields...');
+                    
+                    const minimalKycData = {
+                        full_name: kycData.fullName,
+                        phone: kycData.phone,
+                        consent_data: consentData,
+                        consent_terms: consentTerms,
+                        consent_accuracy: consentAccuracy
+                    };
+                    
+                    dbResult = await databaseService.submitKYC(currentUser.id, minimalKycData);
+                }
                 
                 if (!dbResult.success) {
                     throw new Error('Failed to submit KYC to database: ' + dbResult.error);

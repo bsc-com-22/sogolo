@@ -114,6 +114,8 @@ class DatabaseService {
     // KYC Operations
     async submitKYC(userId, kycData) {
         try {
+            console.log('Submitting KYC data:', kycData);
+            
             const { data, error } = await this.supabase
                 .from('kyc_submissions')
                 .insert([{
@@ -123,11 +125,25 @@ class DatabaseService {
                     created_at: new Date().toISOString()
                 }]);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Database error details:', error);
+                throw error;
+            }
+            
+            console.log('KYC submitted successfully:', data);
             return { success: true, data };
         } catch (error) {
             console.error('Submit KYC error:', error);
-            return { success: false, error: error.message };
+            
+            // Provide more detailed error information
+            let errorMessage = error.message;
+            if (error.code === 'PGRST116') {
+                errorMessage = 'Column not found in database. Please check table schema.';
+            } else if (error.code === '23505') {
+                errorMessage = 'Duplicate entry. KYC may already be submitted.';
+            }
+            
+            return { success: false, error: errorMessage };
         }
     }
 

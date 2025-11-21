@@ -425,6 +425,39 @@
             color: #6b7280;
         }
 
+        /* Mobile Profile Avatar */
+        .mobile-profile-avatar {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 4rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .mobile-profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mobile-profile-avatar .material-icons-outlined {
+            font-size: 24px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
         .mobile-menu {
             display: none;
             position: fixed;
@@ -571,6 +604,10 @@
                 display: block;
             }
 
+            .mobile-profile-avatar {
+                display: block; /* Always show on dashboard when logged in */
+            }
+
             .mobile-menu {
                 display: block;
             }
@@ -578,44 +615,42 @@
             .mobile-menu-content {
                 width: 300px;
             }
-        }
 
-        @media (max-width: 480px) {
-            .mobile-menu-content {
-                width: 280px;
+            .dashboard-grid {
+                grid-template-columns: 1fr;
             }
-        }
-       
 
-        /* Footer */
-        .footer {
-            background: #1f2937;
-            padding: 3rem 2rem 2rem;
-            color: white;
-        }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
 
-        .footer-section h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: white;
-        }
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
 
-        .footer-section p,
-        .footer-section a {
-            color: #9ca3af;
-            text-decoration: none;
-            line-height: 1.6;
-            transition: color 0.2s ease;
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .footer-section h3 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: white;
+            }
+
+            .footer-section p,
+            .footer-section a {
+                color: #9ca3af;
+                text-decoration: none;
+                line-height: 1.6;
+                transition: color 0.2s ease;
+            }
         }
 
         .footer-section a:hover {
@@ -689,6 +724,12 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
+    </button>
+
+    <!-- Mobile Profile Avatar -->
+    <button class="mobile-profile-avatar" id="mobileProfileAvatar" onclick="window.location.reload()">
+        <img src="" alt="Profile" id="mobileAvatarImg" style="display: none;">
+        <span class="material-icons-outlined" id="mobileAvatarIcon">person</span>
     </button>
 
     <!-- Mobile Menu -->
@@ -1046,6 +1087,30 @@
                 const meta = user.user_metadata || {};
                 console.log('User metadata:', meta);
 
+                // Update mobile avatar
+                updateMobileAvatar(user);
+                
+                // Update profile section
+                const profileName = document.getElementById('profileName');
+                const profileEmail = document.getElementById('profileEmail');
+                const avatarImg = document.getElementById('avatarImg');
+                const avatarIcon = document.querySelector('.profile-avatar .material-icons-outlined');
+
+                if (profileName) profileName.textContent = meta.full_name || user.email || 'User';
+                if (profileEmail) profileEmail.textContent = user.email || '';
+
+                // Set avatar image if available
+                if (meta.avatar_url) {
+                    if (avatarImg) {
+                        avatarImg.src = meta.avatar_url;
+                        avatarImg.style.display = 'block';
+                    }
+                    if (avatarIcon) avatarIcon.style.display = 'none';
+                } else {
+                    if (avatarImg) avatarImg.style.display = 'none';
+                    if (avatarIcon) avatarIcon.style.display = 'block';
+                }
+
                 // Try DB profile first
                 let profileData = null;
                 try {
@@ -1181,6 +1246,26 @@
 
         function startTransaction() {
             window.location.href = 'transactions.html?action=new';
+        }
+
+        // Update mobile avatar function
+        function updateMobileAvatar(user) {
+            const mobileAvatarImg = document.getElementById('mobileAvatarImg');
+            const mobileAvatarIcon = document.getElementById('mobileAvatarIcon');
+            
+            if (!mobileAvatarImg || !mobileAvatarIcon) return;
+            
+            const metadata = user.user_metadata || {};
+            
+            // Set avatar (if available)
+            if (metadata.avatar_url) {
+                mobileAvatarImg.src = metadata.avatar_url;
+                mobileAvatarImg.style.display = 'block';
+                mobileAvatarIcon.style.display = 'none';
+            } else {
+                mobileAvatarImg.style.display = 'none';
+                mobileAvatarIcon.style.display = 'block';
+            }
         }
     </script>
 </body>

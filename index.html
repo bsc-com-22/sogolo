@@ -934,6 +934,39 @@
             color: #6b7280;
         }
 
+        /* Mobile Profile Avatar */
+        .mobile-profile-avatar {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 4rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .mobile-profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mobile-profile-avatar .material-icons-outlined {
+            font-size: 24px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
         .mobile-menu {
             display: none;
             position: fixed;
@@ -1076,26 +1109,26 @@
                 display: none;
             }
 
-            .mobile-menu-btn {
-                display: block;
-            }
+    .mobile-menu-btn {
+        display: block;
+    }
 
-            .mobile-menu {
-                display: block;
-            }
+    .mobile-profile-avatar {
+        display: none; /* Only show when logged in */
+    }
 
-            .mobile-menu-content {
-                width: 300px;
-            }
-        }
+    .mobile-menu {
+        display: block;
+    }
 
-        @media (max-width: 480px) {
-            .mobile-menu-content {
-                width: 280px;
-            }
-        }
+    .mobile-menu-content {
+        width: 300px;
+    }
 
-        /* Testimonials Section */
+    .section-title {
+        font-size: 2rem;
+    }
+}
         .testimonials {
             padding: 6rem 2rem;
             background: #ffffff;
@@ -1420,6 +1453,12 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
+    </button>
+
+    <!-- Mobile Profile Avatar -->
+    <button class="mobile-profile-avatar" id="mobileProfileAvatar" onclick="toggleMobileProfileDropdown()" style="display: none;">
+        <img src="" alt="Profile" id="mobileAvatarImg" style="display: none;">
+        <span class="material-icons-outlined" id="mobileAvatarIcon">person</span>
     </button>
 
     <!-- Mobile Menu -->
@@ -2035,15 +2074,25 @@
         function showUserProfile(user) {
             const authButtons = document.getElementById('authButtons');
             const profileDropdown = document.getElementById('profileDropdown');
+            const mobileProfileAvatar = document.getElementById('mobileProfileAvatar');
             
             authButtons.style.display = 'none';
             profileDropdown.style.display = 'block';
+            
+            // Show mobile profile avatar on mobile screens
+            if (window.innerWidth <= 768) {
+                mobileProfileAvatar.style.display = 'block';
+            }
 
             // Update profile information
             const profileName = document.getElementById('headerProfileName');
             const profileEmail = document.getElementById('headerProfileEmail');
             const avatarImg = document.getElementById('headerAvatarImg');
             const avatarIcon = document.getElementById('headerAvatarIcon');
+            
+            // Update mobile avatar
+            const mobileAvatarImg = document.getElementById('mobileAvatarImg');
+            const mobileAvatarIcon = document.getElementById('mobileAvatarIcon');
 
             // Set user info
             const metadata = user.user_metadata || {};
@@ -2055,18 +2104,27 @@
                 avatarImg.src = metadata.avatar_url;
                 avatarImg.style.display = 'block';
                 avatarIcon.style.display = 'none';
+                
+                mobileAvatarImg.src = metadata.avatar_url;
+                mobileAvatarImg.style.display = 'block';
+                mobileAvatarIcon.style.display = 'none';
             } else {
                 avatarImg.style.display = 'none';
                 avatarIcon.style.display = 'block';
+                
+                mobileAvatarImg.style.display = 'none';
+                mobileAvatarIcon.style.display = 'block';
             }
         }
 
         function showAuthButtons() {
             const authButtons = document.getElementById('authButtons');
             const profileDropdown = document.getElementById('profileDropdown');
+            const mobileProfileAvatar = document.getElementById('mobileProfileAvatar');
             
             authButtons.style.display = 'flex';
             profileDropdown.style.display = 'none';
+            mobileProfileAvatar.style.display = 'none';
         }
 
         function toggleProfileDropdown() {
@@ -2080,6 +2138,12 @@
             }
         }
 
+        function toggleMobileProfileDropdown() {
+            // For mobile, we can reuse the same dropdown or create a mobile-specific one
+            // For now, let's redirect to dashboard when mobile avatar is clicked
+            window.location.href = 'dashboard.html';
+        }
+
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             const profileDropdown = document.getElementById('profileDropdown');
@@ -2088,6 +2152,18 @@
             if (!profileDropdown.contains(event.target)) {
                 dropdown.classList.remove('show');
                 isProfileDropdownOpen = false;
+            }
+        });
+
+        // Handle window resize for mobile profile avatar
+        window.addEventListener('resize', function() {
+            const mobileProfileAvatar = document.getElementById('mobileProfileAvatar');
+            const profileDropdown = document.getElementById('profileDropdown');
+            
+            if (window.innerWidth <= 768 && profileDropdown.style.display === 'block') {
+                mobileProfileAvatar.style.display = 'block';
+            } else {
+                mobileProfileAvatar.style.display = 'none';
             }
         });
 

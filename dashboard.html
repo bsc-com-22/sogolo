@@ -1350,9 +1350,18 @@
                 
                 if (kycResult.success && kycResult.data) {
                     kycStatus = kycResult.data.status;
-                    submittedAt = kycResult.data.created_at;
+                    // Try different possible timestamp field names
+                    submittedAt = kycResult.data.created_at || 
+                                kycResult.data.submitted_at || 
+                                kycResult.data.submittedAt ||
+                                kycResult.data.created_at;
                     console.log('KYC status from database:', kycStatus);
-                    console.log('KYC submitted at:', submittedAt);
+                    console.log('KYC timestamp fields:', {
+                        created_at: kycResult.data.created_at,
+                        submitted_at: kycResult.data.submitted_at,
+                        submittedAt: kycResult.data.submittedAt
+                    });
+                    console.log('Using timestamp:', submittedAt);
                 } else {
                     console.log('No KYC record found, defaulting to pending');
                 }
@@ -1361,12 +1370,47 @@
                 updateKycUI(kycStatus);
                 
                 // Check if KYC was recently submitted (within last 5 minutes)
-                const recentlySubmitted = submittedAt && 
-                    (new Date() - new Date(submittedAt)) < (5 * 60 * 1000); // 5 minutes
+                let recentlySubmitted = false;
+                if (submittedAt) {
+                    try {
+                        const submissionTime = new Date(submittedAt);
+                        const now = new Date();
+                        const timeDiff = now - submissionTime;
+                        recentlySubmitted = timeDiff < (5 * 60 * 1000); // 5 minutes
+                        console.log('Time difference (ms):', timeDiff);
+                        console.log('Recently submitted:', recentlySubmitted);
+                    } catch (dateError) {
+                        console.error('Date parsing error:', dateError);
+                        recentlySubmitted = false;
+                    }
+                }
+                
+                // Fallback: check localStorage as well
+                if (!recentlySubmitted) {
+                    const localSubmissionTime = localStorage.getItem('kycRecentlySubmitted');
+                    if (localSubmissionTime) {
+                        try {
+                            const localTime = new Date(localSubmissionTime);
+                            const now = new Date();
+                            const timeDiff = now - localTime;
+                            recentlySubmitted = timeDiff < (5 * 60 * 1000); // 5 minutes
+                            console.log('Local submission time:', localSubmissionTime);
+                            console.log('Local time difference (ms):', timeDiff);
+                            console.log('Recently submitted (local):', recentlySubmitted);
+                            
+                            // Clean up old localStorage entries
+                            if (!recentlySubmitted) {
+                                localStorage.removeItem('kycRecentlySubmitted');
+                            }
+                        } catch (localError) {
+                            console.error('Local date parsing error:', localError);
+                        }
+                    }
+                }
                 
                 // If KYC is not verified AND not recently submitted, redirect to KYC page
                 if (kycStatus !== 'verified' && !recentlySubmitted) {
-                    console.log('KYC not completed, redirecting to KYC page...');
+                    console.log('KYC not completed and not recently submitted, redirecting to KYC page...');
                     setTimeout(() => {
                         window.location.href = 'kyc.html';
                     }, 2000); // Give user time to see the dashboard
@@ -1376,8 +1420,10 @@
                 // If recently submitted, show a message but don't redirect
                 if (recentlySubmitted && kycStatus === 'pending') {
                     console.log('KYC recently submitted, staying on dashboard');
-                    // You could show a toast message here if you want
-                    // Helpers.showToast('KYC submitted successfully! Your verification is pending review.', 'success');
+                    // Show success message
+                    if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                        Helpers.showToast('KYC submitted successfully! Your verification is pending review.', 'success');
+                    }
                 }
                 
                 return true;

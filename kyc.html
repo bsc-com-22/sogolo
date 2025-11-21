@@ -1202,6 +1202,9 @@
 
                 console.log('KYC process completed successfully');
                 
+                // Store recent submission in localStorage as backup
+                localStorage.setItem('kycRecentlySubmitted', new Date().toISOString());
+                
                 // Redirect to dashboard immediately
                 window.location.href = 'dashboard.html';
 

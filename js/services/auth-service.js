@@ -63,6 +63,18 @@ class AuthService {
         }
     }
 
+    // Get current session
+    async getSession() {
+        try {
+            const { data: { session }, error } = await this.supabase.auth.getSession();
+            if (error) throw error;
+            return { success: true, session };
+        } catch (error) {
+            console.error('Get session error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     // Reset password
     async resetPassword(email) {
         try {

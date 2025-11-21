@@ -1000,6 +1000,15 @@
 
         async function checkAuth() {
             try {
+                // First check if there's an active session
+                const sessionResult = await authService.getSession();
+                if (!sessionResult.success || !sessionResult.session) {
+                    console.log('No active session found, redirecting to signin');
+                    window.location.href = 'signin.html';
+                    return false;
+                }
+                
+                // Then get the current user
                 const result = await authService.getCurrentUser();
                 if (!result.success || !result.user) {
                     console.log('No authenticated user found, redirecting to signin');
@@ -1018,6 +1027,15 @@
         async function loadUserData() {
             try {
                 console.log('Loading user data...');
+                
+                // First check session
+                const sessionResult = await authService.getSession();
+                if (!sessionResult.success || !sessionResult.session) {
+                    console.error('No active session found');
+                    return;
+                }
+                
+                // Then get user
                 const userResult = await authService.getCurrentUser();
                 if (!(userResult.success && userResult.user)) {
                     console.error('Failed to get current user');

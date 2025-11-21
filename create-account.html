@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin Account - Sogolo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .admin-badge {
+            background: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Create Admin Account <span class="admin-badge">ADMIN</span></h1>
+        
+        <div class="message info">
+            <strong>Note:</strong> This will create an account with admin privileges for testing the admin dashboard.
+        </div>
+
+        <form id="createAccountForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="chidaziblessings@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="admin123456" required>
+                <small style="color: #666;">Use this password or create your own (min 6 characters)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" value="Blessings Chidazi" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" value="+265123456789" required>
+            </div>
+
+            <button type="submit" id="createBtn">Create Admin Account</button>
+        </form>
+
+        <div id="message"></div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <h3>After Account Creation:</h3>
+            <ol>
+                <li>Go to <a href="signin.html">Sign In page</a></li>
+                <li>Use your email and password to sign in</li>
+                <li>Access <a href="admin.html">Admin Dashboard</a></li>
+                <li>Test KYC management features</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Supabase Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/services/auth-service.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure Supabase is initialized
+            if (!window.supabaseClient && typeof window.supabase !== 'undefined') {
+                initializeSupabase();
+            }
+
+            // Wait a moment for initialization
+            setTimeout(() => {
+                if (window.supabaseClient) {
+                    console.log('Supabase ready for account creation');
+                } else {
+                    showMessage('Supabase not initialized. Please refresh the page.', 'error');
+                }
+            }, 1000);
+        });
+
+        document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const createBtn = document.getElementById('createBtn');
+            
+            // Validation
+            if (!email || !password || !fullName || !phone) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            // Disable button
+            createBtn.disabled = true;
+            createBtn.textContent = 'Creating Account...';
+
+            try {
+                showMessage('Creating admin account...', 'info');
+
+                // Create account with admin role
+                const result = await authService.signUp(email, password, {
+                    full_name: fullName,
+                    phone: phone,
+                    role: 'admin' // Set admin role
+                });
+
+                if (result.success) {
+                    showMessage(`Admin account created successfully for ${email}!`, 'success');
+                    
+                    if (result.needsConfirmation) {
+                        showMessage('Please check your email for verification link, then sign in.', 'info');
+                    } else {
+                        showMessage('Account created and signed in automatically!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 2000);
+                    }
+                } else {
+                    showMessage('Failed to create account: ' + result.error, 'error');
+                }
+
+            } catch (error) {
+                console.error('Account creation error:', error);
+                showMessage('Error creating account: ' + error.message, 'error');
+            } finally {
+                // Re-enable button
+                createBtn.disabled = false;
+                createBtn.textContent = 'Create Admin Account';
+            }
+        });
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

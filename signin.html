@@ -619,11 +619,32 @@
     <script src="js/utils/helpers.js"></script>
 
     <script>
+        // Debug function to check Supabase connection
+        function debugSupabaseConnection() {
+            console.log('=== Supabase Debug Info ===');
+            console.log('Supabase library loaded:', typeof window.supabase !== 'undefined');
+            console.log('Supabase client:', window.supabaseClient);
+            console.log('Auth service:', window.authService);
+            
+            if (window.supabaseClient) {
+                console.log('Supabase URL:', window.supabaseClient.supabaseUrl);
+                console.log('Supabase client initialized correctly');
+            } else {
+                console.error('Supabase client not initialized');
+            }
+        }
+
         // Ensure Supabase is initialized
         document.addEventListener('DOMContentLoaded', () => {
+            debugSupabaseConnection();
+            
             if (!window.supabaseClient && typeof window.supabase !== 'undefined') {
                 initializeSupabase();
+                setTimeout(debugSupabaseConnection, 1000); // Check again after initialization
             }
+            
+            // Check for OAuth redirect
+            setTimeout(handleOAuthRedirect, 2000);
         });
         function showLogin() {
             document.getElementById('loginForm').classList.add('active');
@@ -641,11 +662,65 @@
             document.querySelectorAll('.toggle-btn')[0].classList.remove('active');
         }
 
-        // Mobile menu functions
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('active');
+        // Test login function for debugging
+        async function testLogin() {
+            console.log('=== Testing Login ===');
+            
+            if (!window.authService) {
+                console.error('Auth service not available');
+                return;
+            }
+            
+            try {
+                // Test with your credentials
+                const testEmail = 'chidaziblessings@gmail.com';
+                const testPassword = 'your-password'; // Replace with actual password
+                
+                console.log('Testing login with:', testEmail);
+                
+                const result = await authService.signIn(testEmail, testPassword);
+                console.log('Login result:', result);
+                
+                if (result.success) {
+                    console.log('Login successful!');
+                    
+                    // Check current user
+                    const userResult = await authService.getCurrentUser();
+                    console.log('Current user:', userResult);
+                    
+                    // Check session
+                    const sessionResult = await authService.getSession();
+                    console.log('Current session:', sessionResult);
+                } else {
+                    console.error('Login failed:', result.error);
+                }
+            } catch (error) {
+                console.error('Test login error:', error);
+            }
         }
+
+        // Add test button to page (temporary)
+        function addTestButton() {
+            const testBtn = document.createElement('button');
+            testBtn.textContent = 'Test Login (Debug)';
+            testBtn.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: #ff6b6b;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                z-index: 9999;
+            `;
+            testBtn.onclick = testLogin;
+            document.body.appendChild(testBtn);
+        }
+
+        // Add test button after page loads
+        setTimeout(addTestButton, 2000);
 
         function closeMobileMenu(event) {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -663,13 +738,39 @@
                 if (result.success) {
                     // User will be redirected to Google for authentication
                     // After successful authentication, they'll be redirected back
-                    // The auth state change listener will handle the redirect
+                    // The auth state change listener will handle the redirect based on role
                 } else {
                     Helpers.showToast(result.error || 'Google sign in failed', 'error');
                 }
             } catch (error) {
                 Helpers.showToast('An unexpected error occurred with Google sign in', 'error');
                 console.error('Google sign in error:', error);
+            }
+        }
+
+        // Handle OAuth redirect and check user role
+        async function handleOAuthRedirect() {
+            try {
+                // Check if we have a session after OAuth redirect
+                const sessionResult = await authService.getSession();
+                if (sessionResult.success && sessionResult.session) {
+                    const userResult = await authService.getCurrentUser();
+                    if (userResult.success && userResult.user) {
+                        const metadata = userResult.user.user_metadata || {};
+                        const userRole = metadata.role || metadata.user_role;
+                        
+                        console.log('OAuth user logged in:', userResult.user.email);
+                        console.log('OAuth user role:', userRole);
+                        
+                        if (userRole === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('OAuth redirect handling error:', error);
             }
         }
 
@@ -705,11 +806,24 @@
                     
                     const user = await authService.getCurrentUser();
                     if (user.success && user.user) {
-                        Helpers.showToast('Login successful! Redirecting...', 'success');
-                        // Redirect to dashboard or home page
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
+                        // Check if user is admin
+                        const metadata = user.user.user_metadata || {};
+                        const userRole = metadata.role || metadata.user_role;
+                        
+                        console.log('User logged in:', user.user.email);
+                        console.log('User role:', userRole);
+                        
+                        if (userRole === 'admin') {
+                            Helpers.showToast('Admin login successful! Redirecting to admin dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'admin.html';
+                            }, 1500);
+                        } else {
+                            Helpers.showToast('Login successful! Redirecting to dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        }
                     } else {
                         Helpers.showToast('Authentication failed. Please try again.', 'error');
                     }
@@ -772,13 +886,31 @@
                 });
 
                 if (result.success) {
-                    if (result.needsConfirmation) {
-                        Helpers.showToast(result.message || 'Account created. Please check your email for a verification link.', 'success');
-                    } else {
-                        Helpers.showToast(result.message || 'Account created and signed in successfully! Redirecting...', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
+                    Helpers.showToast('Account created successfully! Checking role...', 'success');
+                    
+                    // Wait a moment for the session to be established
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Check if user was automatically signed in and their role
+                    const user = await authService.getCurrentUser();
+                    if (user.success && user.user) {
+                        const metadata = user.user.user_metadata || {};
+                        const userRole = metadata.role || metadata.user_role;
+                        
+                        console.log('New user signed up:', user.user.email);
+                        console.log('User role:', userRole);
+                        
+                        if (userRole === 'admin') {
+                            Helpers.showToast('Admin account created! Redirecting to admin dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'admin.html';
+                            }, 1500);
+                        } else {
+                            Helpers.showToast('Account created! Redirecting to dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        }
                     }
                     
                     // Switch to login after a short delay if email confirmation is needed

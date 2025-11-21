@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test - Sogolo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background: #f1f8e9; }
+        .error { border-color: #f44336; background: #ffebee; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Authentication Test Page</h1>
+    
+    <div class="test-section">
+        <h2>1. Supabase Connection Test</h2>
+        <button onclick="testSupabaseConnection()">Test Connection</button>
+        <div id="connection-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Sign Up Test</h2>
+        <input type="email" id="testEmail" placeholder="Email" value="chidaziblessings@gmail.com">
+        <input type="password" id="testPassword" placeholder="Password" value="test123456">
+        <input type="text" id="testName" placeholder="Full Name" value="Test User">
+        <input type="tel" id="testPhone" placeholder="Phone" value="+265123456789">
+        <button onclick="testSignUp()">Test Sign Up</button>
+        <div id="signup-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Sign In Test</h2>
+        <input type="email" id="loginEmail" placeholder="Email" value="chidaziblessings@gmail.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="test123456">
+        <button onclick="testSignIn()">Test Sign In</button>
+        <div id="signin-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Current Session Test</h2>
+        <button onclick="testCurrentSession()">Check Session</button>
+        <button onclick="testSignOut()">Sign Out</button>
+        <div id="session-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Console Log</h2>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="console-log" class="log"></div>
+    </div>
+
+    <!-- Supabase Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/services/auth-service.js"></script>
+
+    <script>
+        let logElement = document.getElementById('console-log');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}\n`;
+            logElement.textContent += logMessage;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.textContent = '';
+        }
+
+        function showResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        async function testSupabaseConnection() {
+            log('Testing Supabase connection...');
+            
+            try {
+                // Check if Supabase library is loaded
+                if (typeof window.supabase === 'undefined') {
+                    throw new Error('Supabase library not loaded');
+                }
+                
+                // Check if client is initialized
+                if (!window.supabaseClient) {
+                    throw new Error('Supabase client not initialized');
+                }
+                
+                log('Supabase URL: ' + window.supabaseClient.supabaseUrl);
+                log('Supabase client initialized successfully');
+                
+                // Test connection with a simple query
+                const { data, error } = await window.supabaseClient
+                    .from('kyc_verifications')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    // This might be expected if table doesn't exist or no permissions
+                    log('Connection test warning: ' + error.message);
+                    showResult('connection-result', 'Supabase connected but table access limited', true);
+                } else {
+                    log('Supabase connection successful - can access database');
+                    showResult('connection-result', 'Supabase connection successful!', true);
+                }
+                
+            } catch (error) {
+                log('Supabase connection error: ' + error.message);
+                showResult('connection-result', 'Connection failed: ' + error.message, false);
+            }
+        }
+
+        async function testSignUp() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const fullName = document.getElementById('testName').value;
+            const phone = document.getElementById('testPhone').value;
+            
+            log(`Testing sign up for: ${email}`);
+            
+            try {
+                if (!window.authService) {
+                    throw new Error('Auth service not available');
+                }
+                
+                const result = await authService.signUp(email, password, {
+                    full_name: fullName,
+                    phone: phone
+                });
+                
+                if (result.success) {
+                    log('Sign up successful!');
+                    log('Needs confirmation: ' + (result.needsConfirmation ? 'Yes' : 'No'));
+                    showResult('signup-result', 'Sign up successful! ' + (result.needsConfirmation ? 'Check email for confirmation.' : 'Signed in automatically.'), true);
+                } else {
+                    log('Sign up failed: ' + result.error);
+                    showResult('signup-result', 'Sign up failed: ' + result.error, false);
+                }
+                
+            } catch (error) {
+                log('Sign up error: ' + error.message);
+                showResult('signup-result', 'Sign up error: ' + error.message, false);
+            }
+        }
+
+        async function testSignIn() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            log(`Testing sign in for: ${email}`);
+            
+            try {
+                if (!window.authService) {
+                    throw new Error('Auth service not available');
+                }
+                
+                const result = await authService.signIn(email, password);
+                
+                if (result.success) {
+                    log('Sign in successful!');
+                    showResult('signin-result', 'Sign in successful!', true);
+                    
+                    // Check current user after sign in
+                    setTimeout(testCurrentSession, 1000);
+                } else {
+                    log('Sign in failed: ' + result.error);
+                    showResult('signin-result', 'Sign in failed: ' + result.error, false);
+                }
+                
+            } catch (error) {
+                log('Sign in error: ' + error.message);
+                showResult('signin-result', 'Sign in error: ' + error.message, false);
+            }
+        }
+
+        async function testCurrentSession() {
+            log('Checking current session...');
+            
+            try {
+                if (!window.authService) {
+                    throw new Error('Auth service not available');
+                }
+                
+                // Get session
+                const sessionResult = await authService.getSession();
+                log('Session result: ' + JSON.stringify(sessionResult, null, 2));
+                
+                // Get current user
+                const userResult = await authService.getCurrentUser();
+                log('Current user: ' + JSON.stringify(userResult, null, 2));
+                
+                if (sessionResult.success && userResult.success) {
+                    const user = userResult.user;
+                    const metadata = user.user_metadata || {};
+                    showResult('session-result', 
+                        `Logged in as: ${user.email}<br>` +
+                        `Name: ${metadata.full_name || 'Not set'}<br>` +
+                        `Role: ${metadata.role || 'Not set'}<br>` +
+                        `User ID: ${user.id}`, 
+                        true
+                    );
+                } else {
+                    showResult('session-result', 'No active session', false);
+                }
+                
+            } catch (error) {
+                log('Session check error: ' + error.message);
+                showResult('session-result', 'Session check error: ' + error.message, false);
+            }
+        }
+
+        async function testSignOut() {
+            log('Signing out...');
+            
+            try {
+                if (!window.authService) {
+                    throw new Error('Auth service not available');
+                }
+                
+                await authService.signOut();
+                log('Sign out successful');
+                showResult('session-result', 'Signed out successfully', true);
+                
+            } catch (error) {
+                log('Sign out error: ' + error.message);
+                showResult('session-result', 'Sign out error: ' + error.message, false);
+            }
+        }
+
+        // Auto-test connection on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, testing connection...');
+            setTimeout(testSupabaseConnection, 1000);
+        });
+    </script>
+</body>
+</html>

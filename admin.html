@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - KYC Management</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .admin-badge {
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 24px;
+        }
+
+        .nav-tabs-list {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-tab {
+            padding: 1rem 0;
+            border-bottom: 2px solid transparent;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            color: #3b82f6;
+        }
+
+        .nav-tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.pending {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .stat-icon.verified {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .stat-icon.rejected {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .stat-icon.total {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* KYC List */
+        .kyc-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-size: 0.875rem;
+            width: 250px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        /* KYC Items */
+        .kyc-items {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .kyc-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        .kyc-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .kyc-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+
+        .kyc-content {
+            flex: 1;
+        }
+
+        .kyc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .kyc-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .kyc-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .kyc-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .kyc-status.verified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .kyc-status.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .kyc-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .kyc-detail {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .kyc-detail strong {
+            color: #374151;
+        }
+
+        .kyc-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+            color: #374151;
+        }
+
+        /* KYC Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+
+        .document-preview {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .document-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .document-icon {
+            font-size: 48px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .document-name {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .document-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+
+        .document-link:hover {
+            text-decoration: underline;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-notes {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs-list {
+                gap: 16px;
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .kyc-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .kyc-actions {
+                flex-wrap: wrap;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .review-notes {
+                margin-right: 0;
+            }
+
+            .modal-actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .modal-actions .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons-outlined">admin_panel_settings</span>
+                    Admin Dashboard
+                    <span class="admin-badge">ADMIN</span>
+                </div>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <span class="material-icons-outlined">person</span>
+                        </div>
+                        <div>
+                            <div id="adminName">Admin User</div>
+                            <div style="font-size: 0.75rem; color: #6b7280;">Administrator</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" onclick="logout()">
+                        <span class="material-icons-outlined">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-tabs">
+        <div class="container">
+            <div class="nav-tabs-list">
+                <div class="nav-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    Dashboard
+                </div>
+                <div class="nav-tab" data-tab="kyc-pending" onclick="switchTab('kyc-pending')">
+                    Pending KYC
+                </div>
+                <div class="nav-tab" data-tab="kyc-verified" onclick="switchTab('kyc-verified')">
+                    Verified KYC
+                </div>
+                <div class="nav-tab" data-tab="kyc-rejected" onclick="switchTab('kyc-rejected')">
+                    Rejected KYC
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div class="content-section active" id="dashboard-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total KYC Submissions</div>
+                            <div class="stat-icon total">
+                                <span class="material-icons-outlined">description</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Pending Review</div>
+                            <div class="stat-icon pending">
+                                <span class="material-icons-outlined">hourglass_empty</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Verified</div>
+                            <div class="stat-icon verified">
+                                <span class="material-icons-outlined">check_circle</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="verifiedCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Rejected</div>
+                            <div class="stat-icon rejected">
+                                <span class="material-icons-outlined">cancel</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="rejectedCount">0</div>
+                    </div>
+                </div>
+
+                <div class="kyc-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Recent KYC Submissions</h2>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <span class="material-icons-outlined">refresh</span>
+                            Refresh
+                        </button>
+                    </div>
+                    <div class="kyc-items" id="recentKycItems">
+                        <div class="loading">Loading recent submissions...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending KYC Section -->
+            <div class="content-section" id="kyc-pending-section">
+                <div class="kyc-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Pending KYC Verifications</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by name or ID..." id="pendingSearch">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kyc-items" id="pendingKycItems">
+                        <div class="loading">Loading pending KYC...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verified KYC Section -->
+            <div class="content-section" id="kyc-verified-section">
+                <div class="kyc-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Verified KYC</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by name or ID..." id="verifiedSearch">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kyc-items" id="verifiedKycItems">
+                        <div class="loading">Loading verified KYC...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rejected KYC Section -->
+            <div class="content-section" id="kyc-rejected-section">
+                <div class="kyc-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Rejected KYC</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by name or ID..." id="rejectedSearch">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kyc-items" id="rejectedKycItems">
+                        <div class="loading">Loading rejected KYC...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KYC Detail Modal -->
+    <div class="modal" id="kycModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">KYC Application Details</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically loaded -->
+            </div>
+            <div class="modal-footer">
+                <div class="review-notes">
+                    <textarea class="notes-textarea" id="reviewNotes" placeholder="Add review notes (optional)..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-success" onclick="approveKYC()">
+                        <span class="material-icons-outlined">check_circle</span>
+                        Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectKYC()">
+                        <span class="material-icons-outlined">cancel</span>
+                        Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/services/auth-service.js"></script>
+    <script src="js/services/database-service.js"></script>
+    
+    <script>
+        // Global variables
+        let authService = new AuthService();
+        let databaseService = new DatabaseService();
+        let currentUser = null;
+        let currentKYC = null;
+        let allKYCData = [];
+
+        // Initialize admin dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAdminAuth();
+            await loadDashboardData();
+            setupEventListeners();
+        });
+
+        // Check if user is admin
+        async function checkAdminAuth() {
+            try {
+                const sessionResult = await authService.getSession();
+                if (!sessionResult.success || !sessionResult.session) {
+                    console.log('No active session, redirecting to signin...');
+                    window.location.href = 'signin.html';
+                    return;
+                }
+
+                const userResult = await authService.getCurrentUser();
+                if (!userResult.success || !userResult.user) {
+                    console.error('Failed to get current user');
+                    window.location.href = 'signin.html';
+                    return;
+                }
+
+                currentUser = userResult.user;
+                
+                // Check if user has admin role
+                const metadata = currentUser.user_metadata || {};
+                const userRole = metadata.role || metadata.user_role;
+                
+                if (userRole !== 'admin') {
+                    console.log('User is not admin, redirecting...');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                // Update admin name
+                document.getElementById('adminName').textContent = metadata.full_name || 'Admin User';
+                
+            } catch (error) {
+                console.error('Admin auth check error:', error);
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                console.log('Loading dashboard data...');
+                
+                // Get all KYC data
+                const { data, error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allKYCData = data || [];
+                console.log('Loaded KYC data:', allKYCData);
+
+                // Update stats
+                updateStats();
+                
+                // Load recent submissions
+                loadRecentSubmissions();
+                
+            } catch (error) {
+                console.error('Load dashboard data error:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const stats = {
+                total: allKYCData.length,
+                pending: allKYCData.filter(kyc => kyc.status === 'pending').length,
+                verified: allKYCData.filter(kyc => kyc.status === 'verified').length,
+                rejected: allKYCData.filter(kyc => kyc.status === 'rejected').length
+            };
+
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('pendingCount').textContent = stats.pending;
+            document.getElementById('verifiedCount').textContent = stats.verified;
+            document.getElementById('rejectedCount').textContent = stats.rejected;
+        }
+
+        // Load recent submissions
+        function loadRecentSubmissions() {
+            const container = document.getElementById('recentKycItems');
+            const recentSubmissions = allKYCData.slice(0, 10); // Last 10 submissions
+
+            if (recentSubmissions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">inbox</span></div><p>No KYC submissions yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = recentSubmissions.map(kyc => createKYCItem(kyc)).join('');
+        }
+
+        // Create KYC item HTML
+        function createKYCItem(kyc) {
+            const statusClass = kyc.status || 'pending';
+            const submittedDate = new Date(kyc.created_at).toLocaleDateString();
+
+            return `
+                <div class="kyc-item">
+                    <div class="kyc-avatar">
+                        <span class="material-icons-outlined">person</span>
+                    </div>
+                    <div class="kyc-content">
+                        <div class="kyc-header">
+                            <div class="kyc-name">${kyc.full_name || 'Unknown'}</div>
+                            <div class="kyc-status ${statusClass}">${statusClass}</div>
+                        </div>
+                        <div class="kyc-details">
+                            <div class="kyc-detail"><strong>Phone:</strong> ${kyc.phone || 'N/A'}</div>
+                            <div class="kyc-detail"><strong>ID:</strong> ${kyc.national_id || 'N/A'}</div>
+                            <div class="kyc-detail"><strong>Submitted:</strong> ${submittedDate}</div>
+                        </div>
+                        <div class="kyc-actions">
+                            <button class="btn btn-primary" onclick="viewKYCDetails('${kyc.id}')">
+                                <span class="material-icons-outlined">visibility</span>
+                                View Details
+                            </button>
+                            ${kyc.status === 'pending' ? `
+                                <button class="btn btn-success" onclick="quickApprove('${kyc.id}')">
+                                    <span class="material-icons-outlined">check_circle</span>
+                                    Quick Approve
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab active state
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-section`).classList.add('active');
+
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        // Load tab-specific data
+        async function loadTabData(tabName) {
+            const statusFilter = tabName.replace('kyc-', '');
+            const filteredData = statusFilter === 'dashboard' 
+                ? allKYCData.slice(0, 10)
+                : allKYCData.filter(kyc => kyc.status === statusFilter);
+
+            const containerId = statusFilter === 'dashboard' 
+                ? 'recentKycItems'
+                : `${statusFilter}KycItems`;
+
+            const container = document.getElementById(containerId);
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">inbox</span></div><p>No KYC submissions found</p></div>';
+                return;
+            }
+
+            container.innerHTML = filteredData.map(kyc => createKYCItem(kyc)).join('');
+        }
+
+        // View KYC details
+        async function viewKYCDetails(kycId) {
+            try {
+                const { data, error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('*')
+                    .eq('id', kycId)
+                    .single();
+
+                if (error) throw error;
+
+                currentKYC = data;
+                showKYCModal(data);
+
+            } catch (error) {
+                console.error('View KYC details error:', error);
+                showError('Failed to load KYC details');
+            }
+        }
+
+        // Show KYC modal
+        function showKYCModal(kyc) {
+            const modal = document.getElementById('kycModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <!-- Personal Information -->
+                <div class="detail-section">
+                    <h3 class="section-title">Personal Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value">${kyc.full_name || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone Number</div>
+                            <div class="detail-value">${kyc.phone || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date of Birth</div>
+                            <div class="detail-value">${kyc.date_of_birth || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Address</div>
+                            <div class="detail-value">${kyc.address || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">District</div>
+                            <div class="detail-value">${kyc.district || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">National ID</div>
+                            <div class="detail-value">${kyc.national_id || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="detail-section">
+                    <h3 class="section-title">Emergency Contact</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Next of Kin Name</div>
+                            <div class="detail-value">${kyc.kin_name || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Relationship</div>
+                            <div class="detail-value">${kyc.kin_relationship || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Next of Kin Phone</div>
+                            <div class="detail-value">${kyc.kin_phone || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Next of Kin Address</div>
+                            <div class="detail-value">${kyc.kin_address || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submission Details -->
+                <div class="detail-section">
+                    <h3 class="section-title">Submission Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Submission Date</div>
+                            <div class="detail-value">${new Date(kyc.created_at).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Current Status</div>
+                            <div class="detail-value">
+                                <span class="kyc-status ${kyc.status}">${kyc.status}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Data Consent</div>
+                            <div class="detail-value">${kyc.consent_data ? 'Yes' : 'No'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Terms Consent</div>
+                            <div class="detail-value">${kyc.consent_terms ? 'Yes' : 'No'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review History (if any) -->
+                ${kyc.reviewed_at ? `
+                <div class="detail-section">
+                    <h3 class="section-title">Review History</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Reviewed At</div>
+                            <div class="detail-value">${new Date(kyc.reviewed_at).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Reviewed By</div>
+                            <div class="detail-value">Admin User</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Review Notes</div>
+                            <div class="detail-value">${kyc.review_notes || 'No notes provided'}</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+
+            // Update modal actions based on status
+            const modalActions = document.querySelector('.modal-actions');
+            if (kyc.status === 'pending') {
+                modalActions.innerHTML = `
+                    <button class="btn btn-success" onclick="approveKYC()">
+                        <span class="material-icons-outlined">check_circle</span>
+                        Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectKYC()">
+                        <span class="material-icons-outlined">cancel</span>
+                        Reject
+                    </button>
+                `;
+            } else {
+                modalActions.innerHTML = `
+                    <button class="btn btn-outline" onclick="closeModal()">
+                        <span class="material-icons-outlined">close</span>
+                        Close
+                    </button>
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('kycModal').classList.remove('active');
+            currentKYC = null;
+            document.getElementById('reviewNotes').value = '';
+        }
+
+        // Approve KYC
+        async function approveKYC() {
+            if (!currentKYC) return;
+
+            try {
+                const reviewNotes = document.getElementById('reviewNotes').value;
+
+                const { error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .update({
+                        status: 'verified',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: currentUser.id,
+                        review_notes: reviewNotes
+                    })
+                    .eq('id', currentKYC.id);
+
+                if (error) throw error;
+
+                // Update user metadata
+                const { error: metadataError } = await authService.supabase.auth.admin.updateUserById(
+                    currentKYC.user_id,
+                    { user_metadata: { kyc_status: 'verified' } }
+                );
+
+                if (metadataError) {
+                    console.warn('Failed to update user metadata:', metadataError);
+                }
+
+                showSuccess('KYC approved successfully!');
+                closeModal();
+                await loadDashboardData();
+
+            } catch (error) {
+                console.error('Approve KYC error:', error);
+                showError('Failed to approve KYC');
+            }
+        }
+
+        // Reject KYC
+        async function rejectKYC() {
+            if (!currentKYC) return;
+
+            const reviewNotes = document.getElementById('reviewNotes').value;
+            if (!reviewNotes.trim()) {
+                showError('Please provide rejection reason in the notes');
+                return;
+            }
+
+            try {
+                const { error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .update({
+                        status: 'rejected',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: currentUser.id,
+                        review_notes: reviewNotes
+                    })
+                    .eq('id', currentKYC.id);
+
+                if (error) throw error;
+
+                // Update user metadata
+                const { error: metadataError } = await authService.supabase.auth.admin.updateUserById(
+                    currentKYC.user_id,
+                    { user_metadata: { kyc_status: 'rejected' } }
+                );
+
+                if (metadataError) {
+                    console.warn('Failed to update user metadata:', metadataError);
+                }
+
+                showSuccess('KYC rejected successfully!');
+                closeModal();
+                await loadDashboardData();
+
+            } catch (error) {
+                console.error('Reject KYC error:', error);
+                showError('Failed to reject KYC');
+            }
+        }
+
+        // Quick approve
+        async function quickApprove(kycId) {
+            try {
+                const { error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .update({
+                        status: 'verified',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: currentUser.id,
+                        review_notes: 'Quick approved by admin'
+                    })
+                    .eq('id', kycId);
+
+                if (error) throw error;
+
+                showSuccess('KYC approved successfully!');
+                await loadDashboardData();
+
+            } catch (error) {
+                console.error('Quick approve error:', error);
+                showError('Failed to approve KYC');
+            }
+        }
+
+        // Refresh data
+        async function refreshData() {
+            await loadDashboardData();
+            showSuccess('Data refreshed successfully!');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            ['pending', 'verified', 'rejected'].forEach(status => {
+                const searchInput = document.getElementById(`${status}Search`);
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        filterKYCList(status, e.target.value);
+                    });
+                }
+            });
+
+            // Close modal on outside click
+            document.getElementById('kycModal').addEventListener('click', (e) => {
+                if (e.target.id === 'kycModal') {
+                    closeModal();
+                }
+            });
+        }
+
+        // Filter KYC list
+        function filterKYCList(status, searchTerm) {
+            const container = document.getElementById(`${status}KycItems`);
+            const filteredData = allKYCData.filter(kyc => {
+                const matchesStatus = kyc.status === status;
+                const matchesSearch = !searchTerm || 
+                    kyc.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    kyc.phone?.includes(searchTerm) ||
+                    kyc.national_id?.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">search_off</span></div><p>No matching KYC submissions found</p></div>';
+                return;
+            }
+
+            container.innerHTML = filteredData.map(kyc => createKYCItem(kyc)).join('');
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                await authService.signOut();
+                window.location.href = 'signin.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            // Simple success notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1001;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Show error message
+        function showError(message) {
+            // Simple error notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ef4444;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1001;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

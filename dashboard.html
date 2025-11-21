@@ -787,7 +787,7 @@
                             <p>Status: <span class="status-badge status-pending" id="kycBadge">Pending</span></p>
                             <p style="margin-top: 8px;">Complete your KYC verification to unlock all features.</p>
                         </div>
-                        <button class="btn btn-primary" onclick="openKycModal()">Submit KYC Documents</button>
+                        <button class="btn btn-primary" onclick="window.location.href='kyc.html'">Complete KYC Verification</button>
                     </div>
                 </div>
 
@@ -1027,6 +1027,9 @@
                 if (authResult) {
                     console.log('Authentication successful, loading user data...');
                     await loadUserData();
+                    
+                    // Check KYC status and redirect if needed
+                    await checkKycStatus();
                 } else {
                     console.log('Authentication failed, redirecting...');
                 }
@@ -1245,7 +1248,58 @@
         });
 
         function startTransaction() {
-            window.location.href = 'transactions.html?action=new';
+            // Check KYC status before allowing transaction
+            checkKycForTransaction();
+        }
+
+        // Check KYC status before transaction
+        async function checkKycForTransaction() {
+            try {
+                console.log('Checking KYC status for transaction...');
+                
+                // Get current user
+                const userResult = await authService.getCurrentUser();
+                if (!userResult.success || !userResult.user) {
+                    Helpers.showToast('Please sign in to create transactions', 'error');
+                    return;
+                }
+                
+                const user = userResult.user;
+                const metadata = user.user_metadata || {};
+                const kycStatus = metadata.kyc_status || 'pending';
+                
+                console.log('Transaction KYC check - status:', kycStatus);
+                
+                if (kycStatus !== 'verified') {
+                    // Show appropriate message based on status
+                    let message = '';
+                    switch (kycStatus) {
+                        case 'pending':
+                            message = 'Your KYC verification is pending review. You cannot create transactions until verification is complete.';
+                            break;
+                        case 'rejected':
+                            message = 'Your KYC verification was rejected. Please complete KYC verification again to create transactions.';
+                            break;
+                        default:
+                            message = 'You must complete KYC verification before you can create transactions.';
+                    }
+                    
+                    Helpers.showToast(message, 'error');
+                    
+                    // Redirect to KYC page after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'kyc.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // KYC is verified, proceed to transaction
+                window.location.href = 'transactions.html?action=new';
+                
+            } catch (error) {
+                console.error('KYC check for transaction error:', error);
+                Helpers.showToast('Failed to verify KYC status. Please try again.', 'error');
+            }
         }
 
         // Update mobile avatar function
@@ -1266,6 +1320,83 @@
                 mobileAvatarImg.style.display = 'none';
                 mobileAvatarIcon.style.display = 'block';
             }
+        }
+
+        // Check KYC status and redirect if needed
+        async function checkKycStatus() {
+            try {
+                console.log('Checking KYC status...');
+                
+                // Get current user
+                const userResult = await authService.getCurrentUser();
+                if (!userResult.success || !userResult.user) {
+                    console.error('Failed to get current user for KYC check');
+                    return;
+                }
+                
+                const user = userResult.user;
+                
+                // Check if user has KYC data in metadata
+                const metadata = user.user_metadata || {};
+                const kycStatus = metadata.kyc_status || 'pending';
+                
+                console.log('KYC status:', kycStatus);
+                
+                // Update KYC UI
+                updateKycUI(kycStatus);
+                
+                // If KYC is not verified, redirect to KYC page
+                if (kycStatus !== 'verified') {
+                    console.log('KYC not completed, redirecting to KYC page...');
+                    setTimeout(() => {
+                        window.location.href = 'kyc.html';
+                    }, 2000); // Give user time to see the dashboard
+                    return false;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('KYC status check error:', error);
+                // On error, assume KYC is not completed
+                setTimeout(() => {
+                    window.location.href = 'kyc.html';
+                }, 2000);
+                return false;
+            }
+        }
+
+        // Update KYC UI based on status
+        function updateKycUI(status) {
+            const kycBadge = document.getElementById('kycBadge');
+            const kycStatus = document.getElementById('kycStatus');
+            
+            if (!kycBadge || !kycStatus) return;
+            
+            // Update badge
+            kycBadge.className = 'status-badge';
+            kycBadge.classList.add(`status-${status}`);
+            kycBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            
+            // Update status message
+            let message = '';
+            switch (status) {
+                case 'verified':
+                    message = 'Your KYC verification is complete. You can access all features.';
+                    break;
+                case 'pending':
+                    message = 'Your KYC verification is pending review. Please wait for approval.';
+                    break;
+                case 'rejected':
+                    message = 'Your KYC verification was rejected. Please resubmit your documents.';
+                    break;
+                default:
+                    message = 'Complete your KYC verification to unlock all features.';
+            }
+            
+            kycStatus.innerHTML = `
+                <p>Status: <span class="status-badge status-${status}" id="kycBadge">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+                <p style="margin-top: 8px;">${message}</p>
+            `;
         }
     </script>
 </body>

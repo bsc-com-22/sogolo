@@ -499,6 +499,14 @@
             }
         }
     </style>
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    
+    <!-- Supabase Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/services/auth-service.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -783,7 +791,7 @@
 
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="prevStep(4)">Back</button>
-                <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Submit for Verification</button>
+                <button class="btn btn-primary" id="submitBtn" onclick="submitKYC()">Submit for Verification</button>
             </div>
         </div>
 
@@ -951,6 +959,261 @@
 
         // Initialize
         updateProgress();
+        
+        // Check authentication and load user data
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAuthAndLoadUser();
+        });
+
+        let authService = new AuthService();
+        let currentUser = null;
+        let kycData = {};
+
+        // Check authentication and load user data
+        async function checkAuthAndLoadUser() {
+            try {
+                // Check if user is authenticated
+                const sessionResult = await authService.getSession();
+                if (!sessionResult.success || !sessionResult.session) {
+                    console.log('No active session, redirecting to signin...');
+                    window.location.href = 'signin.html';
+                    return;
+                }
+
+                // Get current user
+                const userResult = await authService.getCurrentUser();
+                if (!userResult.success || !userResult.user) {
+                    console.error('Failed to get current user');
+                    window.location.href = 'signin.html';
+                    return;
+                }
+
+                currentUser = userResult.user;
+                console.log('Current user:', currentUser);
+
+                // Check if KYC is already completed
+                const metadata = currentUser.user_metadata || {};
+                const kycStatus = metadata.kyc_status || 'pending';
+                
+                if (kycStatus === 'verified') {
+                    console.log('KYC already verified, redirecting to dashboard...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Pre-fill form with existing user data
+                prefillForm(metadata);
+
+            } catch (error) {
+                console.error('Authentication check error:', error);
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Pre-fill form with existing user data
+        function prefillForm(metadata) {
+            if (metadata.full_name) {
+                document.getElementById('fullName').value = metadata.full_name;
+            }
+            if (metadata.phone) {
+                document.getElementById('phone').value = metadata.phone;
+            }
+            if (metadata.date_of_birth) {
+                document.getElementById('dob').value = metadata.date_of_birth;
+            }
+            if (metadata.address) {
+                document.getElementById('address').value = metadata.address;
+            }
+            if (metadata.district) {
+                document.getElementById('district').value = metadata.district;
+            }
+        }
+
+        // Enhanced nextStep function to collect data
+        function nextStep(currentStep) {
+            // Collect data from current step
+            collectStepData(currentStep);
+            
+            // Validate current step
+            if (!validateStep(currentStep)) {
+                return;
+            }
+
+            // Proceed to next step
+            if (currentStep < 4) {
+                showStep(currentStep + 1);
+                updateProgress();
+            }
+        }
+
+        // Collect data from current step
+        function collectStepData(step) {
+            switch (step) {
+                case 1:
+                    kycData.fullName = document.getElementById('fullName').value;
+                    kycData.phone = document.getElementById('phone').value;
+                    kycData.dob = document.getElementById('dob').value;
+                    kycData.address = document.getElementById('address').value;
+                    kycData.district = document.getElementById('district').value;
+                    break;
+                case 2:
+                    kycData.nationalId = document.getElementById('nationalId').value;
+                    kycData.idFrontFile = document.getElementById('idFront').files[0];
+                    kycData.idBackFile = document.getElementById('idBack').files[0];
+                    kycData.selfieFile = document.getElementById('selfie').files[0];
+                    break;
+                case 3:
+                    kycData.kinName = document.getElementById('kinName').value;
+                    kycData.kinRelationship = document.getElementById('kinRelationship').value;
+                    kycData.kinPhone = document.getElementById('kinPhone').value;
+                    kycData.kinAddress = document.getElementById('kinAddress').value;
+                    break;
+            }
+        }
+
+        // Validate current step
+        function validateStep(step) {
+            let isValid = true;
+            let errorMessage = '';
+
+            switch (step) {
+                case 1:
+                    if (!kycData.fullName || !kycData.phone || !kycData.dob || !kycData.address || !kycData.district) {
+                        errorMessage = 'Please fill in all required fields';
+                        isValid = false;
+                    }
+                    break;
+                case 2:
+                    if (!kycData.nationalId || !kycData.idFrontFile || !kycData.idBackFile || !kycData.selfieFile) {
+                        errorMessage = 'Please complete all identity verification fields';
+                        isValid = false;
+                    }
+                    break;
+                case 3:
+                    if (!kycData.kinName || !kycData.kinRelationship || !kycData.kinPhone) {
+                        errorMessage = 'Please fill in all required emergency contact fields';
+                        isValid = false;
+                    }
+                    break;
+            }
+
+            if (!isValid) {
+                alert(errorMessage);
+            }
+
+            return isValid;
+        }
+
+        // Enhanced submitKYC function
+        async function submitKYC() {
+            try {
+                // Collect final data
+                collectStepData(3);
+                
+                // Validate all steps
+                for (let i = 1; i <= 3; i++) {
+                    if (!validateStep(i)) {
+                        showStep(i);
+                        updateProgress();
+                        return;
+                    }
+                }
+
+                // Check consent checkboxes
+                const consentData = document.getElementById('consentData').checked;
+                const consentTerms = document.getElementById('consentTerms').checked;
+                const consentAccuracy = document.getElementById('consentAccuracy').checked;
+
+                if (!consentData || !consentTerms || !consentAccuracy) {
+                    alert('Please accept all consent checkboxes to proceed.');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = document.querySelector('#submitBtn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'Submitting...';
+                submitBtn.disabled = true;
+
+                // Prepare KYC data for submission
+                const kycSubmission = {
+                    full_name: kycData.fullName,
+                    phone: kycData.phone,
+                    date_of_birth: kycData.dob,
+                    address: kycData.address,
+                    district: kycData.district,
+                    national_id: kycData.nationalId,
+                    kin_name: kycData.kinName,
+                    kin_relationship: kycData.kinRelationship,
+                    kin_phone: kycData.kinPhone,
+                    kin_address: kycData.kinAddress,
+                    kyc_status: 'pending',
+                    submitted_at: new Date().toISOString()
+                };
+
+                // Update user metadata with KYC data
+                const updateData = {
+                    ...currentUser.user_metadata,
+                    ...kycSubmission
+                };
+
+                // Update user metadata in Supabase
+                const { error } = await authService.supabase.auth.updateUser({
+                    data: updateData
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('KYC data submitted successfully');
+                
+                // Show success message
+                showSuccessMessage();
+                
+                // Redirect to dashboard after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error('KYC submission error:', error);
+                alert('Failed to submit KYC. Please try again.');
+                
+                // Reset button state
+                const submitBtn = document.querySelector('#submitBtn');
+                submitBtn.innerHTML = 'Submit for Verification';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Show specific step
+        function showStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Show current step
+            document.getElementById('step' + stepNumber).classList.add('active');
+            currentStep = stepNumber;
+            updateProgress();
+        }
+
+        // Show success message
+        function showSuccessMessage() {
+            document.getElementById('step4').classList.remove('active');
+            document.getElementById('successMessage').classList.add('active');
+            
+            // Update progress to 100%
+            document.getElementById('progressFill').style.width = '100%';
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            });
+        }
     </script>
 </body>
 </html>

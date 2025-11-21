@@ -1202,13 +1202,8 @@
 
                 console.log('KYC process completed successfully');
                 
-                // Show success message
-                showSuccessMessage();
-                
-                // Redirect to dashboard after 3 seconds
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 3000);
+                // Redirect to dashboard immediately
+                window.location.href = 'dashboard.html';
 
             } catch (error) {
                 console.error('KYC submission error:', error);

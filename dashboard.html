@@ -660,24 +660,26 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
-            </a>
-            <nav class="nav-menu">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="support.html" class="nav-link">Support</a>
-            </nav>
-            <div class="user-menu" id="userMenu">
-                <div class="user-menu-trigger" id="userMenuTrigger">
-                    <div class="user-avatar"><img id="headerAvatarImg" alt="" style="display:none;"></div>
-                    <span class="user-name" id="headerUserName">User</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    <button type="button" onclick="openProfileModal()">Edit Profile</button>
-                    <button type="button" id="logoutBtn">Logout</button>
-                </div>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+      </a>
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="transactions.html" class="nav-link">Transactions</a>
+        <a href="support.html" class="nav-link">Support</a>
+      </nav>
+      <div class="user-menu" id="userMenu">
+        <div class="user-menu-trigger" id="userMenuTrigger">
+          <div class="user-avatar"><img id="headerAvatarImg" alt="" style="display:none;"></div>
+          <span class="user-name" id="headerUserName">User</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="user-dropdown" id="userDropdown">
+          <button type="button" onclick="openProfileModal()">Edit Profile</button>
+          <button type="button" id="logoutBtn">Logout</button>
+        </div>
+      </div>
             </div>
         </div>
     </header>
@@ -882,16 +884,18 @@
     <script src="js/services/database-service.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script>
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
 
-        document.addEventListener('click', (e) => {
-            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
-                mobileMenu.classList.remove('active');
-            }
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
         });
 
         window.addEventListener('scroll', () => {
@@ -1155,7 +1159,7 @@
         });
 
         function startTransaction() {
-            alert('Start new transaction functionality coming soon.');
+            window.location.href = 'transactions.html?action=new';
         }
     </script>
 </body>

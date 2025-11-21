@@ -1346,10 +1346,13 @@
                 // Check KYC status from database
                 const kycResult = await databaseService.getKYCStatus(user.id);
                 let kycStatus = 'pending';
+                let submittedAt = null;
                 
                 if (kycResult.success && kycResult.data) {
                     kycStatus = kycResult.data.status;
+                    submittedAt = kycResult.data.created_at;
                     console.log('KYC status from database:', kycStatus);
+                    console.log('KYC submitted at:', submittedAt);
                 } else {
                     console.log('No KYC record found, defaulting to pending');
                 }
@@ -1357,8 +1360,12 @@
                 // Update KYC UI
                 updateKycUI(kycStatus);
                 
-                // If KYC is not verified, redirect to KYC page
-                if (kycStatus !== 'verified') {
+                // Check if KYC was recently submitted (within last 5 minutes)
+                const recentlySubmitted = submittedAt && 
+                    (new Date() - new Date(submittedAt)) < (5 * 60 * 1000); // 5 minutes
+                
+                // If KYC is not verified AND not recently submitted, redirect to KYC page
+                if (kycStatus !== 'verified' && !recentlySubmitted) {
                     console.log('KYC not completed, redirecting to KYC page...');
                     setTimeout(() => {
                         window.location.href = 'kyc.html';
@@ -1366,13 +1373,17 @@
                     return false;
                 }
                 
+                // If recently submitted, show a message but don't redirect
+                if (recentlySubmitted && kycStatus === 'pending') {
+                    console.log('KYC recently submitted, staying on dashboard');
+                    // You could show a toast message here if you want
+                    // Helpers.showToast('KYC submitted successfully! Your verification is pending review.', 'success');
+                }
+                
                 return true;
             } catch (error) {
                 console.error('KYC status check error:', error);
-                // On error, assume KYC is not completed
-                setTimeout(() => {
-                    window.location.href = 'kyc.html';
-                }, 2000);
+                // On error, don't redirect - let user stay on dashboard
                 return false;
             }
         }

@@ -7,15 +7,22 @@ class AuthService {
     // Sign up with email and password
     async signUp(email, password, userData = {}) {
         try {
+            console.log('Attempting sign up for:', email);
             const { data, error } = await this.supabase.auth.signUp({
                 email: email,
                 password: password,
                 options: {
-                    data: userData // Additional user metadata
+                    data: userData, // Additional user metadata
+                    emailRedirectTo: `${window.location.origin}/signin.html`
                 }
             });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase sign up error:', error);
+                throw error;
+            }
+            
+            console.log('Sign up successful:', data);
             return { success: true, data };
         } catch (error) {
             console.error('Sign up error:', error);
@@ -26,12 +33,18 @@ class AuthService {
     // Sign in with email and password
     async signIn(email, password) {
         try {
+            console.log('Attempting sign in for:', email);
             const { data, error } = await this.supabase.auth.signInWithPassword({
                 email: email,
                 password: password
             });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase sign in error:', error);
+                throw error;
+            }
+            
+            console.log('Sign in successful:', data);
             return { success: true, data };
         } catch (error) {
             console.error('Sign in error:', error);

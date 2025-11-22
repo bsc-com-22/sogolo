@@ -944,18 +944,25 @@
                     for (let i = 0; i < Math.min(5, allKYCData.length); i++) {
                         const kyc = allKYCData[i];
                         try {
+                            // Use the auth service to get user info instead of direct query
                             const { data: userData, error: userError } = await databaseService.supabase
-                                .from('auth.users')
-                                .select('email, raw_user_meta_data')
-                                .eq('id', kyc.user_id)
-                                .single();
+                                .rpc('get_user_info', { user_id: kyc.user_id });
                             
                             if (!userError && userData) {
                                 kyc.user_email = userData.email;
                                 kyc.user_role = userData.raw_user_meta_data?.role;
+                            } else {
+                                // Fallback: use the current user info if it's the same user
+                                if (kyc.user_id === currentUser.id) {
+                                    kyc.user_email = currentUser.email;
+                                    kyc.user_role = currentUser.user_metadata?.role;
+                                }
                             }
                         } catch (err) {
                             console.log('Could not get user info for KYC:', kyc.id);
+                            // Set basic info
+                            kyc.user_email = 'Unknown';
+                            kyc.user_role = 'Unknown';
                         }
                     }
                 } else {
@@ -1367,79 +1374,75 @@
             }
         }
 
-        // Debug visibility issues
-        async function debugVisibility() {
-            console.log('=== Visibility Debug ===');
+        // Refresh data
+        async function refreshData() {
+            await loadDashboardData();
+            showSuccess('Data refreshed successfully!');
+        }
+
+        // Debug function to test database connection and data
+        async function debugKYCData() {
+            console.log('=== KYC Data Debug ===');
             
             try {
-                // 1. Check admin status
-                console.log('1. Checking admin status...');
-                const adminCheck = await databaseService.supabase
+                // Test 1: Check table access
+                console.log('1. Testing table access...');
+                const testResult = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('count')
+                    .limit(1);
+                console.log('Table access test:', testResult);
+                
+                // Test 2: Get all data
+                console.log('2. Getting all KYC data...');
+                const { data, error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                console.log('All KYC data:', { data, error });
+                
+                // Test 3: Check user permissions
+                console.log('3. Checking user permissions...');
+                const userCheck = await databaseService.supabase
                     .from('auth.users')
                     .select('email, raw_user_meta_data')
                     .eq('id', currentUser.id)
                     .single();
-                console.log('Admin status:', adminCheck);
+                console.log('User permissions:', userCheck);
                 
-                // 2. Test simple query without joins
-                console.log('2. Testing simple query...');
-                const simpleQuery = await databaseService.supabase
-                    .from('kyc_verifications')
-                    .select('id, full_name, status, user_id, created_at')
-                    .order('created_at', { ascending: false });
-                console.log('Simple query result:', simpleQuery);
-                
-                // 3. Test count query
-                console.log('3. Testing count query...');
-                const countQuery = await databaseService.supabase
-                    .from('kyc_verifications')
-                    .select('id', { count: 'exact' });
-                console.log('Count query result:', countQuery);
-                
-                // 4. Test with different policies
-                console.log('4. Testing direct SQL...');
-                const { data: sqlData, error: sqlError } = await databaseService.supabase
-                    .rpc('admin_bypass_test'); // We'll need to create this function
-                console.log('SQL RPC result:', { sqlData, sqlError });
-                
-                // 5. Check if RLS is enabled
-                console.log('5. Checking RLS status...');
-                const rlsCheck = await databaseService.supabase
-                    .from('pg_policies')
-                    .select('policyname, qual')
-                    .eq('tablename', 'kyc_verifications');
-                console.log('RLS policies:', rlsCheck);
-                
-                // 6. Show summary
-                const summary = {
-                    adminRole: adminCheck.data?.raw_user_meta_data?.role,
-                    simpleQueryCount: simpleQuery.data?.length || 0,
-                    countQueryCount: countQuery.count || 0,
-                    hasError: !!(simpleQuery.error || countQuery.error)
-                };
-                
-                console.log('Visibility debug summary:', summary);
-                
-                // Show in UI
-                const message = `
-                    Admin Role: ${summary.adminRole || 'Not set'}
-                    Simple Query Found: ${summary.simpleQueryCount} records
-                    Count Query Found: ${summary.countQueryCount} records
-                    Has Errors: ${summary.hasError ? 'Yes' : 'No'}
-                `;
-                
-                alert('Visibility Debug Results:\n\n' + message);
-                
-                // Reload data with simple query if needed
-                if (simpleQuery.data && simpleQuery.data.length > 0) {
-                    allKYCData = simpleQuery.data;
-                    updateStats();
-                    loadRecentSubmissions();
-                    showSuccess('Loaded KYC data with simple query!');
+                // Test 4: Create test data if needed
+                if (!data || data.length === 0) {
+                    console.log('4. No KYC data found, creating test data...');
+                    const testData = await databaseService.supabase
+                        .from('kyc_verifications')
+                        .insert({
+                            user_id: currentUser.id,
+                            full_name: 'Test User',
+                            phone: '+265123456789',
+                            date_of_birth: '1990-01-01',
+                            address: 'Test Address',
+                            district: 'Lilongwe',
+                            national_id: 'TEST123456',
+                            kin_name: 'Test Kin',
+                            kin_relationship: 'Brother',
+                            kin_phone: '+265987654321',
+                            kin_address: 'Kin Address',
+                            consent_data: true,
+                            consent_terms: true,
+                            consent_accuracy: true,
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        })
+                        .select()
+                        .single();
+                    console.log('Test data created:', testData);
                 }
                 
+                // Reload data after creating test data
+                await loadDashboardData();
+                
             } catch (error) {
-                console.error('Visibility debug error:', error);
+                console.error('Debug error:', error);
                 showError('Debug error: ' + error.message);
             }
         }

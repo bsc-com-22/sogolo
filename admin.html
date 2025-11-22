@@ -909,13 +909,24 @@
                     throw new Error(`Access denied: ${testQuery.error.message}`);
                 }
                 
-                // Get all KYC data with simple query first
-                const { data, error } = await databaseService.supabase
-                    .from('kyc_verifications')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                console.log('KYC query result:', { data, error });
+                // Try the admin function first (bypasses RLS)
+                let { data, error } = await databaseService.supabase
+                    .rpc('admin_get_all_kyc');
+                
+                console.log('Admin function result:', { data, error });
+                
+                if (error) {
+                    console.log('Admin function failed, trying regular query...');
+                    // Fallback to regular query
+                    const result = await databaseService.supabase
+                        .from('kyc_verifications')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    data = result.data;
+                    error = result.error;
+                    console.log('Regular query result:', { data, error });
+                }
 
                 if (error) {
                     console.error('KYC query error:', error);
@@ -996,9 +1007,9 @@
                             <span class="material-icons-outlined">refresh</span>
                             Retry
                         </button>
-                        <button class="btn btn-outline" onclick="debugVisibility()" style="margin-top: 0.5rem;">
+                        <button class="btn btn-outline" onclick="debugKYCData()" style="margin-top: 0.5rem;">
                             <span class="material-icons-outlined">bug_report</span>
-                            Debug Visibility
+                            Debug KYC Data
                         </button>
                     </div>
                 `;

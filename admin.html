@@ -909,13 +909,10 @@
                     throw new Error(`Access denied: ${testQuery.error.message}`);
                 }
                 
-                // Get all KYC data with user info for debugging
+                // Get all KYC data with simple query first
                 const { data, error } = await databaseService.supabase
                     .from('kyc_verifications')
-                    .select(`
-                        *,
-                        auth.users!inner(email, raw_user_meta_data)
-                    `)
+                    .select('*')
                     .order('created_at', { ascending: false });
 
                 console.log('KYC query result:', { data, error });
@@ -937,25 +934,32 @@
                             id: kyc.id,
                             full_name: kyc.full_name,
                             status: kyc.status,
-                            user_email: kyc.auth_users?.email,
+                            user_id: kyc.user_id,
                             created_at: kyc.created_at
                         });
                     });
-                } else {
-                    console.log('No KYC data found - checking if table has any records...');
                     
-                    // Try a simpler query without joins
-                    const { data: simpleData, error: simpleError } = await databaseService.supabase
-                        .from('kyc_verifications')
-                        .select('id, full_name, status, created_at')
-                        .order('created_at', { ascending: false });
-                    
-                    console.log('Simple query result:', { simpleData, simpleError });
-                    
-                    if (!simpleError && simpleData && simpleData.length > 0) {
-                        console.log('Found KYC data with simple query:', simpleData);
-                        allKYCData = simpleData;
+                    // Try to get user info separately if needed
+                    console.log('Getting user info for KYC records...');
+                    for (let i = 0; i < Math.min(5, allKYCData.length); i++) {
+                        const kyc = allKYCData[i];
+                        try {
+                            const { data: userData, error: userError } = await databaseService.supabase
+                                .from('auth.users')
+                                .select('email, raw_user_meta_data')
+                                .eq('id', kyc.user_id)
+                                .single();
+                            
+                            if (!userError && userData) {
+                                kyc.user_email = userData.email;
+                                kyc.user_role = userData.raw_user_meta_data?.role;
+                            }
+                        } catch (err) {
+                            console.log('Could not get user info for KYC:', kyc.id);
+                        }
                     }
+                } else {
+                    console.log('No KYC data found');
                 }
 
                 // Update stats

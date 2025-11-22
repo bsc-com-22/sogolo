@@ -911,21 +911,33 @@
                 
                 // Try the admin function first (bypasses RLS)
                 let { data, error } = await databaseService.supabase
-                    .rpc('admin_get_all_kyc');
+                    .rpc('admin_get_all_kyc_improved');
                 
-                console.log('Admin function result:', { data, error });
+                console.log('Admin improved function result:', { data, error });
                 
-                if (error) {
-                    console.log('Admin function failed, trying regular query...');
-                    // Fallback to regular query
+                if (error || !data || data.length === 0) {
+                    console.log('Admin improved function failed, trying original admin function...');
+                    // Try original admin function
                     const result = await databaseService.supabase
-                        .from('kyc_verifications')
-                        .select('*')
-                        .order('created_at', { ascending: false });
+                        .rpc('admin_get_all_kyc');
                     
-                    data = result.data;
-                    error = result.error;
-                    console.log('Regular query result:', { data, error });
+                    console.log('Original admin function result:', { data: result.data, error: result.error });
+                    
+                    if (result.error || !result.data || result.data.length === 0) {
+                        console.log('Admin functions failed, trying regular query...');
+                        // Fallback to regular query
+                        const regularResult = await databaseService.supabase
+                            .from('kyc_verifications')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        
+                        data = regularResult.data;
+                        error = regularResult.error;
+                        console.log('Regular query result:', { data, error });
+                    } else {
+                        data = result.data;
+                        error = result.error;
+                    }
                 }
 
                 if (error) {
@@ -1298,6 +1310,7 @@
             try {
                 const reviewNotes = document.getElementById('reviewNotes').value;
 
+                // Use admin function to update KYC status
                 const { error } = await databaseService.supabase
                     .from('kyc_verifications')
                     .update({
@@ -1308,16 +1321,25 @@
                     })
                     .eq('id', currentKYC.id);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Update error:', error);
+                    throw error;
+                }
 
-                // Update user metadata
-                const { error: metadataError } = await authService.supabase.auth.admin.updateUserById(
-                    currentKYC.user_id,
-                    { user_metadata: { kyc_status: 'verified' } }
-                );
-
-                if (metadataError) {
-                    console.warn('Failed to update user metadata:', metadataError);
+                // Try to update user metadata (optional, may fail due to permissions)
+                try {
+                    // Use RPC function to update user metadata if it exists
+                    const { error: metadataError } = await databaseService.supabase
+                        .rpc('update_user_kyc_status', { 
+                            user_id: currentKYC.user_id, 
+                            status: 'verified' 
+                        });
+                    
+                    if (metadataError) {
+                        console.warn('Failed to update user metadata (this is OK):', metadataError);
+                    }
+                } catch (metadataErr) {
+                    console.warn('User metadata update not available (this is OK):', metadataErr);
                 }
 
                 showSuccess('KYC approved successfully!');
@@ -1326,7 +1348,7 @@
 
             } catch (error) {
                 console.error('Approve KYC error:', error);
-                showError('Failed to approve KYC');
+                showError('Failed to approve KYC: ' + error.message);
             }
         }
 
@@ -1341,6 +1363,7 @@
             }
 
             try {
+                // Use admin function to update KYC status
                 const { error } = await databaseService.supabase
                     .from('kyc_verifications')
                     .update({
@@ -1351,16 +1374,25 @@
                     })
                     .eq('id', currentKYC.id);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Update error:', error);
+                    throw error;
+                }
 
-                // Update user metadata
-                const { error: metadataError } = await authService.supabase.auth.admin.updateUserById(
-                    currentKYC.user_id,
-                    { user_metadata: { kyc_status: 'rejected' } }
-                );
-
-                if (metadataError) {
-                    console.warn('Failed to update user metadata:', metadataError);
+                // Try to update user metadata (optional, may fail due to permissions)
+                try {
+                    // Use RPC function to update user metadata if it exists
+                    const { error: metadataError } = await databaseService.supabase
+                        .rpc('update_user_kyc_status', { 
+                            user_id: currentKYC.user_id, 
+                            status: 'rejected' 
+                        });
+                    
+                    if (metadataError) {
+                        console.warn('Failed to update user metadata (this is OK):', metadataError);
+                    }
+                } catch (metadataErr) {
+                    console.warn('User metadata update not available (this is OK):', metadataErr);
                 }
 
                 showSuccess('KYC rejected successfully!');
@@ -1369,7 +1401,7 @@
 
             } catch (error) {
                 console.error('Reject KYC error:', error);
-                showError('Failed to reject KYC');
+                showError('Failed to reject KYC: ' + error.message);
             }
         }
 

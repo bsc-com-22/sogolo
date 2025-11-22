@@ -894,6 +894,20 @@
         async function loadDashboardData() {
             try {
                 console.log('Loading dashboard data...');
+                console.log('Current user:', currentUser);
+                
+                // Test admin access first
+                const testQuery = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('count')
+                    .limit(1);
+                
+                console.log('Test query result:', testQuery);
+                
+                if (testQuery.error) {
+                    console.error('Test query failed:', testQuery.error);
+                    throw new Error(`Access denied: ${testQuery.error.message}`);
+                }
                 
                 // Get all KYC data
                 const { data, error } = await databaseService.supabase
@@ -901,10 +915,16 @@
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                console.log('KYC query result:', { data, error });
+
+                if (error) {
+                    console.error('KYC query error:', error);
+                    throw error;
+                }
 
                 allKYCData = data || [];
                 console.log('Loaded KYC data:', allKYCData);
+                console.log('Number of KYC records:', allKYCData.length);
 
                 // Update stats
                 updateStats();
@@ -912,9 +932,29 @@
                 // Load recent submissions
                 loadRecentSubmissions();
                 
+                // Load tab-specific data if needed
+                const activeTab = document.querySelector('.nav-tab.active').dataset.tab;
+                if (activeTab !== 'dashboard') {
+                    loadTabData(activeTab);
+                }
+                
             } catch (error) {
                 console.error('Load dashboard data error:', error);
-                showError('Failed to load dashboard data');
+                showError('Failed to load dashboard data: ' + error.message);
+                
+                // Show debug info in the UI
+                const recentContainer = document.getElementById('recentKycItems');
+                recentContainer.innerHTML = `
+                    <div class="error-state">
+                        <div class="empty-icon"><span class="material-icons-outlined">error</span></div>
+                        <p>Error loading KYC data</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">${error.message}</p>
+                        <button class="btn btn-primary" onclick="loadDashboardData()" style="margin-top: 1rem;">
+                            <span class="material-icons-outlined">refresh</span>
+                            Retry
+                        </button>
+                    </div>
+                `;
             }
         }
 
@@ -1287,11 +1327,96 @@
             }
         }
 
-        // Refresh data
-        async function refreshData() {
-            await loadDashboardData();
-            showSuccess('Data refreshed successfully!');
+        // Debug function to test database connection and data
+        async function debugKYCData() {
+            console.log('=== KYC Data Debug ===');
+            
+            try {
+                // Test 1: Check table access
+                console.log('1. Testing table access...');
+                const testResult = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('count')
+                    .limit(1);
+                console.log('Table access test:', testResult);
+                
+                // Test 2: Get all data
+                console.log('2. Getting all KYC data...');
+                const { data, error } = await databaseService.supabase
+                    .from('kyc_verifications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                console.log('All KYC data:', { data, error });
+                
+                // Test 3: Check user permissions
+                console.log('3. Checking user permissions...');
+                const userCheck = await databaseService.supabase
+                    .from('auth.users')
+                    .select('email, raw_user_meta_data')
+                    .eq('id', currentUser.id)
+                    .single();
+                console.log('User permissions:', userCheck);
+                
+                // Test 4: Create test data if needed
+                if (!data || data.length === 0) {
+                    console.log('4. No KYC data found, creating test data...');
+                    const testData = await databaseService.supabase
+                        .from('kyc_verifications')
+                        .insert({
+                            user_id: currentUser.id,
+                            full_name: 'Test User',
+                            phone: '+265123456789',
+                            date_of_birth: '1990-01-01',
+                            address: 'Test Address',
+                            district: 'Lilongwe',
+                            national_id: 'TEST123456',
+                            kin_name: 'Test Kin',
+                            kin_relationship: 'Brother',
+                            kin_phone: '+265987654321',
+                            kin_address: 'Kin Address',
+                            consent_data: true,
+                            consent_terms: true,
+                            consent_accuracy: true,
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        })
+                        .select()
+                        .single();
+                    console.log('Test data created:', testData);
+                }
+                
+                // Reload data after creating test data
+                await loadDashboardData();
+                
+            } catch (error) {
+                console.error('Debug error:', error);
+                showError('Debug error: ' + error.message);
+            }
         }
+
+        // Add debug button to admin dashboard
+        function addDebugButton() {
+            const debugBtn = document.createElement('button');
+            debugBtn.textContent = 'Debug KYC Data';
+            debugBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #f59e0b;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                z-index: 9999;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            `;
+            debugBtn.onclick = debugKYCData;
+            document.body.appendChild(debugBtn);
+        }
+
+        // Add debug button after page loads
+        setTimeout(addDebugButton, 2000);
 
         // Setup event listeners
         function setupEventListeners() {

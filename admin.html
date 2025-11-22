@@ -1123,16 +1123,28 @@
         // View KYC details
         async function viewKYCDetails(kycId) {
             try {
+                // Use the admin function to get KYC details
                 const { data, error } = await databaseService.supabase
-                    .from('kyc_verifications')
-                    .select('*')
+                    .rpc('admin_get_all_kyc')
                     .eq('id', kycId)
                     .single();
 
-                if (error) throw error;
+                if (error) {
+                    console.log('Admin function failed, trying regular query...');
+                    // Fallback to regular query
+                    const result = await databaseService.supabase
+                        .from('kyc_verifications')
+                        .select('*')
+                        .eq('id', kycId)
+                        .single();
+                    
+                    if (result.error) throw result.error;
+                    currentKYC = result.data;
+                } else {
+                    currentKYC = data;
+                }
 
-                currentKYC = data;
-                showKYCModal(data);
+                showKYCModal(currentKYC);
 
             } catch (error) {
                 console.error('View KYC details error:', error);
@@ -1458,7 +1470,7 @@
             }
         }
 
-        // Add visibility debug button
+        // Add visibility debug button (simplified)
         function addVisibilityDebugButton() {
             const debugBtn = document.createElement('button');
             debugBtn.textContent = 'Debug Visibility';
@@ -1475,7 +1487,7 @@
                 z-index: 9999;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             `;
-            debugBtn.onclick = debugVisibility;
+            debugBtn.onclick = debugKYCData; // Use existing debug function
             document.body.appendChild(debugBtn);
         }
 

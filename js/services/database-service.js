@@ -116,18 +116,71 @@ class DatabaseService {
         try {
             console.log('Submitting KYC data:', kycData);
             
-            const { data, error } = await this.supabase
-                .from('kyc_verifications') // Changed from kyc_submissions to kyc_verifications
-                .insert([{
-                    user_id: userId,
-                    ...kycData,
-                    status: 'pending',
-                    created_at: new Date().toISOString()
-                }]);
+            // First, try to submit with all fields
+            let submissionData = {
+                user_id: userId,
+                ...kycData,
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+            
+            let { data, error } = await this.supabase
+                .from('kyc_verifications')
+                .insert([submissionData]);
 
             if (error) {
                 console.error('Database error details:', error);
-                throw error;
+                
+                // If it's a column not found error, try with minimal fields
+                if (error.message && error.message.includes('column') && error.message.includes('does not exist')) {
+                    console.log('Column not found, trying with essential fields only...');
+                    
+                    // Extract only essential fields that should always exist
+                    const essentialData = {
+                        user_id: userId,
+                        full_name: kycData.full_name,
+                        phone: kycData.phone,
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    // Add consent fields if they exist in the data
+                    if (kycData.consent_data !== undefined) {
+                        essentialData.consent_data = kycData.consent_data;
+                    }
+                    if (kycData.consent_terms !== undefined) {
+                        essentialData.consent_terms = kycData.consent_terms;
+                    }
+                    if (kycData.consent_accuracy !== undefined) {
+                        essentialData.consent_accuracy = kycData.consent_accuracy;
+                    }
+                    
+                    // Add other fields that might exist
+                    const optionalFields = [
+                        'date_of_birth', 'address', 'city', 'state', 'postal_code', 'country',
+                        'district', 'national_id', 'kin_name', 'kin_relationship', 'kin_phone', 'kin_address',
+                        'id_document_url', 'address_document_url', 'selfie_url'
+                    ];
+                    
+                    optionalFields.forEach(field => {
+                        if (kycData[field] !== undefined) {
+                            essentialData[field] = kycData[field];
+                        }
+                    });
+                    
+                    console.log('Retrying with essential data:', essentialData);
+                    
+                    const retryResult = await this.supabase
+                        .from('kyc_verifications')
+                        .insert([essentialData]);
+                    
+                    data = retryResult.data;
+                    error = retryResult.error;
+                }
+                
+                if (error) {
+                    throw error;
+                }
             }
             
             console.log('KYC submitted successfully:', data);
@@ -141,6 +194,8 @@ class DatabaseService {
                 errorMessage = 'Table or column not found in database. Please check table schema.';
             } else if (error.code === '23505') {
                 errorMessage = 'Duplicate entry. KYC may already be submitted.';
+            } else if (error.message && error.message.includes('column') && error.message.includes('does not exist')) {
+                errorMessage = 'Some required fields are missing from the database. Please contact support to update the database schema.';
             }
             
             return { success: false, error: errorMessage };

@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction - Sogolo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 16px 0;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            padding-bottom: 40px;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Transaction States */
+        .transaction-state {
+            display: none;
+        }
+
+        .transaction-state.active {
+            display: block;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error-icon {
+            color: #ef4444;
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        /* Transaction Header */
+        .transaction-header {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-id {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .transaction-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .transaction-meta {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .meta-item .material-icons-outlined {
+            font-size: 20px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-created {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-seller_joined {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-product_submitted {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .status-product_approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-payment_uploaded {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+
+        .status-payment_verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Transaction Content */
+        .transaction-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Join Transaction Section */
+        .join-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .join-icon {
+            color: #3b82f6;
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .join-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .join-description {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        /* Product Form */
+        .product-form {
+            display: none;
+        }
+
+        .product-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* Image Upload */
+        .image-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .image-upload:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .image-upload-icon {
+            color: #6b7280;
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .image-upload-text {
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .image-upload-hint {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .uploaded-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .uploaded-image {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+
+        .uploaded-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-image:hover {
+            background: #dc2626;
+        }
+
+        /* Product Display */
+        .product-display {
+            display: none;
+        }
+
+        .product-display.active {
+            display: block;
+        }
+
+        .product-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .product-image {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .payment-title {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .payment-info {
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-marker.completed {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .timeline-marker.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .timeline-description {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .transaction-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+            
+            .transaction-header,
+            .content-section,
+            .join-section {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+                <span>Sogolo</span>
+            </a>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="loadingState" class="transaction-state loading-state active">
+                <div class="spinner"></div>
+                <p>Loading transaction details...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="transaction-state error-state">
+                <div class="error-icon">
+                    <span class="material-icons-outlined">error</span>
+                </div>
+                <h2 class="error-title">Transaction Not Found</h2>
+                <p class="error-message">The transaction you're looking for doesn't exist or has expired.</p>
+                <button class="btn btn-primary" onclick="goToDashboard()">
+                    <span class="material-icons-outlined">dashboard</span>
+                    Go to Dashboard
+                </button>
+            </div>
+
+            <!-- Transaction View -->
+            <div id="transactionView" class="transaction-state">
+                <!-- Transaction Header -->
+                <div class="transaction-header">
+                    <div class="transaction-id" id="transactionId">Loading...</div>
+                    <h1 class="transaction-title" id="transactionTitle">Loading...</h1>
+                    <div class="transaction-meta">
+                        <div class="meta-item">
+                            <span class="material-icons-outlined">payments</span>
+                            <span id="transactionAmount">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="material-icons-outlined">calendar_today</span>
+                            <span id="transactionDate">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="status-badge" id="transactionStatus">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Join Transaction Section (for new sellers) -->
+                <div id="joinSection" class="join-section">
+                    <div class="join-icon">
+                        <span class="material-icons-outlined">handshake</span>
+                    </div>
+                    <h2 class="join-title">Join This Transaction</h2>
+                    <p class="join-description">You've been invited to participate in this secure escrow transaction as the seller.</p>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="goToDashboard()">
+                            <span class="material-icons-outlined">close</span>
+                            Decline
+                        </button>
+                        <button class="btn btn-primary" onclick="joinTransaction()">
+                            <span class="material-icons-outlined">check_circle</span>
+                            Join as Seller
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Form (for sellers who joined) -->
+                <div id="productForm" class="product-form">
+                    <div class="content-section">
+                        <h2 class="section-title">Product Details</h2>
+                        <form id="productDetailsForm">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Product Name <span class="required">*</span>
+                                </label>
+                                <input type="text" id="productName" class="form-input" required 
+                                       placeholder="e.g., iPhone 13 Pro" maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Product Description <span class="required">*</span>
+                                </label>
+                                <textarea id="productDescription" class="form-textarea" required 
+                                          placeholder="Describe the product condition, features, and any important details..." maxlength="1000"></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select id="productCategory" class="form-select">
+                                        <option value="">Select category</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="clothing">Clothing & Accessories</option>
+                                        <option value="home">Home & Garden</option>
+                                        <option value="sports">Sports & Outdoors</option>
+                                        <option value="books">Books & Media</option>
+                                        <option value="toys">Toys & Games</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Condition</label>
+                                    <select id="productCondition" class="form-select">
+                                        <option value="new">New</option>
+                                        <option value="like_new">Like New</option>
+                                        <option value="good">Good</option>
+                                        <option value="fair">Fair</option>
+                                        <option value="poor">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Brand</label>
+                                    <input type="text" id="productBrand" class="form-input" 
+                                           placeholder="e.g., Apple, Samsung" maxlength="50">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Model</label>
+                                    <input type="text" id="productModel" class="form-input" 
+                                           placeholder="e.g., iPhone 13 Pro" maxlength="50">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Product Images <span class="required">*</span>
+                                </label>
+                                <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+                                    <div class="image-upload-icon">
+                                        <span class="material-icons-outlined">add_photo_alternate</span>
+                                    </div>
+                                    <div class="image-upload-text">Click to upload images</div>
+                                    <div class="image-upload-hint">Minimum 5 images required (JPG, PNG, max 5MB each)</div>
+                                </div>
+                                <input type="file" id="imageInput" multiple accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                                <div id="uploadedImages" class="uploaded-images"></div>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary" onclick="goToDashboard()">
+                                    <span class="material-icons-outlined">arrow_back</span>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="submitProductBtn">
+                                    <span class="material-icons-outlined">send</span>
+                                    Submit Product Details
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Product Display (for buyer approval) -->
+                <div id="productDisplay" class="product-display">
+                    <div class="content-section">
+                        <h2 class="section-title">Product Details</h2>
+                        <div id="productImages" class="product-images"></div>
+                        <div class="product-details">
+                            <h3 class="product-name" id="productNameDisplay"></h3>
+                            <p class="product-description" id="productDescriptionDisplay"></p>
+                            <div class="product-meta" id="productMetaDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Content Grid -->
+                <div id="transactionContent" class="transaction-content">
+                    <!-- Transaction Details -->
+                    <div class="content-section">
+                        <h2 class="section-title">Transaction Details</h2>
+                        <div class="detail-row">
+                            <span class="detail-label">Transaction ID</span>
+                            <span class="detail-value" id="detailTransactionId">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Buyer</span>
+                            <span class="detail-value" id="detailBuyer">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Seller</span>
+                            <span class="detail-value" id="detailSeller">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Amount</span>
+                            <span class="detail-value" id="detailAmount">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Created</span>
+                            <span class="detail-value" id="detailCreated">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Expires</span>
+                            <span class="detail-value" id="detailExpires">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Timeline -->
+                    <div class="content-section">
+                        <h2 class="section-title">Transaction Timeline</h2>
+                        <div id="transactionTimeline" class="timeline"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div id="actionButtons" class="btn-group" style="margin-top: 24px;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/auth-service.js"></script>
+    <script src="js/database-service.js"></script>
+    <script src="js/helpers.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let transactionData = null;
+        let uploadedImages = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get transaction ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const transactionId = urlParams.get('id');
+            
+            if (!transactionId) {
+                showError('No transaction ID provided');
+                return;
+            }
+
+            // Check authentication
+            const authResult = await authService.getCurrentUser();
+            if (authResult.success && authResult.user) {
+                currentUser = authResult.user;
+            }
+
+            // Load transaction data
+            await loadTransaction(transactionId);
+        });
+
+        // Load transaction data
+        async function loadTransaction(transactionId) {
+            try {
+                // Query transaction by transaction_id
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .select(`
+                        *,
+                        buyer:auth.users!transactions_buyer_id_fkey (
+                            email,
+                            raw_user_meta_data
+                        ),
+                        seller:auth.users!transactions_seller_id_fkey (
+                            email,
+                            raw_user_meta_data
+                        )
+                    `)
+                    .eq('transaction_id', transactionId)
+                    .single();
+
+                if (error) {
+                    throw error;
+                }
+
+                if (!data) {
+                    showError('Transaction not found');
+                    return;
+                }
+
+                transactionData = data;
+                displayTransaction();
+                
+            } catch (error) {
+                console.error('Error loading transaction:', error);
+                showError('Failed to load transaction details');
+            }
+        }
+
+        // Display transaction data
+        function displayTransaction() {
+            // Hide loading state
+            document.getElementById('loadingState').classList.remove('active');
+            document.getElementById('transactionView').classList.add('active');
+
+            // Update header
+            document.getElementById('transactionId').textContent = `Transaction ID: ${transactionData.transaction_id}`;
+            document.getElementById('transactionTitle').textContent = transactionData.title;
+            document.getElementById('transactionAmount').textContent = 
+                `${transactionData.currency} ${transactionData.amount.toLocaleString()}`;
+            document.getElementById('transactionDate').textContent = 
+                new Date(transactionData.created_at).toLocaleDateString();
+
+            // Update status badge
+            const statusElement = document.getElementById('transactionStatus');
+            statusElement.textContent = formatStatus(transactionData.status);
+            statusElement.className = `status-badge status-${transactionData.status}`;
+
+            // Update details
+            document.getElementById('detailTransactionId').textContent = transactionData.transaction_id;
+            document.getElementById('detailAmount').textContent = 
+                `${transactionData.currency} ${transactionData.amount.toLocaleString()}`;
+            document.getElementById('detailCreated').textContent = 
+                new Date(transactionData.created_at).toLocaleDateString();
+            document.getElementById('detailExpires').textContent = 
+                new Date(transactionData.expires_at).toLocaleDateString();
+
+            // Update buyer info
+            if (transactionData.buyer) {
+                const buyerName = transactionData.buyer.raw_user_meta_data?.full_name || transactionData.buyer.email;
+                document.getElementById('detailBuyer').textContent = buyerName;
+            }
+
+            // Update seller info
+            if (transactionData.seller) {
+                const sellerName = transactionData.seller.raw_user_meta_data?.full_name || transactionData.seller.email;
+                document.getElementById('detailSeller').textContent = sellerName;
+            } else {
+                document.getElementById('detailSeller').textContent = 'Not joined yet';
+            }
+
+            // Load timeline
+            loadTimeline();
+
+            // Show appropriate sections based on status and user role
+            updateViewForUser();
+        }
+
+        // Update view based on user role and transaction status
+        function updateViewForUser() {
+            if (!currentUser) {
+                // Not logged in - show limited view
+                document.getElementById('joinSection').style.display = 'none';
+                document.getElementById('productForm').classList.remove('active');
+                document.getElementById('productDisplay').classList.remove('active');
+                return;
+            }
+
+            const isBuyer = currentUser.id === transactionData.buyer_id;
+            const isSeller = transactionData.seller_id && currentUser.id === transactionData.seller_id;
+
+            if (isBuyer) {
+                // Buyer view
+                document.getElementById('joinSection').style.display = 'none';
+                document.getElementById('productForm').classList.remove('active');
+                
+                if (transactionData.status === 'product_submitted') {
+                    loadProductDetails();
+                    document.getElementById('productDisplay').classList.add('active');
+                    showBuyerActions();
+                } else if (transactionData.status === 'product_approved') {
+                    loadProductDetails();
+                    document.getElementById('productDisplay').classList.add('active');
+                    showPaymentActions();
+                }
+            } else if (isSeller) {
+                // Seller view
+                document.getElementById('joinSection').style.display = 'none';
+                
+                if (transactionData.status === 'seller_joined') {
+                    document.getElementById('productForm').classList.add('active');
+                    setupProductForm();
+                } else if (transactionData.status === 'product_submitted') {
+                    loadProductDetails();
+                    document.getElementById('productDisplay').classList.add('active');
+                }
+            } else {
+                // Potential seller - show join section
+                if (transactionData.status === 'created') {
+                    document.getElementById('joinSection').style.display = 'block';
+                } else {
+                    document.getElementById('joinSection').style.display = 'none';
+                }
+            }
+        }
+
+        // Join transaction as seller
+        async function joinTransaction() {
+            if (!currentUser) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            try {
+                // Update transaction with seller
+                const { error } = await supabase
+                    .from('transactions')
+                    .update({
+                        seller_id: currentUser.id,
+                        status: 'seller_joined',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', transactionData.id);
+
+                if (error) throw error;
+
+                // Log history
+                await logTransactionHistory(
+                    transactionData.id,
+                    'seller_joined',
+                    'Seller joined the transaction',
+                    'created',
+                    'seller_joined',
+                    currentUser.id,
+                    'seller'
+                );
+
+                // Reload transaction data
+                await loadTransaction(transactionData.transaction_id);
+
+            } catch (error) {
+                console.error('Error joining transaction:', error);
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Failed to join transaction. Please try again.', 'error');
+                }
+            }
+        }
+
+        // Setup product form
+        function setupProductForm() {
+            const form = document.getElementById('productDetailsForm');
+            form.addEventListener('submit', handleProductSubmit);
+        }
+
+        // Handle product form submission
+        async function handleProductSubmit(event) {
+            event.preventDefault();
+
+            if (uploadedImages.length < 5) {
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Please upload at least 5 product images', 'error');
+                }
+                return;
+            }
+
+            try {
+                // Disable submit button
+                const submitBtn = document.getElementById('submitProductBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="material-icons-outlined">hourglass_empty</span> Submitting...';
+
+                // Create product listing
+                const productData = {
+                    transaction_id: transactionData.id,
+                    product_name: document.getElementById('productName').value.trim(),
+                    product_description: document.getElementById('productDescription').value.trim(),
+                    product_category: document.getElementById('productCategory').value,
+                    product_condition: document.getElementById('productCondition').value,
+                    product_brand: document.getElementById('productBrand').value.trim(),
+                    product_model: document.getElementById('productModel').value.trim(),
+                    expected_price: transactionData.amount,
+                    status: 'submitted',
+                    submitted_at: new Date().toISOString()
+                };
+
+                const { data: product, error: productError } = await supabase
+                    .from('product_listings')
+                    .insert(productData)
+                    .select()
+                    .single();
+
+                if (productError) throw productError;
+
+                // Upload images
+                await uploadProductImages(product.id);
+
+                // Update transaction status
+                const { error: updateError } = await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'product_submitted',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', transactionData.id);
+
+                if (updateError) throw updateError;
+
+                // Log history
+                await logTransactionHistory(
+                    transactionData.id,
+                    'product_submitted',
+                    'Product details submitted by seller',
+                    'seller_joined',
+                    'product_submitted',
+                    currentUser.id,
+                    'seller'
+                );
+
+                // Reload transaction
+                await loadTransaction(transactionData.transaction_id);
+
+            } catch (error) {
+                console.error('Error submitting product:', error);
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Failed to submit product details. Please try again.', 'error');
+                }
+            } finally {
+                // Re-enable submit button
+                const submitBtn = document.getElementById('submitProductBtn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="material-icons-outlined">send</span> Submit Product Details';
+            }
+        }
+
+        // Handle image upload
+        function handleImageUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            if (uploadedImages.length + files.length > 10) {
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Maximum 10 images allowed', 'error');
+                }
+                return;
+            }
+
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) { // 5MB
+                    if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                        Helpers.showToast('Image size must be less than 5MB', 'error');
+                    }
+                    return;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                        Helpers.showToast('Only image files are allowed', 'error');
+                    }
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push({
+                        file: file,
+                        preview: e.target.result
+                    });
+                    updateImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Update image preview
+        function updateImagePreview() {
+            const container = document.getElementById('uploadedImages');
+            container.innerHTML = '';
+
+            uploadedImages.forEach((image, index) => {
+                const div = document.createElement('div');
+                div.className = 'uploaded-image';
+                div.innerHTML = `
+                    <img src="${image.preview}" alt="Product image ${index + 1}">
+                    <button type="button" class="remove-image" onclick="removeImage(${index})">
+                        <span class="material-icons-outlined" style="font-size: 16px;">close</span>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Remove image
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImagePreview();
+        }
+
+        // Upload product images
+        async function uploadProductImages(productListingId) {
+            const uploadPromises = uploadedImages.map(async (image, index) => {
+                const fileName = `product-${productListingId}-${index + 1}-${Date.now()}.${image.file.name.split('.').pop()}`;
+                const filePath = `product-images/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('product-images')
+                    .upload(filePath, image.file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('product-images')
+                    .getPublicUrl(filePath);
+
+                // Save image record
+                await supabase
+                    .from('product_images')
+                    .insert({
+                        product_listing_id: productListingId,
+                        image_url: publicUrl,
+                        image_order: index,
+                        file_size: image.file.size,
+                        file_type: image.file.type
+                    });
+            });
+
+            await Promise.all(uploadPromises);
+        }
+
+        // Load product details
+        async function loadProductDetails() {
+            try {
+                const { data, error } = await supabase
+                    .from('product_listings')
+                    .select(`
+                        *,
+                        product_images (
+                            image_url,
+                            image_order
+                        )
+                    `)
+                    .eq('transaction_id', transactionData.id)
+                    .single();
+
+                if (error) throw error;
+                if (!data) return;
+
+                // Display product images
+                const imagesContainer = document.getElementById('productImages');
+                imagesContainer.innerHTML = '';
+                
+                if (data.product_images && data.product_images.length > 0) {
+                    data.product_images
+                        .sort((a, b) => a.image_order - b.image_order)
+                        .forEach(image => {
+                            const div = document.createElement('div');
+                            div.className = 'product-image';
+                            div.innerHTML = `<img src="${image.image_url}" alt="Product image">`;
+                            imagesContainer.appendChild(div);
+                        });
+                }
+
+                // Display product details
+                document.getElementById('productNameDisplay').textContent = data.product_name;
+                document.getElementById('productDescriptionDisplay').textContent = data.product_description;
+
+                // Display product meta
+                const metaContainer = document.getElementById('productMetaDisplay');
+                metaContainer.innerHTML = `
+                    <div><strong>Category:</strong> ${data.product_category || 'Not specified'}</div>
+                    <div><strong>Condition:</strong> ${data.product_condition}</div>
+                    ${data.product_brand ? `<div><strong>Brand:</strong> ${data.product_brand}</div>` : ''}
+                    ${data.product_model ? `<div><strong>Model:</strong> ${data.product_model}</div>` : ''}
+                    <div><strong>Expected Price:</strong> ${transactionData.currency} ${data.expected_price.toLocaleString()}</div>
+                `;
+
+            } catch (error) {
+                console.error('Error loading product details:', error);
+            }
+        }
+
+        // Show buyer actions
+        function showBuyerActions() {
+            const container = document.getElementById('actionButtons');
+            container.innerHTML = `
+                <button class="btn btn-success" onclick="approveProduct()">
+                    <span class="material-icons-outlined">check_circle</span>
+                    Approve Product
+                </button>
+                <button class="btn btn-danger" onclick="rejectProduct()">
+                    <span class="material-icons-outlined">cancel</span>
+                    Request Changes
+                </button>
+            `;
+        }
+
+        // Show payment actions
+        function showPaymentActions() {
+            const container = document.getElementById('actionButtons');
+            container.innerHTML = `
+                <button class="btn btn-primary" onclick="uploadPaymentProof()">
+                    <span class="material-icons-outlined">upload</span>
+                    Upload Payment Proof
+                </button>
+            `;
+        }
+
+        // Approve product
+        async function approveProduct() {
+            try {
+                // Update transaction status
+                const { error } = await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'product_approved',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', transactionData.id);
+
+                if (error) throw error;
+
+                // Log history
+                await logTransactionHistory(
+                    transactionData.id,
+                    'product_approved',
+                    'Product approved by buyer',
+                    'product_submitted',
+                    'product_approved',
+                    currentUser.id,
+                    'buyer'
+                );
+
+                // Reload transaction
+                await loadTransaction(transactionData.transaction_id);
+
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Product approved successfully!', 'success');
+                }
+
+            } catch (error) {
+                console.error('Error approving product:', error);
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Failed to approve product. Please try again.', 'error');
+                }
+            }
+        }
+
+        // Reject product
+        async function rejectProduct() {
+            const reason = prompt('Please specify the changes needed:');
+            if (!reason) return;
+
+            try {
+                // Update product listing
+                const { error } = await supabase
+                    .from('product_listings')
+                    .update({
+                        status: 'rejected',
+                        rejection_reason: reason,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('transaction_id', transactionData.id);
+
+                if (error) throw error;
+
+                // Log history
+                await logTransactionHistory(
+                    transactionData.id,
+                    'product_rejected',
+                    `Product rejected: ${reason}`,
+                    'product_submitted',
+                    'seller_joined',
+                    currentUser.id,
+                    'buyer'
+                );
+
+                // Reload transaction
+                await loadTransaction(transactionData.transaction_id);
+
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Changes requested. Seller will be notified.', 'info');
+                }
+
+            } catch (error) {
+                console.error('Error rejecting product:', error);
+                if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                    Helpers.showToast('Failed to reject product. Please try again.', 'error');
+                }
+            }
+        }
+
+        // Upload payment proof
+        function uploadPaymentProof() {
+            // This would open a payment upload modal
+            if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                Helpers.showToast('Payment upload feature coming soon!', 'info');
+            }
+        }
+
+        // Load transaction timeline
+        async function loadTimeline() {
+            try {
+                const { data, error } = await supabase
+                    .from('transaction_history')
+                    .select('*')
+                    .eq('transaction_id', transactionData.id)
+                    .order('created_at', { ascending: true });
+
+                if (error) throw error;
+
+                const timelineContainer = document.getElementById('transactionTimeline');
+                timelineContainer.innerHTML = '';
+
+                data.forEach((event, index) => {
+                    const isCompleted = index < data.length - 1;
+                    const isActive = index === data.length - 1;
+
+                    const item = document.createElement('div');
+                    item.className = 'timeline-item';
+                    item.innerHTML = `
+                        <div class="timeline-marker ${isCompleted ? 'completed' : isActive ? 'active' : ''}">
+                            ${isCompleted ? '<span class="material-icons-outlined" style="font-size: 14px;">check</span>' : ''}
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">${event.event_description}</div>
+                            <div class="timeline-description">By ${event.user_role}</div>
+                            <div class="timeline-time">${new Date(event.created_at).toLocaleString()}</div>
+                        </div>
+                    `;
+                    timelineContainer.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error('Error loading timeline:', error);
+            }
+        }
+
+        // Log transaction history
+        async function logTransactionHistory(transactionId, eventType, description, previousStatus, newStatus, performedBy, userRole) {
+            try {
+                await supabase
+                    .from('transaction_history')
+                    .insert({
+                        transaction_id: transactionId,
+                        event_type: eventType,
+                        event_description: description,
+                        previous_status: previousStatus,
+                        new_status: newStatus,
+                        performed_by: performedBy,
+                        user_role: userRole
+                    });
+            } catch (error) {
+                console.error('Failed to log transaction history:', error);
+            }
+        }
+
+        // Utility functions
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').classList.remove('active');
+            document.getElementById('errorState').classList.add('active');
+            document.querySelector('.error-message').textContent = message;
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -683,6 +683,15 @@
                 <div class="nav-tab" data-tab="kyc-rejected" onclick="switchTab('kyc-rejected')">
                     Rejected KYC
                 </div>
+                <div class="nav-tab" data-tab="transactions" onclick="switchTab('transactions')">
+                    All Transactions
+                </div>
+                <div class="nav-tab" data-tab="payments" onclick="switchTab('payments')">
+                    Payment Verification
+                </div>
+                <div class="nav-tab" data-tab="inspection" onclick="switchTab('inspection')">
+                    Product Inspection
+                </div>
             </div>
         </div>
     </div>
@@ -796,6 +805,146 @@
                     <div class="kyc-items" id="rejectedKycItems">
                         <div class="loading">Loading rejected KYC...</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div class="content-section" id="transactions-section">
+                <div class="transaction-list">
+                    <div class="list-header">
+                        <h2 class="list-title">All Transactions</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by ID or name..." id="transactionSearch">
+                            </div>
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="created">Created</option>
+                                <option value="seller_joined">Seller Joined</option>
+                                <option value="product_submitted">Product Submitted</option>
+                                <option value="product_approved">Product Approved</option>
+                                <option value="payment_uploaded">Payment Uploaded</option>
+                                <option value="payment_verified">Payment Verified</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="transaction-items" id="transactionItems">
+                        <div class="loading">Loading transactions...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Verification Section -->
+            <div class="content-section" id="payments-section">
+                <div class="payment-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Payment Verification</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by transaction ID..." id="paymentSearch">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-items" id="paymentItems">
+                        <div class="loading">Loading payment records...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Inspection Section -->
+            <div class="content-section" id="inspection-section">
+                <div class="inspection-list">
+                    <div class="list-header">
+                        <h2 class="list-title">Product Inspection</h2>
+                        <div class="filter-controls">
+                            <div class="search-box">
+                                <span class="material-icons-outlined search-icon">search</span>
+                                <input type="text" class="search-input" placeholder="Search by transaction ID..." id="inspectionSearch">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inspection-items" id="inspectionItems">
+                        <div class="loading">Loading inspection records...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Transaction Details</h2>
+                <button class="modal-close" onclick="closeTransactionModal()">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="transactionModalBody">
+                <!-- Content will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Verification Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Payment Verification</h2>
+                <button class="modal-close" onclick="closePaymentModal()">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="paymentModalBody">
+                <!-- Content will be dynamically loaded -->
+            </div>
+            <div class="modal-footer">
+                <div class="review-notes">
+                    <textarea class="notes-textarea" id="paymentNotes" placeholder="Add verification notes..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-success" onclick="verifyPayment()">
+                        <span class="material-icons-outlined">check_circle</span>
+                        Verify Payment
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectPayment()">
+                        <span class="material-icons-outlined">cancel</span>
+                        Reject Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspection Modal -->
+    <div class="modal" id="inspectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Product Inspection</h2>
+                <button class="modal-close" onclick="closeInspectionModal()">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="inspectionModalBody">
+                <!-- Content will be dynamically loaded -->
+            </div>
+            <div class="modal-footer">
+                <div class="review-notes">
+                    <textarea class="notes-textarea" id="inspectionNotes" placeholder="Add inspection notes..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-success" onclick="passInspection()">
+                        <span class="material-icons-outlined">check_circle</span>
+                        Pass Inspection
+                    </button>
+                    <button class="btn btn-warning" onclick="failInspection()">
+                        <span class="material-icons-outlined">error</span>
+                        Fail Inspection
+                    </button>
                 </div>
             </div>
         </div>
@@ -1113,23 +1262,264 @@
 
         // Load tab-specific data
         async function loadTabData(tabName) {
-            const statusFilter = tabName.replace('kyc-', '');
-            const filteredData = statusFilter === 'dashboard' 
-                ? allKYCData.slice(0, 10)
-                : allKYCData.filter(kyc => kyc.status === statusFilter);
+            switch(tabName) {
+                case 'dashboard':
+                case 'kyc-pending':
+                case 'kyc-verified':
+                case 'kyc-rejected':
+                    const statusFilter = tabName.replace('kyc-', '');
+                    const filteredData = statusFilter === 'dashboard' 
+                        ? allKYCData.slice(0, 10)
+                        : allKYCData.filter(kyc => kyc.status === statusFilter);
 
-            const containerId = statusFilter === 'dashboard' 
-                ? 'recentKycItems'
-                : `${statusFilter}KycItems`;
+                    const containerId = statusFilter === 'dashboard' 
+                        ? 'recentKycItems'
+                        : `${statusFilter}KycItems`;
 
-            const container = document.getElementById(containerId);
-            
-            if (filteredData.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">inbox</span></div><p>No KYC submissions found</p></div>';
-                return;
+                    const container = document.getElementById(containerId);
+                    
+                    if (filteredData.length === 0) {
+                        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">inbox</span></div><p>No KYC submissions found</p></div>';
+                        return;
+                    }
+
+                    container.innerHTML = filteredData.map(kyc => createKYCItem(kyc)).join('');
+                    break;
+                
+                case 'transactions':
+                    await loadTransactions();
+                    break;
+                
+                case 'payments':
+                    await loadPayments();
+                    break;
+                
+                case 'inspection':
+                    await loadInspections();
+                    break;
             }
+        }
 
-            container.innerHTML = filteredData.map(kyc => createKYCItem(kyc)).join('');
+        // Load transactions
+        async function loadTransactions() {
+            try {
+                const { data, error } = await supabase
+                    .from('transaction_summary')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('transactionItems');
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">receipt_long</span></div><p>No transactions found</p></div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(transaction => createTransactionItem(transaction)).join('');
+                
+                // Add event listeners
+                setupTransactionFilters();
+                
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactionItems').innerHTML = '<div class="error-state">Failed to load transactions</div>';
+            }
+        }
+
+        // Load payments
+        async function loadPayments() {
+            try {
+                const { data, error } = await supabase
+                    .from('payment_records')
+                    .select(`
+                        *,
+                        transactions!inner (
+                            transaction_id,
+                            title,
+                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
+                            seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data)
+                        )
+                    `)
+                    .eq('status', 'uploaded')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('paymentItems');
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">payments</span></div><p>No payment verifications pending</p></div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(payment => createPaymentItem(payment)).join('');
+                
+                // Add event listeners
+                setupPaymentFilters();
+                
+            } catch (error) {
+                console.error('Error loading payments:', error);
+                document.getElementById('paymentItems').innerHTML = '<div class="error-state">Failed to load payments</div>';
+            }
+        }
+
+        // Load inspections
+        async function loadInspections() {
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .select(`
+                        *,
+                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
+                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        product_listings (
+                            product_name,
+                            product_description,
+                            status
+                        )
+                    `)
+                    .eq('status', 'payment_verified')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('inspectionItems');
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">fact_check</span></div><p>No inspections pending</p></div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(transaction => createInspectionItem(transaction)).join('');
+                
+                // Add event listeners
+                setupInspectionFilters();
+                
+            } catch (error) {
+                console.error('Error loading inspections:', error);
+                document.getElementById('inspectionItems').innerHTML = '<div class="error-state">Failed to load inspections</div>';
+            }
+        }
+
+        // Create transaction item HTML
+        function createTransactionItem(transaction) {
+            const statusClass = transaction.status || 'created';
+            const createdDate = new Date(transaction.created_at).toLocaleDateString();
+            const buyerName = transaction.buyer_name || transaction.buyer_email || 'Unknown';
+            const sellerName = transaction.seller_name || transaction.seller_email || 'Not joined';
+
+            return `
+                <div class="kyc-item" onclick="viewTransactionDetails('${transaction.id}')">
+                    <div class="kyc-header">
+                        <div class="kyc-info">
+                            <div class="kyc-name">${transaction.transaction_id}</div>
+                            <div class="kyc-email">${transaction.title}</div>
+                        </div>
+                        <div class="kyc-status">
+                            <span class="status-badge status-${statusClass}">${formatStatus(transaction.status)}</span>
+                        </div>
+                    </div>
+                    <div class="kyc-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value">${transaction.currency} ${transaction.amount.toLocaleString()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Buyer:</span>
+                            <span class="detail-value">${buyerName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Seller:</span>
+                            <span class="detail-value">${sellerName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Created:</span>
+                            <span class="detail-value">${createdDate}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create payment item HTML
+        function createPaymentItem(payment) {
+            const createdDate = new Date(payment.created_at).toLocaleDateString();
+            const transaction = payment.transactions;
+            const buyerName = transaction.buyer.raw_user_meta_data?.full_name || transaction.buyer.email;
+
+            return `
+                <div class="kyc-item" onclick="viewPaymentDetails('${payment.id}')">
+                    <div class="kyc-header">
+                        <div class="kyc-info">
+                            <div class="kyc-name">${transaction.transaction_id}</div>
+                            <div class="kyc-email">${transaction.title}</div>
+                        </div>
+                        <div class="kyc-status">
+                            <span class="status-badge status-pending">Verification Required</span>
+                        </div>
+                    </div>
+                    <div class="kyc-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value">${transaction.currency} ${payment.amount.toLocaleString()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Method:</span>
+                            <span class="detail-value">${payment.payment_method}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Buyer:</span>
+                            <span class="detail-value">${buyerName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Uploaded:</span>
+                            <span class="detail-value">${createdDate}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create inspection item HTML
+        function createInspectionItem(transaction) {
+            const createdDate = new Date(transaction.created_at).toLocaleDateString();
+            const buyerName = transaction.buyer.raw_user_meta_data?.full_name || transaction.buyer.email;
+            const sellerName = transaction.seller.raw_user_meta_data?.full_name || transaction.seller.email;
+            const product = transaction.product_listings && transaction.product_listings[0];
+
+            return `
+                <div class="kyc-item" onclick="viewInspectionDetails('${transaction.id}')">
+                    <div class="kyc-header">
+                        <div class="kyc-info">
+                            <div class="kyc-name">${transaction.transaction_id}</div>
+                            <div class="kyc-email">${product ? product.product_name : transaction.title}</div>
+                        </div>
+                        <div class="kyc-status">
+                            <span class="status-badge status-payment_verified">Ready for Inspection</span>
+                        </div>
+                    </div>
+                    <div class="kyc-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value">${transaction.currency} ${transaction.amount.toLocaleString()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Buyer:</span>
+                            <span class="detail-value">${buyerName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Seller:</span>
+                            <span class="detail-value">${sellerName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Payment Verified:</span>
+                            <span class="detail-value">${createdDate}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // View KYC details
@@ -1568,6 +1958,27 @@
                     closeModal();
                 }
             });
+
+            // Close transaction modal on outside click
+            document.getElementById('transactionModal').addEventListener('click', (e) => {
+                if (e.target.id === 'transactionModal') {
+                    closeTransactionModal();
+                }
+            });
+
+            // Close payment modal on outside click
+            document.getElementById('paymentModal').addEventListener('click', (e) => {
+                if (e.target.id === 'paymentModal') {
+                    closePaymentModal();
+                }
+            });
+
+            // Close inspection modal on outside click
+            document.getElementById('inspectionModal').addEventListener('click', (e) => {
+                if (e.target.id === 'inspectionModal') {
+                    closeInspectionModal();
+                }
+            });
         }
 
         // Filter KYC list
@@ -1624,6 +2035,673 @@
             setTimeout(() => {
                 notification.remove();
             }, 3000);
+        }
+
+        // Filter setup functions
+        function setupTransactionFilters() {
+            const searchInput = document.getElementById('transactionSearch');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => filterTransactions('search', e.target.value));
+            }
+            
+            if (statusFilter) {
+                statusFilter.addEventListener('change', (e) => filterTransactions('status', e.target.value));
+            }
+        }
+
+        function setupPaymentFilters() {
+            const searchInput = document.getElementById('paymentSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => filterPayments(e.target.value));
+            }
+        }
+
+        function setupInspectionFilters() {
+            const searchInput = document.getElementById('inspectionSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => filterInspections(e.target.value));
+            }
+        }
+
+        // Filter functions
+        async function filterTransactions(filterType, value) {
+            try {
+                let query = supabase.from('transaction_summary').select('*');
+                
+                if (filterType === 'status' && value) {
+                    query = query.eq('status', value);
+                } else if (filterType === 'search' && value) {
+                    query = query.or(`transaction_id.ilike.%${value}%,title.ilike.%${value}%,buyer_name.ilike.%${value}%,seller_name.ilike.%${value}%`);
+                }
+                
+                const { data, error } = await query.order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('transactionItems');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">search_off</span></div><p>No transactions found</p></div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(transaction => createTransactionItem(transaction)).join('');
+                
+            } catch (error) {
+                console.error('Error filtering transactions:', error);
+            }
+        }
+
+        async function filterPayments(searchTerm) {
+            try {
+                const { data, error } = await supabase
+                    .from('payment_records')
+                    .select(`
+                        *,
+                        transactions!inner (
+                            transaction_id,
+                            title,
+                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
+                            seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data)
+                        )
+                    `)
+                    .eq('status', 'uploaded')
+                    .or(`transaction_id.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('paymentItems');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">search_off</span></div><p>No payments found</p></div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(payment => createPaymentItem(payment)).join('');
+                
+            } catch (error) {
+                console.error('Error filtering payments:', error);
+            }
+        }
+
+        async function filterInspections(searchTerm) {
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .select(`
+                        *,
+                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
+                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        product_listings (
+                            product_name,
+                            product_description,
+                            status
+                        )
+                    `)
+                    .eq('status', 'payment_verified')
+                    .or(`transaction_id.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('inspectionItems');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon"><span class="material-icons-outlined">search_off</span></div><p>No inspections found</p></div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(transaction => createInspectionItem(transaction)).join('');
+                
+            } catch (error) {
+                console.error('Error filtering inspections:', error);
+            }
+        }
+
+        // Transaction detail functions
+        async function viewTransactionDetails(transactionId) {
+            try {
+                const { data, error } = await supabase
+                    .from('transaction_summary')
+                    .select('*')
+                    .eq('id', transactionId)
+                    .single();
+
+                if (error) throw error;
+
+                showTransactionModal(data);
+                
+            } catch (error) {
+                console.error('Error loading transaction details:', error);
+                showError('Failed to load transaction details');
+            }
+        }
+
+        function showTransactionModal(transaction) {
+            const modal = document.getElementById('transactionModal');
+            const modalBody = document.getElementById('transactionModalBody');
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3 class="section-title">Transaction Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Transaction ID</div>
+                            <div class="detail-value">${transaction.transaction_id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Title</div>
+                            <div class="detail-value">${transaction.title}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Amount</div>
+                            <div class="detail-value">${transaction.currency} ${transaction.amount.toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">
+                                <span class="status-badge status-${transaction.status}">${formatStatus(transaction.status)}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Buyer</div>
+                            <div class="detail-value">${transaction.buyer_name || transaction.buyer_email}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Seller</div>
+                            <div class="detail-value">${transaction.seller_name || transaction.seller_email || 'Not joined'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Created</div>
+                            <div class="detail-value">${new Date(transaction.created_at).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Shareable Link</div>
+                            <div class="detail-value">
+                                <a href="${transaction.shareable_link}" target="_blank" style="color: #3b82f6;">View Transaction</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${transaction.product_name ? `
+                <div class="detail-section">
+                    <h3 class="section-title">Product Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Product Name</div>
+                            <div class="detail-value">${transaction.product_name}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value">${transaction.product_description || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="detail-section">
+                    <h3 class="section-title">Latest Activity</h3>
+                    <div class="detail-value">${transaction.latest_event || 'No recent activity'}</div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('active');
+        }
+
+        // Payment verification functions
+        let currentPayment = null;
+
+        async function viewPaymentDetails(paymentId) {
+            try {
+                const { data, error } = await supabase
+                    .from('payment_records')
+                    .select(`
+                        *,
+                        transactions!inner (
+                            transaction_id,
+                            title,
+                            amount,
+                            currency,
+                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data)
+                        )
+                    `)
+                    .eq('id', paymentId)
+                    .single();
+
+                if (error) throw error;
+
+                currentPayment = data;
+                showPaymentModal(data);
+                
+            } catch (error) {
+                console.error('Error loading payment details:', error);
+                showError('Failed to load payment details');
+            }
+        }
+
+        function showPaymentModal(payment) {
+            const modal = document.getElementById('paymentModal');
+            const modalBody = document.getElementById('paymentModalBody');
+            const transaction = payment.transactions;
+            const buyerName = transaction.buyer.raw_user_meta_data?.full_name || transaction.buyer.email;
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3 class="section-title">Payment Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Transaction ID</div>
+                            <div class="detail-value">${transaction.transaction_id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Title</div>
+                            <div class="detail-value">${transaction.title}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Amount</div>
+                            <div class="detail-value">${transaction.currency} ${payment.amount.toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Payment Method</div>
+                            <div class="detail-value">${payment.payment_method}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Provider</div>
+                            <div class="detail-value">${payment.payment_provider || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Reference</div>
+                            <div class="detail-value">${payment.transaction_reference || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Buyer</div>
+                            <div class="detail-value">${buyerName}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Uploaded</div>
+                            <div class="detail-value">${new Date(payment.created_at).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${payment.proof_url ? `
+                <div class="detail-section">
+                    <h3 class="section-title">Payment Proof</h3>
+                    <div style="text-align: center;">
+                        <img src="${payment.proof_url}" alt="Payment Proof" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    </div>
+                    ${payment.proof_description ? `
+                    <div style="margin-top: 16px;">
+                        <strong>Description:</strong> ${payment.proof_description}
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('active');
+        }
+
+        async function verifyPayment() {
+            if (!currentPayment) return;
+
+            const notes = document.getElementById('paymentNotes').value;
+
+            try {
+                // Update payment status
+                const { error: paymentError } = await supabase
+                    .from('payment_records')
+                    .update({
+                        status: 'verified',
+                        verified_at: new Date().toISOString(),
+                        verified_by: currentUser.id,
+                        verification_notes: notes
+                    })
+                    .eq('id', currentPayment.id);
+
+                if (paymentError) throw paymentError;
+
+                // Update transaction status
+                const { error: transactionError } = await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'payment_verified',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', currentPayment.transaction_id);
+
+                if (transactionError) throw transactionError;
+
+                // Create escrow record
+                await supabase
+                    .from('escrow_records')
+                    .insert({
+                        transaction_id: currentPayment.transaction_id,
+                        amount: currentPayment.amount,
+                        currency: currentPayment.transactions.currency,
+                        status: 'held',
+                        funds_held_at: new Date().toISOString()
+                    });
+
+                // Log history
+                await supabase
+                    .from('transaction_history')
+                    .insert({
+                        transaction_id: currentPayment.transaction_id,
+                        event_type: 'payment_verified',
+                        event_description: 'Payment verified by admin',
+                        previous_status: 'payment_uploaded',
+                        new_status: 'payment_verified',
+                        performed_by: currentUser.id,
+                        user_role: 'admin'
+                    });
+
+                showSuccess('Payment verified successfully!');
+                closePaymentModal();
+                await loadPayments();
+
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                showError('Failed to verify payment: ' + error.message);
+            }
+        }
+
+        async function rejectPayment() {
+            if (!currentPayment) return;
+
+            const notes = document.getElementById('paymentNotes').value;
+            if (!notes.trim()) {
+                showError('Please provide rejection reason');
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('payment_records')
+                    .update({
+                        status: 'rejected',
+                        verified_at: new Date().toISOString(),
+                        verified_by: currentUser.id,
+                        verification_notes: notes,
+                        rejection_reason: notes
+                    })
+                    .eq('id', currentPayment.id);
+
+                if (error) throw error;
+
+                showSuccess('Payment rejected successfully!');
+                closePaymentModal();
+                await loadPayments();
+
+            } catch (error) {
+                console.error('Error rejecting payment:', error);
+                showError('Failed to reject payment: ' + error.message);
+            }
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            currentPayment = null;
+            document.getElementById('paymentNotes').value = '';
+        }
+
+        // Inspection functions
+        let currentInspection = null;
+
+        async function viewInspectionDetails(transactionId) {
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .select(`
+                        *,
+                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
+                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        product_listings (
+                            product_name,
+                            product_description,
+                            product_condition,
+                            expected_price,
+                            product_images (
+                                image_url,
+                                image_order
+                            )
+                        )
+                    `)
+                    .eq('id', transactionId)
+                    .single();
+
+                if (error) throw error;
+
+                currentInspection = data;
+                showInspectionModal(data);
+                
+            } catch (error) {
+                console.error('Error loading inspection details:', error);
+                showError('Failed to load inspection details');
+            }
+        }
+
+        function showInspectionModal(transaction) {
+            const modal = document.getElementById('inspectionModal');
+            const modalBody = document.getElementById('inspectionModalBody');
+            const buyerName = transaction.buyer.raw_user_meta_data?.full_name || transaction.buyer.email;
+            const sellerName = transaction.seller.raw_user_meta_data?.full_name || transaction.seller.email;
+            const product = transaction.product_listings && transaction.product_listings[0];
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3 class="section-title">Transaction Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Transaction ID</div>
+                            <div class="detail-value">${transaction.transaction_id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Amount</div>
+                            <div class="detail-value">${transaction.currency} ${transaction.amount.toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Buyer</div>
+                            <div class="detail-value">${buyerName}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Seller</div>
+                            <div class="detail-value">${sellerName}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${product ? `
+                <div class="detail-section">
+                    <h3 class="section-title">Product Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Product Name</div>
+                            <div class="detail-value">${product.product_name}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value">${product.product_description}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Condition</div>
+                            <div class="detail-value">${product.product_condition}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Expected Price</div>
+                            <div class="detail-value">${transaction.currency} ${product.expected_price.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    ${product.product_images && product.product_images.length > 0 ? `
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 12px;">Product Images:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                            ${product.product_images
+                                .sort((a, b) => a.image_order - b.image_order)
+                                .map(img => `
+                                    <img src="${img.image_url}" alt="Product image" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+                
+                <div class="detail-section">
+                    <h3 class="section-title">Inspection Instructions</h3>
+                    <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px;">
+                        <p style="margin: 0; color: #92400e;">
+                            Please inspect the product to ensure it matches the submitted description and condition. 
+                            Check for any damages, missing items, or discrepancies from the listing.
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        async function passInspection() {
+            if (!currentInspection) return;
+
+            const notes = document.getElementById('inspectionNotes').value;
+
+            try {
+                // Create inspection record
+                await supabase
+                    .from('inspection_records')
+                    .insert({
+                        transaction_id: currentInspection.id,
+                        inspector_id: currentUser.id,
+                        result: 'passed',
+                        inspection_notes: notes,
+                        inspection_date: new Date().toISOString()
+                    });
+
+                // Update transaction status
+                const { error: transactionError } = await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'inspection_passed',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', currentInspection.id);
+
+                if (transactionError) throw transactionError;
+
+                // Release funds from escrow
+                await supabase
+                    .from('escrow_records')
+                    .update({
+                        status: 'released',
+                        funds_released_at: new Date().toISOString(),
+                        released_by: currentUser.id,
+                        release_notes: notes || 'Inspection passed - funds released'
+                    })
+                    .eq('transaction_id', currentInspection.id);
+
+                // Mark transaction as completed
+                await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'completed',
+                        completed_at: new Date().toISOString()
+                    })
+                    .eq('id', currentInspection.id);
+
+                // Log history
+                await supabase
+                    .from('transaction_history')
+                    .insert({
+                        transaction_id: currentInspection.id,
+                        event_type: 'inspection_passed',
+                        event_description: 'Product inspection passed - funds released',
+                        previous_status: 'payment_verified',
+                        new_status: 'completed',
+                        performed_by: currentUser.id,
+                        user_role: 'admin'
+                    });
+
+                showSuccess('Inspection passed and funds released!');
+                closeInspectionModal();
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error completing inspection:', error);
+                showError('Failed to complete inspection: ' + error.message);
+            }
+        }
+
+        async function failInspection() {
+            if (!currentInspection) return;
+
+            const notes = document.getElementById('inspectionNotes').value;
+            if (!notes.trim()) {
+                showError('Please provide failure reason');
+                return;
+            }
+
+            try {
+                // Create inspection record
+                await supabase
+                    .from('inspection_records')
+                    .insert({
+                        transaction_id: currentInspection.id,
+                        inspector_id: currentUser.id,
+                        result: 'failed',
+                        inspection_notes: notes,
+                        inspection_date: new Date().toISOString()
+                    });
+
+                // Update transaction status
+                const { error } = await supabase
+                    .from('transactions')
+                    .update({
+                        status: 'inspection_failed',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', currentInspection.id);
+
+                if (error) throw error;
+
+                // Log history
+                await supabase
+                    .from('transaction_history')
+                    .insert({
+                        transaction_id: currentInspection.id,
+                        event_type: 'inspection_failed',
+                        event_description: `Product inspection failed: ${notes}`,
+                        previous_status: 'payment_verified',
+                        new_status: 'inspection_failed',
+                        performed_by: currentUser.id,
+                        user_role: 'admin'
+                    });
+
+                showSuccess('Inspection failed - seller notified');
+                closeInspectionModal();
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error failing inspection:', error);
+                showError('Failed to record inspection failure: ' + error.message);
+            }
+        }
+
+        function closeInspectionModal() {
+            document.getElementById('inspectionModal').classList.remove('active');
+            currentInspection = null;
+            document.getElementById('inspectionNotes').value = '';
+        }
+
+        // Utility function
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
 
         // Show error message

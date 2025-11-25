@@ -690,6 +690,146 @@
             margin: 0 2px;
         }
 
+        /* KYC Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .kyc-prompt-content {
+            text-align: center;
+        }
+
+        .kyc-icon {
+            margin-bottom: 16px;
+        }
+
+        .kyc-prompt-content h3 {
+            margin: 16px 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .kyc-prompt-content p {
+            margin: 8px 0 16px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .kyc-benefits {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .kyc-benefits h4 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .kyc-benefits ul {
+            margin: 0;
+            padding-left: 20px;
+            list-style: none;
+        }
+
+        .kyc-benefits li {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .kyc-warning {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .kyc-warning p {
+            margin: 0;
+            font-size: 14px;
+            color: #92400e;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
     </style>
 </head>
 <body>
@@ -820,6 +960,43 @@
             </div>
         </div>
     </main>
+
+    <!-- KYC Prompt Modal -->
+    <div id="kycPromptModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Complete Your KYC Verification</h2>
+                <button class="modal-close" onclick="closeKycModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="kyc-prompt-content">
+                    <div class="kyc-icon">
+                        <span class="material-icons-outlined" style="font-size: 48px; color: #3b82f6;">verified_user</span>
+                    </div>
+                    <h3>Verify Your Identity</h3>
+                    <p>To ensure secure transactions and comply with regulations, please complete your KYC (Know Your Customer) verification.</p>
+                    
+                    <div class="kyc-benefits">
+                        <h4>Benefits of completing KYC:</h4>
+                        <ul>
+                            <li>✓ Create and manage transactions</li>
+                            <li>✓ Higher transaction limits</li>
+                            <li>✓ Priority support</li>
+                            <li>✓ Enhanced security features</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="kyc-warning">
+                        <p><strong>Note:</strong> While you can skip this for now, KYC verification will be required before you can initiate any transactions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="skipKyc()">Skip for Now</button>
+                <button class="btn btn-primary" onclick="completeKyc()">Complete KYC</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
     <script src="https://elfsightcdn.com/platform.js" async></script>
@@ -1408,12 +1585,27 @@
                     }
                 }
                 
-                // If KYC is not verified AND not recently submitted, redirect to KYC page
+                // If KYC is not verified AND not recently submitted, show prompt modal
                 if (kycStatus !== 'verified' && !recentlySubmitted) {
-                    console.log('KYC not completed and not recently submitted, redirecting to KYC page...');
-                    setTimeout(() => {
-                        window.location.href = 'kyc.html';
-                    }, 2000); // Give user time to see the dashboard
+                    console.log('KYC not completed and not recently submitted, showing prompt modal...');
+                    // Check if user has already dismissed the KYC prompt before
+                    const kycPromptDismissed = localStorage.getItem('kycPromptDismissed');
+                    const lastDismissTime = localStorage.getItem('kycPromptDismissedTime');
+                    
+                    let shouldShowPrompt = true;
+                    if (kycPromptDismissed && lastDismissTime) {
+                        const dismissTime = new Date(lastDismissTime);
+                        const now = new Date();
+                        const daysSinceDismiss = (now - dismissTime) / (1000 * 60 * 60 * 24);
+                        // Only show prompt again if it's been more than 7 days
+                        shouldShowPrompt = daysSinceDismiss > 7;
+                    }
+                    
+                    if (shouldShowPrompt) {
+                        setTimeout(() => {
+                            showKycModal();
+                        }, 1000); // Show modal after 1 second
+                    }
                     return false;
                 }
                 
@@ -1467,6 +1659,57 @@
                 <p style="margin-top: 8px;">${message}</p>
             `;
         }
+
+        // KYC Modal Functions
+        function showKycModal() {
+            const modal = document.getElementById('kycPromptModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+        }
+
+        function closeKycModal() {
+            const modal = document.getElementById('kycPromptModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+
+        function skipKyc() {
+            // Store that user dismissed the KYC prompt
+            localStorage.setItem('kycPromptDismissed', 'true');
+            localStorage.setItem('kycPromptDismissedTime', new Date().toISOString());
+            
+            closeKycModal();
+            
+            // Show toast message
+            if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                Helpers.showToast('KYC verification skipped. You will be prompted again before creating transactions.', 'info');
+            }
+        }
+
+        function completeKyc() {
+            closeKycModal();
+            // Redirect to KYC page
+            window.location.href = 'kyc.html';
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('kycPromptModal');
+            if (modal && event.target === modal) {
+                closeKycModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeKycModal();
+            }
+        });
     </script>
 </body>
 </html>

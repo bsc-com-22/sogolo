@@ -474,6 +474,42 @@
             gap: 1rem;
         }
 
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .document-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #f9fafb;
+        }
+
+        .document-label {
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .document-preview {
+            text-align: center;
+        }
+
+        .document-preview img {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .document-preview img:hover {
+            transform: scale(1.02);
+        }
+
         .detail-item {
             display: flex;
             flex-direction: column;
@@ -1335,11 +1371,11 @@
                     .from('payment_records')
                     .select(`
                         *,
-                        transactions!inner (
+                        transactions (
                             transaction_id,
                             title,
-                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
-                            seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data)
+                            buyer:auth.users!buyer_id (email, raw_user_meta_data),
+                            seller:auth.users!seller_id (email, raw_user_meta_data)
                         )
                     `)
                     .eq('status', 'uploaded')
@@ -1372,8 +1408,8 @@
                     .from('transactions')
                     .select(`
                         *,
-                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
-                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        buyer:auth.users!buyer_id (email, raw_user_meta_data),
+                        seller:auth.users!seller_id (email, raw_user_meta_data),
                         product_listings (
                             product_name,
                             product_description,
@@ -1610,6 +1646,49 @@
                         <div class="detail-item">
                             <div class="detail-label">Next of Kin Address</div>
                             <div class="detail-value">${kyc.kin_address || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Documents -->
+                <div class="detail-section">
+                    <h3 class="section-title">Verification Documents</h3>
+                    <div class="document-grid">
+                        <div class="document-item">
+                            <div class="document-label">ID Document (Front)</div>
+                            ${kyc.id_document_url ? `
+                                <div class="document-preview">
+                                    <img src="${getFileUrl('kyc-documents', kyc.id_document_url)}" alt="ID Document Front" onclick="viewFullImage('${getFileUrl('kyc-documents', kyc.id_document_url)}')" style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; cursor: pointer;">
+                                    <button class="btn btn-sm btn-primary" onclick="viewFullImage('${getFileUrl('kyc-documents', kyc.id_document_url)}')">
+                                        <span class="material-icons-outlined">visibility</span>
+                                        View Full Size
+                                    </button>
+                                </div>
+                            ` : '<div class="detail-value">Not uploaded</div>'}
+                        </div>
+                        <div class="document-item">
+                            <div class="document-label">ID Document (Back)</div>
+                            ${kyc.address_document_url ? `
+                                <div class="document-preview">
+                                    <img src="${getFileUrl('kyc-documents', kyc.address_document_url)}" alt="ID Document Back" onclick="viewFullImage('${getFileUrl('kyc-documents', kyc.address_document_url)}')" style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; cursor: pointer;">
+                                    <button class="btn btn-sm btn-primary" onclick="viewFullImage('${getFileUrl('kyc-documents', kyc.address_document_url)}')">
+                                        <span class="material-icons-outlined">visibility</span>
+                                        View Full Size
+                                    </button>
+                                </div>
+                            ` : '<div class="detail-value">Not uploaded</div>'}
+                        </div>
+                        <div class="document-item">
+                            <div class="document-label">Selfie Photo</div>
+                            ${kyc.selfie_url ? `
+                                <div class="document-preview">
+                                    <img src="${getFileUrl('kyc-selfies', kyc.selfie_url)}" alt="Selfie" onclick="viewFullImage('${getFileUrl('kyc-selfies', kyc.selfie_url)}')" style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; cursor: pointer;">
+                                    <button class="btn btn-sm btn-primary" onclick="viewFullImage('${getFileUrl('kyc-selfies', kyc.selfie_url)}')">
+                                        <span class="material-icons-outlined">visibility</span>
+                                        View Full Size
+                                    </button>
+                                </div>
+                            ` : '<div class="detail-value">Not uploaded</div>'}
                         </div>
                     </div>
                 </div>
@@ -2099,11 +2178,11 @@
                     .from('payment_records')
                     .select(`
                         *,
-                        transactions!inner (
+                        transactions (
                             transaction_id,
                             title,
-                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
-                            seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data)
+                            buyer:auth.users!buyer_id (email, raw_user_meta_data),
+                            seller:auth.users!seller_id (email, raw_user_meta_data)
                         )
                     `)
                     .eq('status', 'uploaded')
@@ -2131,8 +2210,8 @@
                     .from('transactions')
                     .select(`
                         *,
-                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
-                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        buyer:auth.users!buyer_id (email, raw_user_meta_data),
+                        seller:auth.users!seller_id (email, raw_user_meta_data),
                         product_listings (
                             product_name,
                             product_description,
@@ -2262,12 +2341,12 @@
                     .from('payment_records')
                     .select(`
                         *,
-                        transactions!inner (
+                        transactions (
                             transaction_id,
                             title,
                             amount,
                             currency,
-                            buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data)
+                            buyer:auth.users!buyer_id (email, raw_user_meta_data)
                         )
                     `)
                     .eq('id', paymentId)
@@ -2459,8 +2538,8 @@
                     .from('transactions')
                     .select(`
                         *,
-                        buyer:auth.users!transactions_buyer_id_fkey (email, raw_user_meta_data),
-                        seller:auth.users!transactions_seller_id_fkey (email, raw_user_meta_data),
+                        buyer:auth.users!buyer_id (email, raw_user_meta_data),
+                        seller:auth.users!seller_id (email, raw_user_meta_data),
                         product_listings (
                             product_name,
                             product_description,
@@ -2726,6 +2805,59 @@
             setTimeout(() => {
                 notification.remove();
             }, 3000);
+        }
+
+        // File viewing functions
+        function getFileUrl(bucket, filePath) {
+            try {
+                const { data } = databaseService.supabase.storage
+                    .from(bucket)
+                    .getPublicUrl(filePath);
+                return data.publicUrl;
+            } catch (error) {
+                console.error('Error getting file URL:', error);
+                return '#';
+            }
+        }
+
+        function viewFullImage(imageUrl) {
+            if (imageUrl === '#') {
+                showError('Image not available');
+                return;
+            }
+            
+            // Create a simple modal to view the full image
+            const imageModal = document.createElement('div');
+            imageModal.className = 'modal active';
+            imageModal.style.zIndex = '9999';
+            imageModal.innerHTML = `
+                <div class="modal-content" style="max-width: 90%; max-height: 90%; text-align: center;">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Document Preview</h2>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">
+                            <span class="material-icons-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="padding: 20px;">
+                        <img src="${imageUrl}" style="max-width: 100%; max-height: 70vh; border-radius: 8px;" alt="Document">
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="window.open('${imageUrl}', '_blank')">
+                                <span class="material-icons-outlined">open_in_new</span>
+                                Open in New Tab
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(imageModal);
+            
+            // Close on outside click
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    imageModal.remove();
+                }
+            });
         }
     </script>
 </body>

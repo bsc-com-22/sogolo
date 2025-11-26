@@ -1142,6 +1142,38 @@
                 submitBtn.innerHTML = 'Submitting...';
                 submitBtn.disabled = true;
 
+                // Upload files first
+                let uploadedFiles = {};
+                if (kycData.idFrontFile) {
+                    const fileName = `kyc-${currentUser.id}-id-front-${Date.now()}.${kycData.idFrontFile.name.split('.').pop()}`;
+                    const filePath = `kyc-documents/${fileName}`;
+                    
+                    const uploadResult = await databaseService.uploadFile('kyc-documents', filePath, kycData.idFrontFile);
+                    if (uploadResult.success) {
+                        uploadedFiles.id_document_url = uploadResult.data.path;
+                    }
+                }
+
+                if (kycData.idBackFile) {
+                    const fileName = `kyc-${currentUser.id}-id-back-${Date.now()}.${kycData.idBackFile.name.split('.').pop()}`;
+                    const filePath = `kyc-documents/${fileName}`;
+                    
+                    const uploadResult = await databaseService.uploadFile('kyc-documents', filePath, kycData.idBackFile);
+                    if (uploadResult.success) {
+                        uploadedFiles.address_document_url = uploadResult.data.path;
+                    }
+                }
+
+                if (kycData.selfieFile) {
+                    const fileName = `kyc-${currentUser.id}-selfie-${Date.now()}.${kycData.selfieFile.name.split('.').pop()}`;
+                    const filePath = `kyc-selfies/${fileName}`;
+                    
+                    const uploadResult = await databaseService.uploadFile('kyc-selfies', filePath, kycData.selfieFile);
+                    if (uploadResult.success) {
+                        uploadedFiles.selfie_url = uploadResult.data.path;
+                    }
+                }
+
                 // Prepare KYC data for database submission (using standard field names)
                 const kycSubmission = {
                     full_name: kycData.fullName,
@@ -1156,7 +1188,8 @@
                     kin_address: kycData.kinAddress, // Use standard kin_address field
                     consent_data: consentData,
                     consent_terms: consentTerms,
-                    consent_accuracy: consentAccuracy
+                    consent_accuracy: consentAccuracy,
+                    ...uploadedFiles // Add uploaded file URLs
                 };
 
                 // 1. Store KYC data in database
@@ -1172,7 +1205,8 @@
                         phone: kycData.phone,
                         consent_data: consentData,
                         consent_terms: consentTerms,
-                        consent_accuracy: consentAccuracy
+                        consent_accuracy: consentAccuracy,
+                        ...uploadedFiles // Keep uploaded files
                     };
                     
                     dbResult = await databaseService.submitKYC(currentUser.id, minimalKycData);

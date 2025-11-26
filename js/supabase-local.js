@@ -5,6 +5,7 @@
 class SupabaseClient {
     constructor(url, key) {
         this.url = url;
+        this.supabaseUrl = url; // Add this property for compatibility
         this.key = key;
         this.restUrl = `${url}/rest/v1`;
         this.storageUrl = `${url}/storage/v1`;
@@ -37,6 +38,31 @@ class SupabaseClient {
                 }
             },
             
+            getSession: async () => {
+                const token = localStorage.getItem('sb-access-token');
+                if (!token) return { data: { session: null }, error: null };
+                
+                try {
+                    const userResponse = await this.getUser();
+                    if (userResponse.data.user) {
+                        return { 
+                            data: { 
+                                session: {
+                                    user: userResponse.data.user,
+                                    access_token: token,
+                                    refresh_token: localStorage.getItem('sb-refresh-token'),
+                                    expires_at: localStorage.getItem('sb-expires-at')
+                                }
+                            }, 
+                            error: null 
+                        };
+                    }
+                    return { data: { session: null }, error: null };
+                } catch (error) {
+                    return { data: { session: null }, error: { message: error.message } };
+                }
+            },
+            
             updateUser: async (attributes) => {
                 const token = localStorage.getItem('sb-access-token');
                 if (!token) return { data: null, error: { message: 'Not authenticated' } };
@@ -63,10 +89,140 @@ class SupabaseClient {
                 }
             },
             
+            signInWithPassword: async (credentials) => {
+                try {
+                    const response = await fetch(`${this.authUrl}/token?grant_type=password`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': this.key,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: credentials.email,
+                            password: credentials.password
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error_description || errorData.message || 'Invalid login credentials');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Store tokens
+                    localStorage.setItem('sb-access-token', data.access_token);
+                    localStorage.setItem('sb-refresh-token', data.refresh_token);
+                    
+                    // Get user data
+                    const userResponse = await this.getUser();
+                    
+                    return { 
+                        data: { 
+                            user: userResponse.data.user,
+                            session: data
+                        }, 
+                        error: null 
+                    };
+                } catch (error) {
+                    return { data: { user: null, session: null }, error: { message: error.message } };
+                }
+            },
+            
+            signInWithOAuth: async (options) => {
+                // For OAuth, we'll redirect to the provider
+                const { provider } = options;
+                const redirectUrl = window.location.origin + '/signin.html';
+                
+                const authUrl = `${this.authUrl}/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectUrl)}&scopes=email`;
+                
+                // Store redirect info for after OAuth callback
+                sessionStorage.setItem('oauth-provider', provider);
+                
+                // Redirect to OAuth provider
+                window.location.href = authUrl;
+                
+                // Return a promise that will never resolve (since we redirect)
+                return new Promise(() => {});
+            },
+            
+            signUp: async (credentials) => {
+                try {
+                    const response = await fetch(`${this.authUrl}/signup`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': this.key,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: credentials.email,
+                            password: credentials.password,
+                            options: credentials.options
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error_description || errorData.message || 'Registration failed');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Auto-signin after signup if email confirmation is not required
+                    if (data.user && !data.user.email_confirmed_at) {
+                        return { 
+                            data: { 
+                                user: data.user,
+                                session: null
+                            }, 
+                            error: null 
+                        };
+                    }
+                    
+                    // Try to get session
+                    const sessionResponse = await this.signInWithPassword({
+                        email: credentials.email,
+                        password: credentials.password
+                    });
+                    
+                    return sessionResponse;
+                } catch (error) {
+                    return { data: { user: null, session: null }, error: { message: error.message } };
+                }
+            },
+            
             signOut: async () => {
-                localStorage.removeItem('sb-access-token');
-                localStorage.removeItem('sb-refresh-token');
+                try {
+                    const token = localStorage.getItem('sb-access-token');
+                    if (token) {
+                        await fetch(`${this.authUrl}/logout`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'apikey': this.key
+                            }
+                        });
+                    }
+                } catch (error) {
+                    // Ignore logout errors
+                } finally {
+                    localStorage.removeItem('sb-access-token');
+                    localStorage.removeItem('sb-refresh-token');
+                    localStorage.removeItem('sb-expires-at');
+                }
                 return { error: null };
+            },
+            
+            onAuthStateChange: (callback) => {
+                // Simple implementation - just call the callback once
+                setTimeout(() => {
+                    this.getSession().then(({ data, error }) => {
+                        callback('SIGNED_IN', data.session);
+                    });
+                }, 100);
+                
+                // Return unsubscribe function
+                return () => {};
             }
         };
     }

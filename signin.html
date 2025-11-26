@@ -634,6 +634,53 @@
             }
         }
 
+        // Handle OAuth URL parameters and exchange code for session
+        async function handleOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description');
+            
+            if (error) {
+                console.error('OAuth error:', error, errorDescription);
+                showError('OAuth authentication failed: ' + errorDescription);
+                return;
+            }
+            
+            if (code) {
+                try {
+                    // Exchange authorization code for session
+                    const response = await fetch(`${window.supabaseClient.authUrl}/token?grant_type=authorization_code&code=${code}`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': window.supabaseClient.key,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error_description || errorData.message || 'OAuth token exchange failed');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Store tokens
+                    localStorage.setItem('sb-access-token', data.access_token);
+                    localStorage.setItem('sb-refresh-token', data.refresh_token);
+                    
+                    console.log('OAuth authentication successful');
+                    
+                    // Redirect to clean URL and handle user role
+                    window.location.href = 'signin.html';
+                    
+                } catch (error) {
+                    console.error('OAuth token exchange error:', error);
+                    showError('OAuth authentication failed: ' + error.message);
+                }
+            }
+        }
+
         // Ensure Supabase is initialized
         document.addEventListener('DOMContentLoaded', () => {
             debugSupabaseConnection();
@@ -643,7 +690,10 @@
                 setTimeout(debugSupabaseConnection, 1000); // Check again after initialization
             }
             
-            // Check for OAuth redirect
+            // Handle OAuth callback first
+            setTimeout(handleOAuthCallback, 500);
+            
+            // Check for OAuth redirect after potential callback handling
             setTimeout(handleOAuthRedirect, 2000);
         });
         function showLogin() {

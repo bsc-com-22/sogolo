@@ -7,9 +7,8 @@ let supabaseClient = null;
 
 // Initialize Supabase when the library is loaded
 function initializeSupabase() {
-    if (typeof window.Supabase !== 'undefined') {
-        supabaseClient = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        window.supabase = supabaseClient; // Keep for backward compatibility
+    if (typeof window.supabase !== 'undefined') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         window.supabaseClient = supabaseClient;
         console.log('Supabase client initialized successfully');
         return supabaseClient;
@@ -20,11 +19,6 @@ function initializeSupabase() {
 }
 
 // Auto-initialize if Supabase is already loaded
-if (typeof window.Supabase !== 'undefined') {
+if (typeof window.supabase !== 'undefined') {
     initializeSupabase();
-} else {
-    // Wait for the library to load
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(initializeSupabase, 100);
-    });
 }

@@ -425,39 +425,6 @@
             color: #6b7280;
         }
 
-        /* Mobile Profile Avatar */
-        .mobile-profile-avatar {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            right: 4rem;
-            z-index: 1001;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .mobile-profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .mobile-profile-avatar .material-icons-outlined {
-            font-size: 24px;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-
         .mobile-menu {
             display: none;
             position: fixed;
@@ -604,10 +571,6 @@
                 display: block;
             }
 
-            .mobile-profile-avatar {
-                display: block; /* Always show on dashboard when logged in */
-            }
-
             .mobile-menu {
                 display: block;
             }
@@ -615,42 +578,44 @@
             .mobile-menu-content {
                 width: 300px;
             }
+        }
 
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 480px) {
+            .mobile-menu-content {
+                width: 280px;
             }
+        }
+       
 
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            padding: 3rem 2rem 2rem;
+            color: white;
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
 
-            .steps-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
 
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .footer-section h3 {
-                font-size: 1.125rem;
-                font-weight: 600;
-                margin-bottom: 1rem;
-                color: white;
-            }
-
-            .footer-section p,
-            .footer-section a {
-                color: #9ca3af;
-                text-decoration: none;
-                line-height: 1.6;
-                transition: color 0.2s ease;
-            }
+        .footer-section p,
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.2s ease;
         }
 
         .footer-section a:hover {
@@ -690,171 +655,29 @@
             margin: 0 2px;
         }
 
-        /* KYC Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 24px 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .modal-close:hover {
-            background: #f3f4f6;
-            color: #1f2937;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 0 24px 24px;
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-
-        .kyc-prompt-content {
-            text-align: center;
-        }
-
-        .kyc-icon {
-            margin-bottom: 16px;
-        }
-
-        .kyc-prompt-content h3 {
-            margin: 16px 0 8px;
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .kyc-prompt-content p {
-            margin: 8px 0 16px;
-            color: #6b7280;
-            line-height: 1.5;
-        }
-
-        .kyc-benefits {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px 0;
-            text-align: left;
-        }
-
-        .kyc-benefits h4 {
-            margin: 0 0 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .kyc-benefits ul {
-            margin: 0;
-            padding-left: 20px;
-            list-style: none;
-        }
-
-        .kyc-benefits li {
-            margin: 4px 0;
-            font-size: 14px;
-            color: #374151;
-        }
-
-        .kyc-warning {
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
-            border-radius: 6px;
-            padding: 12px;
-            margin: 16px 0;
-        }
-
-        .kyc-warning p {
-            margin: 0;
-            font-size: 14px;
-            color: #92400e;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            color: #1f2937;
-        }
-
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">
-        <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
-      </a>
-      <nav class="nav-menu">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="transactions.html" class="nav-link">Transactions</a>
-        <a href="support.html" class="nav-link">Support</a>
-      </nav>
-      <div class="user-menu" id="userMenu">
-        <div class="user-menu-trigger" id="userMenuTrigger">
-          <div class="user-avatar"><img id="headerAvatarImg" alt="" style="display:none;"></div>
-          <span class="user-name" id="headerUserName">User</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </div>
-        <div class="user-dropdown" id="userDropdown">
-          <button type="button" onclick="openProfileModal()">Edit Profile</button>
-          <button type="button" id="logoutBtn">Logout</button>
-        </div>
-      </div>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+            </a>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="support.html" class="nav-link">Support</a>
+            </nav>
+            <div class="user-menu" id="userMenu">
+                <div class="user-menu-trigger" id="userMenuTrigger">
+                    <div class="user-avatar"><img id="headerAvatarImg" alt="" style="display:none;"></div>
+                    <span class="user-name" id="headerUserName">User</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <button type="button" onclick="openProfileModal()">Edit Profile</button>
+                    <button type="button" id="logoutBtn">Logout</button>
+                </div>
             </div>
         </div>
     </header>
@@ -864,12 +687,6 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
-    </button>
-
-    <!-- Mobile Profile Avatar -->
-    <button class="mobile-profile-avatar" id="mobileProfileAvatar" onclick="window.location.reload()">
-        <img src="" alt="Profile" id="mobileAvatarImg" style="display: none;">
-        <span class="material-icons-outlined" id="mobileAvatarIcon">person</span>
     </button>
 
     <!-- Mobile Menu -->
@@ -927,7 +744,7 @@
                             <p>Status: <span class="status-badge status-pending" id="kycBadge">Pending</span></p>
                             <p style="margin-top: 8px;">Complete your KYC verification to unlock all features.</p>
                         </div>
-                        <button class="btn btn-primary" onclick="window.location.href='kyc.html'">Complete KYC Verification</button>
+                        <button class="btn btn-primary" onclick="openKycModal()">Submit KYC Documents</button>
                     </div>
                 </div>
 
@@ -960,43 +777,6 @@
             </div>
         </div>
     </main>
-
-    <!-- KYC Prompt Modal -->
-    <div id="kycPromptModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Complete Your KYC Verification</h2>
-                <button class="modal-close" onclick="closeKycModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="kyc-prompt-content">
-                    <div class="kyc-icon">
-                        <span class="material-icons-outlined" style="font-size: 48px; color: #3b82f6;">verified_user</span>
-                    </div>
-                    <h3>Verify Your Identity</h3>
-                    <p>To ensure secure transactions and comply with regulations, please complete your KYC (Know Your Customer) verification.</p>
-                    
-                    <div class="kyc-benefits">
-                        <h4>Benefits of completing KYC:</h4>
-                        <ul>
-                            <li>✓ Create and manage transactions</li>
-                            <li>✓ Higher transaction limits</li>
-                            <li>✓ Priority support</li>
-                            <li>✓ Enhanced security features</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="kyc-warning">
-                        <p><strong>Note:</strong> While you can skip this for now, KYC verification will be required before you can initiate any transactions.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="skipKyc()">Skip for Now</button>
-                <button class="btn btn-primary" onclick="completeKyc()">Complete KYC</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
     <script src="https://elfsightcdn.com/platform.js" async></script>
@@ -1096,26 +876,21 @@
         </div>
     </div>
 
-    <script src="js/supabase-local.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/services/auth-service.js"></script>
     <script src="js/services/database-service.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
-            
-            if (mobileMenuBtn && mobileMenu) {
-                mobileMenuBtn.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('active');
-                });
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
 
-                document.addEventListener('click', (e) => {
-                    if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
-                        mobileMenu.classList.remove('active');
-                    }
-                });
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
             }
         });
 
@@ -1204,15 +979,11 @@
                 if (authResult) {
                     console.log('Authentication successful, loading user data...');
                     await loadUserData();
-                    
-                    // Check KYC status and redirect if needed
-                    await checkKycStatus();
                 } else {
                     console.log('Authentication failed, redirecting...');
                 }
             } catch (error) {
                 console.error('Dashboard initialization error:', error);
-                debugStoredTokens();
                 Helpers.showToast('Failed to initialize dashboard. Redirecting to sign in...', 'error');
                 setTimeout(() => {
                     window.location.href = 'signin.html';
@@ -1220,53 +991,9 @@
             }
         });
 
-        // Debug function to check stored tokens
-        function debugStoredTokens() {
-            console.log('=== Stored Tokens Debug ===');
-            console.log('Access token:', localStorage.getItem('sb-access-token') ? 'Present' : 'Missing');
-            console.log('Refresh token:', localStorage.getItem('sb-refresh-token') ? 'Present' : 'Missing');
-            console.log('Expires at:', localStorage.getItem('sb-expires-at'));
-            
-            // Check if we can decode the token (basic check)
-            const token = localStorage.getItem('sb-access-token');
-            if (token) {
-                try {
-                    const parts = token.split('.');
-                    if (parts.length === 3) {
-                        const payload = JSON.parse(atob(parts[1]));
-                        console.log('Token payload:', payload);
-                        console.log('Token expires:', new Date(payload.exp * 1000));
-                        console.log('Token valid:', Date.now() < payload.exp * 1000);
-                    }
-                } catch (e) {
-                    console.log('Token format invalid:', e.message);
-                }
-            }
-        }
-
         async function checkAuth() {
             try {
-                console.log('=== Dashboard Auth Check ===');
-                debugStoredTokens();
-                console.log('Auth service available:', !!window.authService);
-                console.log('Supabase client available:', !!window.supabaseClient);
-                
-                // First check if there's an active session
-                console.log('Getting session...');
-                const sessionResult = await authService.getSession();
-                console.log('Session result:', sessionResult);
-                
-                if (!sessionResult.success || !sessionResult.session) {
-                    console.log('No active session found, redirecting to signin');
-                    window.location.href = 'signin.html';
-                    return false;
-                }
-                
-                // Then get the current user
-                console.log('Getting current user...');
                 const result = await authService.getCurrentUser();
-                console.log('User result:', result);
-                
                 if (!result.success || !result.user) {
                     console.log('No authenticated user found, redirecting to signin');
                     window.location.href = 'signin.html';
@@ -1284,15 +1011,6 @@
         async function loadUserData() {
             try {
                 console.log('Loading user data...');
-                
-                // First check session
-                const sessionResult = await authService.getSession();
-                if (!sessionResult.success || !sessionResult.session) {
-                    console.error('No active session found');
-                    return;
-                }
-                
-                // Then get user
                 const userResult = await authService.getCurrentUser();
                 if (!(userResult.success && userResult.user)) {
                     console.error('Failed to get current user');
@@ -1302,30 +1020,6 @@
                 const user = userResult.user;
                 const meta = user.user_metadata || {};
                 console.log('User metadata:', meta);
-
-                // Update mobile avatar
-                updateMobileAvatar(user);
-                
-                // Update profile section
-                const profileName = document.getElementById('profileName');
-                const profileEmail = document.getElementById('profileEmail');
-                const avatarImg = document.getElementById('avatarImg');
-                const avatarIcon = document.querySelector('.profile-avatar .material-icons-outlined');
-
-                if (profileName) profileName.textContent = meta.full_name || user.email || 'User';
-                if (profileEmail) profileEmail.textContent = user.email || '';
-
-                // Set avatar image if available
-                if (meta.avatar_url) {
-                    if (avatarImg) {
-                        avatarImg.src = meta.avatar_url;
-                        avatarImg.style.display = 'block';
-                    }
-                    if (avatarIcon) avatarIcon.style.display = 'none';
-                } else {
-                    if (avatarImg) avatarImg.style.display = 'none';
-                    if (avatarIcon) avatarIcon.style.display = 'block';
-                }
 
                 // Try DB profile first
                 let profileData = null;
@@ -1461,291 +1155,8 @@
         });
 
         function startTransaction() {
-            // Check KYC status before allowing transaction
-            checkKycForTransaction();
+            alert('Start new transaction functionality coming soon.');
         }
-
-        // Check KYC status before transaction
-        async function checkKycForTransaction() {
-            try {
-                console.log('Checking KYC status for transaction...');
-                
-                // Get current user
-                const userResult = await authService.getCurrentUser();
-                if (!userResult.success || !userResult.user) {
-                    Helpers.showToast('Please sign in to create transactions', 'error');
-                    return;
-                }
-                
-                const user = userResult.user;
-                
-                // Check KYC status from database
-                const kycResult = await databaseService.getKYCStatus(user.id);
-                let kycStatus = 'pending';
-                
-                if (kycResult.success && kycResult.data) {
-                    kycStatus = kycResult.data.status;
-                    console.log('Transaction KYC check - status from database:', kycStatus);
-                } else {
-                    console.log('No KYC record found for transaction check');
-                }
-                
-                if (kycStatus !== 'verified') {
-                    // Show appropriate message based on status
-                    let message = '';
-                    switch (kycStatus) {
-                        case 'pending':
-                            message = 'Your KYC verification is pending review. You cannot create transactions until verification is complete.';
-                            break;
-                        case 'rejected':
-                            message = 'Your KYC verification was rejected. Please complete KYC verification again to create transactions.';
-                            break;
-                        default:
-                            message = 'You must complete KYC verification before you can create transactions.';
-                    }
-                    
-                    Helpers.showToast(message, 'error');
-                    
-                    // Redirect to KYC page after a short delay
-                    setTimeout(() => {
-                        window.location.href = 'kyc.html';
-                    }, 2000);
-                    return;
-                }
-                
-                // KYC is verified, proceed to transaction
-                window.location.href = 'transactions.html?action=new';
-                
-            } catch (error) {
-                console.error('KYC check for transaction error:', error);
-                Helpers.showToast('Failed to verify KYC status. Please try again.', 'error');
-            }
-        }
-
-        // Update mobile avatar function
-        function updateMobileAvatar(user) {
-            const mobileAvatarImg = document.getElementById('mobileAvatarImg');
-            const mobileAvatarIcon = document.getElementById('mobileAvatarIcon');
-            
-            if (!mobileAvatarImg || !mobileAvatarIcon) return;
-            
-            const metadata = user.user_metadata || {};
-            
-            // Set avatar (if available)
-            if (metadata.avatar_url) {
-                mobileAvatarImg.src = metadata.avatar_url;
-                mobileAvatarImg.style.display = 'block';
-                mobileAvatarIcon.style.display = 'none';
-            } else {
-                mobileAvatarImg.style.display = 'none';
-                mobileAvatarIcon.style.display = 'block';
-            }
-        }
-
-        // Check KYC status and redirect if needed
-        async function checkKycStatus() {
-            try {
-                console.log('Checking KYC status...');
-                
-                // Get current user
-                const userResult = await authService.getCurrentUser();
-                if (!userResult.success || !userResult.user) {
-                    console.error('Failed to get current user for KYC check');
-                    return;
-                }
-                
-                const user = userResult.user;
-                
-                // Check KYC status from database
-                const kycResult = await databaseService.getKYCStatus(user.id);
-                let kycStatus = 'pending';
-                let submittedAt = null;
-                
-                if (kycResult.success && kycResult.data) {
-                    kycStatus = kycResult.data.status;
-                    // Try different possible timestamp field names
-                    submittedAt = kycResult.data.created_at || 
-                                kycResult.data.submitted_at || 
-                                kycResult.data.submittedAt ||
-                                kycResult.data.created_at;
-                    console.log('KYC status from database:', kycStatus);
-                    console.log('KYC timestamp fields:', {
-                        created_at: kycResult.data.created_at,
-                        submitted_at: kycResult.data.submitted_at,
-                        submittedAt: kycResult.data.submittedAt
-                    });
-                    console.log('Using timestamp:', submittedAt);
-                } else {
-                    console.log('No KYC record found, defaulting to pending');
-                }
-                
-                // Update KYC UI
-                updateKycUI(kycStatus);
-                
-                // Check if KYC was recently submitted (within last 5 minutes)
-                let recentlySubmitted = false;
-                if (submittedAt) {
-                    try {
-                        const submissionTime = new Date(submittedAt);
-                        const now = new Date();
-                        const timeDiff = now - submissionTime;
-                        recentlySubmitted = timeDiff < (5 * 60 * 1000); // 5 minutes
-                        console.log('Time difference (ms):', timeDiff);
-                        console.log('Recently submitted:', recentlySubmitted);
-                    } catch (dateError) {
-                        console.error('Date parsing error:', dateError);
-                        recentlySubmitted = false;
-                    }
-                }
-                
-                // Fallback: check localStorage as well
-                if (!recentlySubmitted) {
-                    const localSubmissionTime = localStorage.getItem('kycRecentlySubmitted');
-                    if (localSubmissionTime) {
-                        try {
-                            const localTime = new Date(localSubmissionTime);
-                            const now = new Date();
-                            const timeDiff = now - localTime;
-                            recentlySubmitted = timeDiff < (5 * 60 * 1000); // 5 minutes
-                            console.log('Local submission time:', localSubmissionTime);
-                            console.log('Local time difference (ms):', timeDiff);
-                            console.log('Recently submitted (local):', recentlySubmitted);
-                            
-                            // Clean up old localStorage entries
-                            if (!recentlySubmitted) {
-                                localStorage.removeItem('kycRecentlySubmitted');
-                            }
-                        } catch (localError) {
-                            console.error('Local date parsing error:', localError);
-                        }
-                    }
-                }
-                
-                // If KYC is not verified AND not recently submitted, show prompt modal
-                if (kycStatus !== 'verified' && !recentlySubmitted) {
-                    console.log('KYC not completed and not recently submitted, showing prompt modal...');
-                    // Check if user has already dismissed the KYC prompt before
-                    const kycPromptDismissed = localStorage.getItem('kycPromptDismissed');
-                    const lastDismissTime = localStorage.getItem('kycPromptDismissedTime');
-                    
-                    let shouldShowPrompt = true;
-                    if (kycPromptDismissed && lastDismissTime) {
-                        const dismissTime = new Date(lastDismissTime);
-                        const now = new Date();
-                        const daysSinceDismiss = (now - dismissTime) / (1000 * 60 * 60 * 24);
-                        // Only show prompt again if it's been more than 7 days
-                        shouldShowPrompt = daysSinceDismiss > 7;
-                    }
-                    
-                    if (shouldShowPrompt) {
-                        setTimeout(() => {
-                            showKycModal();
-                        }, 1000); // Show modal after 1 second
-                    }
-                    return false;
-                }
-                
-                // If recently submitted, show a message but don't redirect
-                if (recentlySubmitted && kycStatus === 'pending') {
-                    console.log('KYC recently submitted, staying on dashboard');
-                    // Show success message
-                    if (typeof Helpers !== 'undefined' && Helpers.showToast) {
-                        Helpers.showToast('KYC submitted successfully! Your verification is pending review.', 'success');
-                    }
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('KYC status check error:', error);
-                // On error, don't redirect - let user stay on dashboard
-                return false;
-            }
-        }
-
-        // Update KYC UI based on status
-        function updateKycUI(status) {
-            const kycBadge = document.getElementById('kycBadge');
-            const kycStatus = document.getElementById('kycStatus');
-            
-            if (!kycBadge || !kycStatus) return;
-            
-            // Update badge
-            kycBadge.className = 'status-badge';
-            kycBadge.classList.add(`status-${status}`);
-            kycBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-            
-            // Update status message
-            let message = '';
-            switch (status) {
-                case 'verified':
-                    message = 'Your KYC verification is complete. You can access all features.';
-                    break;
-                case 'pending':
-                    message = 'Your KYC verification is pending review. Please wait for approval.';
-                    break;
-                case 'rejected':
-                    message = 'Your KYC verification was rejected. Please resubmit your documents.';
-                    break;
-                default:
-                    message = 'Complete your KYC verification to unlock all features.';
-            }
-            
-            kycStatus.innerHTML = `
-                <p>Status: <span class="status-badge status-${status}" id="kycBadge">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
-                <p style="margin-top: 8px;">${message}</p>
-            `;
-        }
-
-        // KYC Modal Functions
-        function showKycModal() {
-            const modal = document.getElementById('kycPromptModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            }
-        }
-
-        function closeKycModal() {
-            const modal = document.getElementById('kycPromptModal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = ''; // Restore scrolling
-            }
-        }
-
-        function skipKyc() {
-            // Store that user dismissed the KYC prompt
-            localStorage.setItem('kycPromptDismissed', 'true');
-            localStorage.setItem('kycPromptDismissedTime', new Date().toISOString());
-            
-            closeKycModal();
-            
-            // Show toast message
-            if (typeof Helpers !== 'undefined' && Helpers.showToast) {
-                Helpers.showToast('KYC verification skipped. You will be prompted again before creating transactions.', 'info');
-            }
-        }
-
-        function completeKyc() {
-            closeKycModal();
-            // Redirect to KYC page
-            window.location.href = 'kyc.html';
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('kycPromptModal');
-            if (modal && event.target === modal) {
-                closeKycModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeKycModal();
-            }
-        });
     </script>
 </body>
 </html>

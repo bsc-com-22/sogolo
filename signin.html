@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Sogolo</title>
     
-    <!-- Supabase Local Library -->
-    <script src="js/supabase-local.js"></script>
+    <!-- Supabase CDN (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     
     <style>
         * {
@@ -619,108 +619,11 @@
     <script src="js/utils/helpers.js"></script>
 
     <script>
-        // Debug function to check Supabase connection
-        function debugSupabaseConnection() {
-            console.log('=== Supabase Debug Info ===');
-            console.log('Supabase library loaded:', typeof window.supabase !== 'undefined');
-            console.log('Supabase client:', window.supabaseClient);
-            console.log('Auth service:', window.authService);
-            
-            if (window.supabaseClient) {
-                console.log('Supabase URL:', window.supabaseClient.supabaseUrl);
-                console.log('Supabase client initialized correctly');
-            } else {
-                console.error('Supabase client not initialized');
-            }
-        }
-
-        // Handle OAuth URL parameters and exchange code for session
-        async function handleOAuthCallback() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const error = urlParams.get('error');
-            const errorDescription = urlParams.get('error_description');
-            
-            if (error) {
-                console.error('OAuth error:', error, errorDescription);
-                showError('OAuth authentication failed: ' + errorDescription);
-                return;
-            }
-            
-            if (code) {
-                try {
-                    console.log('OAuth code received, exchanging for session...');
-                    
-                    // Exchange authorization code for session
-                    const response = await fetch(`${window.supabaseClient.authUrl}/token?grant_type=authorization_code&code=${code}`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': window.supabaseClient.key,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error_description || errorData.message || 'OAuth token exchange failed');
-                    }
-                    
-                    const data = await response.json();
-                    
-                    // Store tokens
-                    localStorage.setItem('sb-access-token', data.access_token);
-                    localStorage.setItem('sb-refresh-token', data.refresh_token);
-                    
-                    console.log('OAuth authentication successful');
-                    
-                    // Get stored redirect URL or default to dashboard
-                    const redirectTo = sessionStorage.getItem('oauth-redirect-to') || 'dashboard.html';
-                    
-                    // Clear OAuth session storage
-                    sessionStorage.removeItem('oauth-provider');
-                    sessionStorage.removeItem('oauth-redirect-to');
-                    
-                    console.log('Redirecting to:', redirectTo);
-                    
-                    // Redirect to the appropriate page
-                    window.location.href = redirectTo;
-                    
-                } catch (error) {
-                    console.error('OAuth token exchange error:', error);
-                    showError('OAuth authentication failed: ' + error.message);
-                }
-            }
-        }
-
-        // Test OAuth setup
-        function testOAuthSetup() {
-            console.log('=== OAuth Setup Test ===');
-            console.log('Supabase client:', window.supabaseClient);
-            console.log('Auth URL:', window.supabaseClient?.authUrl);
-            console.log('Supabase URL:', window.supabaseClient?.supabaseUrl);
-            
-            if (window.supabaseClient) {
-                const testUrl = `${window.supabaseClient.authUrl}/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin + '/signin.html')}&scopes=email`;
-                console.log('Test OAuth URL:', testUrl);
-            }
-        }
-
         // Ensure Supabase is initialized
         document.addEventListener('DOMContentLoaded', () => {
-            debugSupabaseConnection();
-            testOAuthSetup();
-            
             if (!window.supabaseClient && typeof window.supabase !== 'undefined') {
                 initializeSupabase();
-                setTimeout(debugSupabaseConnection, 1000); // Check again after initialization
-                setTimeout(testOAuthSetup, 1100); // Test OAuth after initialization
             }
-            
-            // Handle OAuth callback first
-            setTimeout(handleOAuthCallback, 500);
-            
-            // Check for OAuth redirect after potential callback handling
-            setTimeout(handleOAuthRedirect, 2000);
         });
         function showLogin() {
             document.getElementById('loginForm').classList.add('active');
@@ -738,65 +641,11 @@
             document.querySelectorAll('.toggle-btn')[0].classList.remove('active');
         }
 
-        // Test login function for debugging
-        async function testLogin() {
-            console.log('=== Testing Login ===');
-            
-            if (!window.authService) {
-                console.error('Auth service not available');
-                return;
-            }
-            
-            try {
-                // Test with your credentials
-                const testEmail = 'chidaziblessings@gmail.com';
-                const testPassword = 'your-password'; // Replace with actual password
-                
-                console.log('Testing login with:', testEmail);
-                
-                const result = await authService.signIn(testEmail, testPassword);
-                console.log('Login result:', result);
-                
-                if (result.success) {
-                    console.log('Login successful!');
-                    
-                    // Check current user
-                    const userResult = await authService.getCurrentUser();
-                    console.log('Current user:', userResult);
-                    
-                    // Check session
-                    const sessionResult = await authService.getSession();
-                    console.log('Current session:', sessionResult);
-                } else {
-                    console.error('Login failed:', result.error);
-                }
-            } catch (error) {
-                console.error('Test login error:', error);
-            }
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
         }
-
-        // Add test button to page (temporary)
-        function addTestButton() {
-            const testBtn = document.createElement('button');
-            testBtn.textContent = 'Test Login (Debug)';
-            testBtn.style.cssText = `
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                background: #ff6b6b;
-                color: white;
-                border: none;
-                padding: 10px;
-                border-radius: 5px;
-                cursor: pointer;
-                z-index: 9999;
-            `;
-            testBtn.onclick = testLogin;
-            document.body.appendChild(testBtn);
-        }
-
-        // Add test button after page loads
-        setTimeout(addTestButton, 2000);
 
         function closeMobileMenu(event) {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -810,57 +659,17 @@
         // Google Sign In function
         async function signInWithGoogle() {
             try {
-                console.log('Starting Google OAuth sign in...');
-                
-                if (!window.authService) {
-                    console.error('Auth service not available');
-                    showError('Authentication service not available');
-                    return;
-                }
-                
-                console.log('Calling authService.signInWithOAuth...');
                 const result = await authService.signInWithOAuth('google');
-                
-                console.log('OAuth result:', result);
-                
                 if (result.success) {
                     // User will be redirected to Google for authentication
                     // After successful authentication, they'll be redirected back
-                    // The auth state change listener will handle the redirect based on role
-                    console.log('OAuth initiated successfully');
+                    // The auth state change listener will handle the redirect
                 } else {
-                    console.error('OAuth failed:', result.error);
-                    showError(result.error || 'Google sign in failed');
+                    Helpers.showToast(result.error || 'Google sign in failed', 'error');
                 }
             } catch (error) {
+                Helpers.showToast('An unexpected error occurred with Google sign in', 'error');
                 console.error('Google sign in error:', error);
-                showError('Google sign in failed: ' + error.message);
-            }
-        }
-
-        // Handle OAuth redirect and check user role
-        async function handleOAuthRedirect() {
-            try {
-                // Check if we have a session after OAuth redirect
-                const sessionResult = await authService.getSession();
-                if (sessionResult.success && sessionResult.session) {
-                    const userResult = await authService.getCurrentUser();
-                    if (userResult.success && userResult.user) {
-                        const metadata = userResult.user.user_metadata || {};
-                        const userRole = metadata.role || metadata.user_role;
-                        
-                        console.log('OAuth user logged in:', userResult.user.email);
-                        console.log('OAuth user role:', userRole);
-                        
-                        if (userRole === 'admin') {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'dashboard.html';
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('OAuth redirect handling error:', error);
             }
         }
 
@@ -891,46 +700,21 @@
                 const result = await authService.signIn(email, password);
                 
                 if (result.success) {
-                    // Wait a moment for the session to be established
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
                     const user = await authService.getCurrentUser();
                     if (user.success && user.user) {
-                        // Check if user is admin
-                        const metadata = user.user.user_metadata || {};
-                        const userRole = metadata.role || metadata.user_role;
-                        
-                        console.log('User logged in:', user.user.email);
-                        console.log('User role:', userRole);
-                        
-                        if (userRole === 'admin') {
-                            Helpers.showToast('Admin login successful! Redirecting to admin dashboard...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'admin.html';
-                            }, 1500);
-                        } else {
-                            Helpers.showToast('Login successful! Redirecting to dashboard...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'dashboard.html';
-                            }, 1500);
-                        }
+                        Helpers.showToast('Login successful! Redirecting...', 'success');
+                        // Redirect to dashboard or home page
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
                     } else {
-                        Helpers.showToast('Authentication failed. Please try again.', 'error');
+                        Helpers.showToast('Authentication failed', 'error');
                     }
                 } else {
-                    // Provide more specific error messages
-                    let errorMessage = result.error || 'Login failed';
-                    if (errorMessage.includes('Invalid login credentials')) {
-                        errorMessage = 'Invalid email or password. If you just signed up, please check your email for the verification link first.';
-                    } else if (errorMessage.includes('Email not confirmed')) {
-                        errorMessage = 'Please check your email and click the verification link before signing in.';
-                    } else if (errorMessage.includes('Too many requests')) {
-                        errorMessage = 'Too many login attempts. Please wait a moment and try again.';
-                    }
-                    Helpers.showToast(errorMessage, 'error');
+                    Helpers.showToast(result.error || 'Login failed', 'error');
                 }
             } catch (error) {
-                Helpers.showToast('An unexpected error occurred. Please try again.', 'error');
+                Helpers.showToast('An unexpected error occurred', 'error');
                 console.error('Login error:', error);
             } finally {
                 Helpers.hideLoading('loginSubmitBtn', originalText);
@@ -976,40 +760,11 @@
                 });
 
                 if (result.success) {
-                    Helpers.showToast('Account created successfully! Checking role...', 'success');
-                    
-                    // Wait a moment for the session to be established
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // Check if user was automatically signed in and their role
-                    const user = await authService.getCurrentUser();
-                    if (user.success && user.user) {
-                        const metadata = user.user.user_metadata || {};
-                        const userRole = metadata.role || metadata.user_role;
-                        
-                        console.log('New user signed up:', user.user.email);
-                        console.log('User role:', userRole);
-                        
-                        if (userRole === 'admin') {
-                            Helpers.showToast('Admin account created! Redirecting to admin dashboard...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'admin.html';
-                            }, 1500);
-                        } else {
-                            Helpers.showToast('Account created! Redirecting to dashboard...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'dashboard.html';
-                            }, 1500);
-                        }
-                    }
-                    
-                    // Switch to login after a short delay if email confirmation is needed
-                    if (result.needsConfirmation) {
-                        setTimeout(() => {
-                            showLogin();
-                        }, 2000);
-                    }
-                    
+                    Helpers.showToast('Account created. Please check your email for a verification link.', 'success');
+                    // Switch to login after a short delay
+                    setTimeout(() => {
+                        showLogin();
+                    }, 1600);
                     // Clear form
                     document.getElementById('signupForm').reset();
                 } else {

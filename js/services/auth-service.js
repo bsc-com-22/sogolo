@@ -7,52 +7,16 @@ class AuthService {
     // Sign up with email and password
     async signUp(email, password, userData = {}) {
         try {
-            console.log('Attempting sign up for:', email);
             const { data, error } = await this.supabase.auth.signUp({
                 email: email,
                 password: password,
                 options: {
-                    data: userData, // Additional user metadata
-                    emailRedirectTo: `${window.location.origin}/signin.html`
+                    data: userData // Additional user metadata
                 }
             });
 
-            if (error) {
-                console.error('Supabase sign up error:', error);
-                throw error;
-            }
-            
-            console.log('Sign up successful:', data);
-            
-            // Check if user was created but needs email confirmation
-            if (data.user && !data.session) {
-                console.log('User created but needs email confirmation');
-                
-                // Try immediate sign in (works if email verification is disabled)
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    const signInResult = await this.signIn(email, password);
-                    if (signInResult.success) {
-                        return { 
-                            success: true, 
-                            data: signInResult.data,
-                            needsConfirmation: false,
-                            message: 'Account created and signed in successfully!'
-                        };
-                    }
-                } catch (signInError) {
-                    console.log('Auto sign-in failed, email confirmation required');
-                }
-                
-                return { 
-                    success: true, 
-                    data: data,
-                    needsConfirmation: true,
-                    message: 'Account created successfully. Please check your email to verify your account.'
-                };
-            }
-            
-            return { success: true, data: data };
+            if (error) throw error;
+            return { success: true, data };
         } catch (error) {
             console.error('Sign up error:', error);
             return { success: false, error: error.message };
@@ -62,18 +26,12 @@ class AuthService {
     // Sign in with email and password
     async signIn(email, password) {
         try {
-            console.log('Attempting sign in for:', email);
             const { data, error } = await this.supabase.auth.signInWithPassword({
                 email: email,
                 password: password
             });
 
-            if (error) {
-                console.error('Supabase sign in error:', error);
-                throw error;
-            }
-            
-            console.log('Sign in successful:', data);
+            if (error) throw error;
             return { success: true, data };
         } catch (error) {
             console.error('Sign in error:', error);
@@ -101,18 +59,6 @@ class AuthService {
             return { success: true, user };
         } catch (error) {
             console.error('Get user error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Get current session
-    async getSession() {
-        try {
-            const { data: { session }, error } = await this.supabase.auth.getSession();
-            if (error) throw error;
-            return { success: true, session };
-        } catch (error) {
-            console.error('Get session error:', error);
             return { success: false, error: error.message };
         }
     }

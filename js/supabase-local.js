@@ -14,16 +14,18 @@ class SupabaseClient {
 
     // Auth methods
     get auth() {
+        const self = this; // Preserve context
+        
         return {
             getUser: async () => {
                 const token = localStorage.getItem('sb-access-token');
                 if (!token) return { data: { user: null }, error: null };
                 
                 try {
-                    const response = await fetch(`${this.authUrl}/user`, {
+                    const response = await fetch(`${self.authUrl}/user`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
-                            'apikey': this.key
+                            'apikey': self.key
                         }
                     });
                     
@@ -43,21 +45,31 @@ class SupabaseClient {
                 if (!token) return { data: { session: null }, error: null };
                 
                 try {
-                    const userResponse = await this.getUser();
-                    if (userResponse.data.user) {
-                        return { 
-                            data: { 
-                                session: {
-                                    user: userResponse.data.user,
-                                    access_token: token,
-                                    refresh_token: localStorage.getItem('sb-refresh-token'),
-                                    expires_at: localStorage.getItem('sb-expires-at')
-                                }
-                            }, 
-                            error: null 
-                        };
+                    // Get user data directly without calling this.getUser to avoid context issues
+                    const response = await fetch(`${self.authUrl}/user`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'apikey': self.key
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        return { data: { session: null }, error: null };
                     }
-                    return { data: { session: null }, error: null };
+                    
+                    const userData = await response.json();
+                    
+                    return { 
+                        data: { 
+                            session: {
+                                user: userData,
+                                access_token: token,
+                                refresh_token: localStorage.getItem('sb-refresh-token'),
+                                expires_at: localStorage.getItem('sb-expires-at')
+                            }
+                        }, 
+                        error: null 
+                    };
                 } catch (error) {
                     return { data: { session: null }, error: { message: error.message } };
                 }
@@ -68,11 +80,11 @@ class SupabaseClient {
                 if (!token) return { data: null, error: { message: 'Not authenticated' } };
                 
                 try {
-                    const response = await fetch(`${this.authUrl}/user`, {
+                    const response = await fetch(`${self.authUrl}/user`, {
                         method: 'PUT',
                         headers: {
                             'Authorization': `Bearer ${token}`,
-                            'apikey': this.key,
+                            'apikey': self.key,
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(attributes)
@@ -91,10 +103,10 @@ class SupabaseClient {
             
             signInWithPassword: async (credentials) => {
                 try {
-                    const response = await fetch(`${this.authUrl}/token?grant_type=password`, {
+                    const response = await fetch(`${self.authUrl}/token?grant_type=password`, {
                         method: 'POST',
                         headers: {
-                            'apikey': this.key,
+                            'apikey': self.key,
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
@@ -114,12 +126,26 @@ class SupabaseClient {
                     localStorage.setItem('sb-access-token', data.access_token);
                     localStorage.setItem('sb-refresh-token', data.refresh_token);
                     
-                    // Get user data
-                    const userResponse = await this.getUser();
+                    // Get user data directly
+                    let userData = null;
+                    try {
+                        const userResponse = await fetch(`${self.authUrl}/user`, {
+                            headers: {
+                                'Authorization': `Bearer ${data.access_token}`,
+                                'apikey': self.key
+                            }
+                        });
+                        
+                        if (userResponse.ok) {
+                            userData = await userResponse.json();
+                        }
+                    } catch (userError) {
+                        console.warn('Failed to get user data after login:', userError);
+                    }
                     
                     return { 
                         data: { 
-                            user: userResponse.data.user,
+                            user: userData,
                             session: data
                         }, 
                         error: null 
@@ -134,7 +160,7 @@ class SupabaseClient {
                 const { provider } = options;
                 const redirectUrl = window.location.origin + '/signin.html';
                 
-                const authUrl = `${this.authUrl}/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectUrl)}&scopes=email`;
+                const authUrl = `${self.authUrl}/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectUrl)}&scopes=email`;
                 
                 // Store redirect info for after OAuth callback
                 sessionStorage.setItem('oauth-provider', provider);
@@ -148,10 +174,10 @@ class SupabaseClient {
             
             signUp: async (credentials) => {
                 try {
-                    const response = await fetch(`${this.authUrl}/signup`, {
+                    const response = await fetch(`${self.authUrl}/signup`, {
                         method: 'POST',
                         headers: {
-                            'apikey': this.key,
+                            'apikey': self.key,
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
@@ -179,13 +205,46 @@ class SupabaseClient {
                         };
                     }
                     
-                    // Try to get session
-                    const sessionResponse = await this.signInWithPassword({
-                        email: credentials.email,
-                        password: credentials.password
-                    });
+                    // Try to get session by signing in
+                    try {
+                        const loginResponse = await fetch(`${self.authUrl}/token?grant_type=password`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': self.key,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: credentials.email,
+                                password: credentials.password
+                            })
+                        });
+                        
+                        if (loginResponse.ok) {
+                            const loginData = await loginResponse.json();
+                            
+                            // Store tokens
+                            localStorage.setItem('sb-access-token', loginData.access_token);
+                            localStorage.setItem('sb-refresh-token', loginData.refresh_token);
+                            
+                            return { 
+                                data: { 
+                                    user: data.user,
+                                    session: loginData
+                                }, 
+                                error: null 
+                            };
+                        }
+                    } catch (loginError) {
+                        console.warn('Auto login after signup failed:', loginError);
+                    }
                     
-                    return sessionResponse;
+                    return { 
+                        data: { 
+                            user: data.user,
+                            session: null
+                        }, 
+                        error: null 
+                    };
                 } catch (error) {
                     return { data: { user: null, session: null }, error: { message: error.message } };
                 }
@@ -195,11 +254,11 @@ class SupabaseClient {
                 try {
                     const token = localStorage.getItem('sb-access-token');
                     if (token) {
-                        await fetch(`${this.authUrl}/logout`, {
+                        await fetch(`${self.authUrl}/logout`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
-                                'apikey': this.key
+                                'apikey': self.key
                             }
                         });
                     }
@@ -216,9 +275,31 @@ class SupabaseClient {
             onAuthStateChange: (callback) => {
                 // Simple implementation - just call the callback once
                 setTimeout(() => {
-                    this.getSession().then(({ data, error }) => {
-                        callback('SIGNED_IN', data.session);
-                    });
+                    const token = localStorage.getItem('sb-access-token');
+                    if (token) {
+                        fetch(`${self.authUrl}/user`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'apikey': self.key
+                            }
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error('Failed to get user');
+                        }).then(userData => {
+                            callback('SIGNED_IN', {
+                                user: userData,
+                                access_token: token,
+                                refresh_token: localStorage.getItem('sb-refresh-token'),
+                                expires_at: localStorage.getItem('sb-expires-at')
+                            });
+                        }).catch(() => {
+                            callback('SIGNED_OUT', null);
+                        });
+                    } else {
+                        callback('SIGNED_OUT', null);
+                    }
                 }, 100);
                 
                 // Return unsubscribe function

@@ -313,6 +313,36 @@ class SupabaseClient {
         return new SupabaseQuery(this.restUrl, table, this.key);
     }
 
+    // RPC method for calling stored procedures
+    rpc(functionName, params = {}) {
+        return new Promise((resolve, reject) => {
+            const token = localStorage.getItem('sb-access-token');
+            
+            fetch(`${this.restUrl}/rpc/${functionName}`, {
+                method: 'POST',
+                headers: {
+                    'apikey': this.key,
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                body: JSON.stringify(params)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    const errorData = response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `RPC call failed: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resolve({ data, error: null });
+            })
+            .catch(error => {
+                resolve({ data: null, error: { message: error.message } });
+            });
+        });
+    }
+
     // Storage methods
     get storage() {
         return new SupabaseStorage(this.storageUrl, this.key);

@@ -157,13 +157,31 @@ class SupabaseClient {
             
             signInWithOAuth: async (options) => {
                 // For OAuth, we'll redirect to the provider
-                const { provider } = options;
-                const redirectUrl = window.location.origin + '/signin.html';
+                const { provider, options: oauthOptions = {} } = options;
+                const redirectUrl = oauthOptions.redirectTo || window.location.origin + '/signin.html';
                 
-                const authUrl = `${self.authUrl}/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectUrl)}&scopes=email`;
+                // Build OAuth URL with proper parameters
+                const params = new URLSearchParams({
+                    provider: provider,
+                    redirect_to: redirectUrl,
+                    scopes: 'email'
+                });
+                
+                // Add any additional query parameters
+                if (oauthOptions.queryParams) {
+                    Object.entries(oauthOptions.queryParams).forEach(([key, value]) => {
+                        params.append(key, value);
+                    });
+                }
+                
+                const authUrl = `${self.authUrl}/authorize?${params.toString()}`;
                 
                 // Store redirect info for after OAuth callback
                 sessionStorage.setItem('oauth-provider', provider);
+                sessionStorage.setItem('oauth-redirect-to', redirectUrl);
+                
+                console.log('OAuth URL:', authUrl);
+                console.log('Redirecting to OAuth provider:', provider);
                 
                 // Redirect to OAuth provider
                 window.location.href = authUrl;

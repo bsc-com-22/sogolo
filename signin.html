@@ -649,6 +649,8 @@
             
             if (code) {
                 try {
+                    console.log('OAuth code received, exchanging for session...');
+                    
                     // Exchange authorization code for session
                     const response = await fetch(`${window.supabaseClient.authUrl}/token?grant_type=authorization_code&code=${code}`, {
                         method: 'POST',
@@ -671,8 +673,17 @@
                     
                     console.log('OAuth authentication successful');
                     
-                    // Redirect to clean URL and handle user role
-                    window.location.href = 'signin.html';
+                    // Get stored redirect URL or default to dashboard
+                    const redirectTo = sessionStorage.getItem('oauth-redirect-to') || 'dashboard.html';
+                    
+                    // Clear OAuth session storage
+                    sessionStorage.removeItem('oauth-provider');
+                    sessionStorage.removeItem('oauth-redirect-to');
+                    
+                    console.log('Redirecting to:', redirectTo);
+                    
+                    // Redirect to the appropriate page
+                    window.location.href = redirectTo;
                     
                 } catch (error) {
                     console.error('OAuth token exchange error:', error);
@@ -681,13 +692,28 @@
             }
         }
 
+        // Test OAuth setup
+        function testOAuthSetup() {
+            console.log('=== OAuth Setup Test ===');
+            console.log('Supabase client:', window.supabaseClient);
+            console.log('Auth URL:', window.supabaseClient?.authUrl);
+            console.log('Supabase URL:', window.supabaseClient?.supabaseUrl);
+            
+            if (window.supabaseClient) {
+                const testUrl = `${window.supabaseClient.authUrl}/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin + '/signin.html')}&scopes=email`;
+                console.log('Test OAuth URL:', testUrl);
+            }
+        }
+
         // Ensure Supabase is initialized
         document.addEventListener('DOMContentLoaded', () => {
             debugSupabaseConnection();
+            testOAuthSetup();
             
             if (!window.supabaseClient && typeof window.supabase !== 'undefined') {
                 initializeSupabase();
                 setTimeout(debugSupabaseConnection, 1000); // Check again after initialization
+                setTimeout(testOAuthSetup, 1100); // Test OAuth after initialization
             }
             
             // Handle OAuth callback first
@@ -784,17 +810,31 @@
         // Google Sign In function
         async function signInWithGoogle() {
             try {
+                console.log('Starting Google OAuth sign in...');
+                
+                if (!window.authService) {
+                    console.error('Auth service not available');
+                    showError('Authentication service not available');
+                    return;
+                }
+                
+                console.log('Calling authService.signInWithOAuth...');
                 const result = await authService.signInWithOAuth('google');
+                
+                console.log('OAuth result:', result);
+                
                 if (result.success) {
                     // User will be redirected to Google for authentication
                     // After successful authentication, they'll be redirected back
                     // The auth state change listener will handle the redirect based on role
+                    console.log('OAuth initiated successfully');
                 } else {
-                    Helpers.showToast(result.error || 'Google sign in failed', 'error');
+                    console.error('OAuth failed:', result.error);
+                    showError(result.error || 'Google sign in failed');
                 }
             } catch (error) {
-                Helpers.showToast('An unexpected error occurred with Google sign in', 'error');
                 console.error('Google sign in error:', error);
+                showError('Google sign in failed: ' + error.message);
             }
         }
 

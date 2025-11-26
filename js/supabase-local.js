@@ -460,7 +460,12 @@ class SupabaseQuery {
     // For CRUD operations
     async insert(data) {
         const token = localStorage.getItem('sb-access-token');
-        const url = `${this.restUrl}/${this.table}?select=${this.query.select}`;
+        let url = `${this.restUrl}/${this.table}?select=${this.query.select}`;
+        
+        // Add filters for WHERE clause
+        if (this.query.filter.length > 0) {
+            url += '&' + this.query.filter.join('&');
+        }
 
         try {
             const response = await fetch(url, {
@@ -503,6 +508,36 @@ class SupabaseQuery {
                     ...(token && { 'Authorization': `Bearer ${token}` })
                 },
                 body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+            return { data: result, error: null };
+        } catch (error) {
+            return { data: null, error: { message: error.message } };
+        }
+    }
+
+    async delete() {
+        const token = localStorage.getItem('sb-access-token');
+        let url = `${this.restUrl}/${this.table}?select=${this.query.select}`;
+        
+        // Add filters for WHERE clause
+        if (this.query.filter.length > 0) {
+            url += '&' + this.query.filter.join('&');
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': this.key,
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                }
             });
 
             if (!response.ok) {

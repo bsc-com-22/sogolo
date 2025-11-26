@@ -1563,9 +1563,7 @@
             try {
                 // Use the admin function to get KYC details
                 const { data, error } = await databaseService.supabase
-                    .rpc('admin_get_all_kyc')
-                    .eq('id', kycId)
-                    .single();
+                    .rpc('admin_get_all_kyc', { kyc_id: kycId });
 
                 if (error) {
                     console.log('Admin function failed, trying regular query...');
@@ -1579,7 +1577,8 @@
                     if (result.error) throw result.error;
                     currentKYC = result.data;
                 } else {
-                    currentKYC = data;
+                    // RPC returns array, get first item
+                    currentKYC = data && data.length > 0 ? data[0] : null;
                 }
 
                 showKYCModal(currentKYC);

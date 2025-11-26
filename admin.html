@@ -1303,7 +1303,7 @@
         // Load transactions
         async function loadTransactions() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('transaction_summary')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -1331,7 +1331,7 @@
         // Load payments
         async function loadPayments() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('payment_records')
                     .select(`
                         *,
@@ -1368,7 +1368,7 @@
         // Load inspections
         async function loadInspections() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('transactions')
                     .select(`
                         *,
@@ -2068,7 +2068,7 @@
         // Filter functions
         async function filterTransactions(filterType, value) {
             try {
-                let query = supabase.from('transaction_summary').select('*');
+                let query = databaseService.supabase.from('transaction_summary').select('*');
                 
                 if (filterType === 'status' && value) {
                     query = query.eq('status', value);
@@ -2095,7 +2095,7 @@
 
         async function filterPayments(searchTerm) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('payment_records')
                     .select(`
                         *,
@@ -2127,7 +2127,7 @@
 
         async function filterInspections(searchTerm) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('transactions')
                     .select(`
                         *,
@@ -2161,7 +2161,7 @@
         // Transaction detail functions
         async function viewTransactionDetails(transactionId) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('transaction_summary')
                     .select('*')
                     .eq('id', transactionId)
@@ -2258,7 +2258,7 @@
 
         async function viewPaymentDetails(paymentId) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('payment_records')
                     .select(`
                         *,
@@ -2354,7 +2354,7 @@
 
             try {
                 // Update payment status
-                const { error: paymentError } = await supabase
+                const { error: paymentError } = await databaseService.supabase
                     .from('payment_records')
                     .update({
                         status: 'verified',
@@ -2367,7 +2367,7 @@
                 if (paymentError) throw paymentError;
 
                 // Update transaction status
-                const { error: transactionError } = await supabase
+                const { error: transactionError } = await databaseService.supabase
                     .from('transactions')
                     .update({
                         status: 'payment_verified',
@@ -2378,7 +2378,7 @@
                 if (transactionError) throw transactionError;
 
                 // Create escrow record
-                await supabase
+                await databaseService.supabase
                     .from('escrow_records')
                     .insert({
                         transaction_id: currentPayment.transaction_id,
@@ -2389,7 +2389,7 @@
                     });
 
                 // Log history
-                await supabase
+                await databaseService.supabase
                     .from('transaction_history')
                     .insert({
                         transaction_id: currentPayment.transaction_id,
@@ -2421,7 +2421,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await databaseService.supabase
                     .from('payment_records')
                     .update({
                         status: 'rejected',
@@ -2455,7 +2455,7 @@
 
         async function viewInspectionDetails(transactionId) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await databaseService.supabase
                     .from('transactions')
                     .select(`
                         *,
@@ -2574,7 +2574,7 @@
 
             try {
                 // Create inspection record
-                await supabase
+                await databaseService.supabase
                     .from('inspection_records')
                     .insert({
                         transaction_id: currentInspection.id,
@@ -2585,7 +2585,7 @@
                     });
 
                 // Update transaction status
-                const { error: transactionError } = await supabase
+                const { error: transactionError } = await databaseService.supabase
                     .from('transactions')
                     .update({
                         status: 'inspection_passed',
@@ -2596,7 +2596,7 @@
                 if (transactionError) throw transactionError;
 
                 // Release funds from escrow
-                await supabase
+                await databaseService.supabase
                     .from('escrow_records')
                     .update({
                         status: 'released',
@@ -2607,7 +2607,7 @@
                     .eq('transaction_id', currentInspection.id);
 
                 // Mark transaction as completed
-                await supabase
+                await databaseService.supabase
                     .from('transactions')
                     .update({
                         status: 'completed',
@@ -2616,7 +2616,7 @@
                     .eq('id', currentInspection.id);
 
                 // Log history
-                await supabase
+                await databaseService.supabase
                     .from('transaction_history')
                     .insert({
                         transaction_id: currentInspection.id,
@@ -2649,7 +2649,7 @@
 
             try {
                 // Create inspection record
-                await supabase
+                await databaseService.supabase
                     .from('inspection_records')
                     .insert({
                         transaction_id: currentInspection.id,
@@ -2660,7 +2660,7 @@
                     });
 
                 // Update transaction status
-                const { error } = await supabase
+                const { error } = await databaseService.supabase
                     .from('transactions')
                     .update({
                         status: 'inspection_failed',
@@ -2671,7 +2671,7 @@
                 if (error) throw error;
 
                 // Log history
-                await supabase
+                await databaseService.supabase
                     .from('transaction_history')
                     .insert({
                         transaction_id: currentInspection.id,
@@ -2689,7 +2689,7 @@
 
             } catch (error) {
                 console.error('Error failing inspection:', error);
-                showError('Failed to record inspection failure: ' + error.message);
+                showError('Failed to fail inspection: ' + error.message);
             }
         }
 

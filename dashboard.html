@@ -1212,6 +1212,7 @@
                 }
             } catch (error) {
                 console.error('Dashboard initialization error:', error);
+                debugStoredTokens();
                 Helpers.showToast('Failed to initialize dashboard. Redirecting to sign in...', 'error');
                 setTimeout(() => {
                     window.location.href = 'signin.html';
@@ -1219,10 +1220,42 @@
             }
         });
 
+        // Debug function to check stored tokens
+        function debugStoredTokens() {
+            console.log('=== Stored Tokens Debug ===');
+            console.log('Access token:', localStorage.getItem('sb-access-token') ? 'Present' : 'Missing');
+            console.log('Refresh token:', localStorage.getItem('sb-refresh-token') ? 'Present' : 'Missing');
+            console.log('Expires at:', localStorage.getItem('sb-expires-at'));
+            
+            // Check if we can decode the token (basic check)
+            const token = localStorage.getItem('sb-access-token');
+            if (token) {
+                try {
+                    const parts = token.split('.');
+                    if (parts.length === 3) {
+                        const payload = JSON.parse(atob(parts[1]));
+                        console.log('Token payload:', payload);
+                        console.log('Token expires:', new Date(payload.exp * 1000));
+                        console.log('Token valid:', Date.now() < payload.exp * 1000);
+                    }
+                } catch (e) {
+                    console.log('Token format invalid:', e.message);
+                }
+            }
+        }
+
         async function checkAuth() {
             try {
+                console.log('=== Dashboard Auth Check ===');
+                debugStoredTokens();
+                console.log('Auth service available:', !!window.authService);
+                console.log('Supabase client available:', !!window.supabaseClient);
+                
                 // First check if there's an active session
+                console.log('Getting session...');
                 const sessionResult = await authService.getSession();
+                console.log('Session result:', sessionResult);
+                
                 if (!sessionResult.success || !sessionResult.session) {
                     console.log('No active session found, redirecting to signin');
                     window.location.href = 'signin.html';
@@ -1230,7 +1263,10 @@
                 }
                 
                 // Then get the current user
+                console.log('Getting current user...');
                 const result = await authService.getCurrentUser();
+                console.log('User result:', result);
+                
                 if (!result.success || !result.user) {
                     console.log('No authenticated user found, redirecting to signin');
                     window.location.href = 'signin.html';

@@ -7,12 +7,18 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="flex items-center justify-center" style="min-height: 100vh;">
+<body class="flex items-center justify-center" style="min-height: 100vh; padding: 1rem;">
     
-    <div class="card" style="width: 100%; max-width: 400px;">
+    <div class="card" style="width: 100%; max-width: 400px; margin: 1rem;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Create Account</h1>
-            <p style="color: var(--text-muted);">Join Sogolo today</p>
+            <a href="index.html" style="display: inline-block; margin-bottom: 1rem;">
+                <img src="logo.png" alt="Sogolo" style="height: 60px;">
+            </a>
+            <div style="margin-bottom: 1rem;">
+                <a href="index.html" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">← Back to Home</a>
+            </div>
+            <h1 style="font-size: clamp(1.25rem, 4vw, 1.5rem); margin-bottom: 0.5rem;">Create Account</h1>
+            <p style="color: var(--text-muted); font-size: clamp(0.875rem, 2vw, 1rem);">Join Sogolo today</p>
         </div>
 
         <form id="signupForm">
@@ -45,7 +51,7 @@
             Sign up with Google
         </button>
 
-        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem;">
+        <div style="text-align: center; margin-top: 1.5rem; font-size: clamp(0.813rem, 2vw, 0.875rem);">
             Already have an account? <a href="signin.html">Sign in</a>
         </div>
     </div>

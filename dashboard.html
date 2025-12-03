@@ -12,10 +12,14 @@
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
-                Sogolo
+                <img src="logo.png" alt="Sogolo" style="height: 42px;">
             </a>
-            <div class="flex gap-4 items-center">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div class="nav-actions" id="navActions">
                 <a href="admin-dashboard.html" id="adminBtn" class="btn btn-primary hidden">Admin Dashboard</a>
                 <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             </div>
@@ -24,12 +28,12 @@
 
     <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
         <!-- User Welcome & KYC Status -->
-        <div class="card mb-4 flex justify-between items-center">
-            <div class="flex items-center gap-4">
+        <div class="card mb-4" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="flex items-center gap-4" style="flex-wrap: wrap;">
                 <div id="userAvatar" style="width: 48px; height: 48px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 600;">U</div>
-                <div>
-                    <h2 id="userEmail" style="font-size: 1.25rem; font-weight: 600;">Loading...</h2>
-                    <p style="color: var(--text-muted);">Welcome back!</p>
+                <div style="flex: 1; min-width: 200px;">
+                    <h2 id="userEmail" style="font-size: clamp(1.125rem, 3vw, 1.25rem); font-weight: 600;">Loading...</h2>
+                    <p style="color: var(--text-muted); font-size: clamp(0.875rem, 2vw, 1rem);">Welcome back!</p>
                 </div>
             </div>
             <div id="kycStatusBadge">
@@ -39,9 +43,9 @@
 
         <!-- Transactions -->
         <div class="card">
-            <div class="flex justify-between items-center mb-4">
-                <h3 style="font-size: 1.25rem; font-weight: 600;">My Transactions</h3>
-                <a href="create-transaction.html" class="btn btn-primary">Create New Transaction</a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <h3 style="font-size: clamp(1.125rem, 3vw, 1.25rem); font-weight: 600;">My Transactions</h3>
+                <a href="create-transaction.html" class="btn btn-primary btn-full-mobile">Create New Transaction</a>
             </div>
 
             <div id="transactionList">
@@ -144,6 +148,22 @@
         loadDashboard();
 
         document.getElementById('logoutBtn').addEventListener('click', () => logout());
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navActions = document.getElementById('navActions');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navActions.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
+                    navActions.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>

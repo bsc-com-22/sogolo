@@ -1,93 +1,1916 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sogolo - Secure Escrow Transactions</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sogolo - Secure Social Trading</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #f3f4f6;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .header.scrolled {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 82px;
+            height: 82px;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #1f2937;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #6b7280;
+        }
+
+        .btn-login:hover {
+            color: #1f2937;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-cta {
+            padding: 14px 28px;
+            font-size: 16px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            background: linear-gradient(135deg, rgba(30, 59, 138, 0.404) 0%, rgba(26, 33, 56, 0.486) 50%, rgba(21, 34, 56, 0.85) 100%),
+                url('https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1600&auto=format&fit=crop') center/cover no-repeat;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.2) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            font-size: 0.813rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 600;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            color: white;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 4rem;
+            margin-top: 6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+                margin-top: 4rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        /* About Section */
+        .about {
+            padding: 6rem 2rem;
+            background: #ffffff;
+        }
+
+        .about .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-content {
+            max-width: 540px;
+        }
+
+        .about-label {
+            display: inline-block;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .about h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .about-subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .about-description {
+            font-size: 1rem;
+            color: #6b7280;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .about-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .about-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            color: #3b82f6;
+            flex-shrink: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+                margin-top: 4rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .about {
+                padding: 4rem 1.5rem;
+            }
+
+            .about .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-image {
+                height: 300px;
+            }
+
+            .about h2 {
+                font-size: 2rem;
+            }
+
+            .about-subtitle {
+                font-size: 1.125rem;
+            }
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 6rem 2rem;
+            background: #f9fafb;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-label {
+            display: inline-block;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            position: relative;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -12px;
+            left: 2rem;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            margin: 1.5rem 0 1.5rem;
+            color: #3b82f6;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-description {
+            font-size: 0.938rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* Why Choose Us Section */
+        .why-choose-us {
+            padding: 6rem 2rem;
+            background: #ffffff;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            border-color: #e5e7eb;
+        }
+
+        .feature-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card-icon {
+            width: 28px;
+            height: 28px;
+            color: #3b82f6;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .feature-card p {
+            font-size: 0.938rem;
+            color: #6b7280;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 6rem 2rem;
+            background: #f9fafb;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #f3f4f6;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .faq-question:hover {
+            color: #3b82f6;
+        }
+
+        .faq-icon {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+            color: #3b82f6;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-answer-content {
+            padding: 0 2rem 1.5rem;
+            font-size: 1rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .faq-cta {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+        }
+
+        .faq-cta h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .cta-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .cta p {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta-primary {
+            background: white;
+            color: #3b82f6;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-cta-primary:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-cta-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            padding: 3rem 2rem 2rem;
+            color: white;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: #3b82f6;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-credit {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .footer-credit a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-credit a:hover {
+            color: #60a5fa;
+        }
+
+        .heart {
+            color: #ef4444;
+            margin: 0 2px;
+        }
+
+       /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            color: #6b7280;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            padding: 2rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active .mobile-menu-content {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .mobile-menu-logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-close svg {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            transition: color 0.2s ease;
+        }
+
+        .mobile-nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .mobile-auth-container {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .mobile-auth-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mobile-auth-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-auth-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .mobile-auth-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .mobile-auth-btn.secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .mobile-auth-btn.secondary:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu,
+            .nav-actions {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .mobile-menu-content {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-menu-content {
+                width: 280px;
+            }
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 6rem 2rem;
+            background: #ffffff;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: #e5e7eb;
+        }
+
+        .testimonial-quote {
+            font-size: 1.125rem;
+            color: #1f2937;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            position: relative;
+        }
+
+        .testimonial-quote::before {
+            content: '"';
+            font-size: 3rem;
+            color: #3b82f6;
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-family: Georgia, serif;
+            opacity: 0.3;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .testimonial-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .testimonial-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .verified-icon {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Tablet Responsive Design */
+        @media (max-width: 1024px) {
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+                text-align: left;
+            }
+
+            .hero-content {
+                text-align: left;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .hero-cta {
+                justify-content: flex-start;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+                margin-top: 4rem;
+                justify-content: flex-start;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .about {
+                padding: 4rem 1.5rem;
+            }
+
+            .about .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-image {
+                height: 300px;
+            }
+
+            .about h2 {
+                font-size: 2rem;
+            }
+
+            .about-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .why-choose-us {
+                padding: 4rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .faq {
+                padding: 4rem 1.5rem;
+            }
+
+            .faq-question {
+                padding: 1.25rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .faq-answer-content {
+                padding: 0 1.5rem 1.25rem;
+                font-size: 0.938rem;
+            }
+
+            .faq-cta {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .cta {
+                padding: 4rem 1.5rem;
+            }
+
+            .cta h2 {
+                font-size: 2rem;
+            }
+
+            .cta p {
+                font-size: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-cta-primary,
+            .btn-cta-secondary {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+
+            .footer {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                text-align: left;
+            }
+
+            .testimonials {
+                padding: 4rem 1.5rem;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .testimonial-card {
+                padding: 1.5rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1rem;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
+
+   <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
-                Sogolo
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
             </a>
-            <div class="flex gap-4 items-center">
-                <div id="authLinks" class="flex gap-4">
-                    <a href="signin.html" class="btn btn-secondary">Sign In</a>
-                    <a href="signup.html" class="btn btn-primary">Get Started</a>
-                </div>
-                <div id="userLinks" class="hidden flex gap-4 items-center">
-                    <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
-                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
-                </div>
+            <nav class="nav-menu">
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#how-it-works" class="nav-link">How It Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#FAQs" class="nav-link">FAQs</a>
+                <a href="support.html" class="nav-link">Support</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="signin.html#loginForm" class="btn btn-login">Login</a>
+                <a href="signin.html#signupForm" class="btn btn-primary">Get Started</a>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="container" style="margin-top: 100px; text-align: center; padding: 4rem 1.5rem;">
-        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2;">
-            Secure Transactions,<br>
-            <span style="color: var(--primary);">Zero Risk.</span>
-        </h1>
-        <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2rem;">
-            Buy and sell with confidence. We hold the money until the product is verified.
-        </p>
-        <div class="flex justify-center gap-4">
-            <a href="signup.html" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem;">Start a Transaction</a>
-            <a href="#how-it-works" class="btn btn-secondary" style="padding: 0.75rem 2rem; font-size: 1rem;">How it Works</a>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" onclick="closeMobileMenu(event)">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">Sogolo</div>
+                <button class="mobile-menu-close" onclick="closeMobileMenu()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mobile-nav-links">
+                <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+                <a href="index.html#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
+                <a href="index.html#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
+                <a href="index.html#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+
+            <div class="mobile-auth-container">
+                <div class="mobile-auth-title">Get Started</div>
+                <div class="mobile-auth-buttons">
+                    <a href="signin.html" class="mobile-auth-btn primary">Sign Up</a>
+                    <a href="signin.html" class="mobile-auth-btn secondary">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                Secure Escrow Protection
+            </div>
+
+            <h1>Trade Safely on Social Media</h1>
+
+            <p>Sogolo bridges trust between buyers and sellers in Malawi's social media marketplace with verified
+                transactions and secure payments.</p>
+
+            <div class="hero-cta">
+                <a href="#start" class="btn btn-primary btn-cta">Start Trading</a>
+                <a href="#learn" class="btn btn-secondary btn-cta">Learn More</a>
+            </div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">1,000+</span>
+                <span class="stat-label">Verified Sellers</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">5,000+</span>
+                <span class="stat-label">Safe Transactions</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">98%</span>
+                <span class="stat-label">Satisfaction Rate</span>
+            </div>
         </div>
     </section>
 
-    <!-- How it Works -->
-    <section id="how-it-works" class="container" style="padding: 4rem 1.5rem;">
-        <h2 style="text-align: center; font-size: 2rem; margin-bottom: 3rem;">How Sogolo Works</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">🤝</div>
-                <h3 style="margin-bottom: 0.5rem;">1. Agree</h3>
-                <p style="color: var(--text-muted);">Buyer and Seller agree on terms. Buyer creates a transaction.</p>
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&auto=format&fit=crop"
+                    alt="Team collaboration" class="about-image">
             </div>
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div>
-                <h3 style="margin-bottom: 0.5rem;">2. Secure</h3>
-                <p style="color: var(--text-muted);">Buyer sends money to Sogolo Escrow. Seller is notified.</p>
-            </div>
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">📦</div>
-                <h3 style="margin-bottom: 0.5rem;">3. Deliver</h3>
-                <p style="color: var(--text-muted);">Seller delivers item for inspection. We verify quality.</p>
-            </div>
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">💸</div>
-                <h3 style="margin-bottom: 0.5rem;">4. Pay</h3>
-                <p style="color: var(--text-muted);">Funds are released to the seller only after approval.</p>
+            <div class="about-content">
+                <span class="about-label">About Sogolo</span>
+                <h2>Building Trust in Malawi's Digital Marketplace</h2>
+                <p class="about-subtitle">We're on a mission to make online trading safer and more reliable for everyone
+                    in Malawi.</p>
+                <p class="about-description">Social media has become the marketplace of choice for thousands of
+                    Malawians, but trust remains a challenge. Sogolo solves this by providing secure escrow services,
+                    product verification, and buyer protection—ensuring every transaction is safe and transparent.</p>
+
+                <div class="about-features">
+                    <div class="about-feature">
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Verified product inspections</span>
+                    </div>
+                    <div class="about-feature">
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                            </path>
+                        </svg>
+                        <span>Secure payment escrow</span>
+                    </div>
+                    <div class="about-feature">
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        <span>24/7 customer support</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <script type="module">
-        import { initAuthStateListener, logout } from './js/auth.js';
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Simple Process</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Four easy steps to secure transactions</p>
+            </div>
 
-        const authLinks = document.getElementById('authLinks');
-        const userLinks = document.getElementById('userLinks');
-        const logoutBtn = document.getElementById('logoutBtn');
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                        </path>
+                    </svg>
+                    <h3 class="step-title">Create Link</h3>
+                    <p class="step-description">Buyer creates a verification link and shares with seller</p>
+                </div>
 
-        initAuthStateListener((event, session) => {
-            if (session) {
-                authLinks.classList.add('hidden');
-                userLinks.classList.remove('hidden');
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <h3 class="step-title">Verify Details</h3>
+                    <p class="step-description">Seller uploads product details and images for verification</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    <h3 class="step-title">Secure Payment</h3>
+                    <p class="step-description">Buyer pays securely. Funds held in escrow until delivery</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <h3 class="step-title">Confirm & Release</h3>
+                    <p class="step-description">Product verified and delivered. Funds released to seller</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose-us" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Everything You Need</span>
+                <h2 class="section-title">Why Choose Us</h2>
+                <p class="section-subtitle">Complete protection for your online transactions</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Escrow Protection -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Escrow Protection</h3>
+                    <p>Your payment is held securely until product verification is complete.</p>
+                </div>
+
+                <!-- Secure Payments -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Secure Payments</h3>
+                    <p>Multiple payment methods including mobile money, cards, and bank transfers.</p>
+                </div>
+
+                <!-- Product Verification -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3>Product Verification</h3>
+                    <p>Expert inspection ensures you receive exactly what you paid for.</p>
+                </div>
+
+                <!-- Real-time Tracking -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3>Real-time Tracking</h3>
+                    <p>Track every step of your transaction from start to finish.</p>
+                </div>
+
+                <!-- 24/7 Support -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Our support team is always here to help resolve any issues.</p>
+                </div>
+
+                <!-- Trust Score -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Trust Score</h3>
+                    <p>Verified sellers earn trust badges for reliable transactions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="FAQs">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">FAQs</span>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Everything you need to know about using Sogolo</p>
+            </div>
+
+            <div class="faq-container">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How does Sogolo protect my money?</span>
+                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Sogolo uses secure escrow services to hold your payment until the product is verified and
+                            delivered. Your money is never released to the seller until you confirm receipt of the exact
+                            item you ordered. This ensures complete protection against fraud and gives you peace of mind
+                            with every transaction.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How long does the verification process take?</span>
+                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Our verification process typically takes 2-4 hours during business hours. Our expert team
+                            carefully inspects product details, images, and seller information to ensure authenticity.
+                            For urgent transactions, we offer priority verification that can be completed within 1 hour
+                            for a small additional fee.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What happens if the product is not as described?</span>
+                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            If the product doesn't match the verified description, you can reject it and receive a full
+                            refund. Simply contact our support team within 24 hours of delivery with photos and details.
+                            We'll investigate the issue and ensure you're protected. Your satisfaction and safety are
+                            our top priorities.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Are there any fees for using Sogolo?</span>
+                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Sogolo charges a small service fee of 3% of the transaction value to cover verification,
+                            escrow services, and customer support. This fee is split between buyer and seller (1.5%
+                            each). There are no hidden charges, and the fee is clearly displayed before you complete any
+                            transaction.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ CTA -->
+                <div class="faq-cta">
+                    <h3>Still have questions? We're here to help!</h3>
+                    <a href="support.html#contact" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Start Trading Safely?</h2>
+            <p>Join thousands of buyers and sellers who trust Sogolo for secure social commerce transactions.</p>
+            <div class="cta-buttons">
+                <a href="signin.html#login" class="btn-cta-primary">
+                    Start Your First Transaction
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </a>
+                <a href="signin.html#signup" class="btn-cta-secondary">Create Free Account</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Testimonials</span>
+                <h2 class="section-title">What Our Users Say</h2>
+                <p class="section-subtitle">Real stories from buyers and sellers across Malawi</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        Sogolo made buying my first phone online so easy! The verification process gave me confidence,
+                        and I got exactly what I paid for.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">T</div>
+                        <div class="testimonial-info">
+                            <h4>Thabo Mwale</h4>
+                            <p>Buyer, Blantyre</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        As a seller, Sogolo protects both me and my customers. The trust score system has helped grow my
+                        business significantly.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">C</div>
+                        <div class="testimonial-info">
+                            <h4>Chisomo Banda</h4>
+                            <p class="testimonial-role">
+                                <span class="verified-badge">
+                                    <svg class="verified-icon" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Verified
+                                </span>
+                                Seller, Lilongwe
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        Finally, a safe way to shop on social media! The escrow service means I never have to worry
+                        about losing money to scammers.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">G</div>
+                        <div class="testimonial-info">
+                            <h4>Grace Phiri</h4>
+                            <p>Buyer, Mzuzu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-e41befc6-25d0-4ad4-bd42-34b291485fe4" data-elfsight-app-lazy></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="logo2.png" alt="sogolo logo" height="50px">
+                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
+                    verified products, and complete buyer protection.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Platform</h3>
+                <div class="footer-links">
+                    <a href="#about">About Us</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#features">Features</a>
+                    <a href="pricing.html">Pricing</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <div class="footer-links">
+                    <a href="#ai">Help Center</a>
+                    <a href="support.html">Contact Support</a>
+                    <a href="#FAQs">FAQ</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#security">Security</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-credit">
+                &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
+            </p>
+            <p class="footer-credit" style="margin-top: 0.5rem;">
+                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
+                    Creatives</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+
+                    // Toggle current item
+                    if (isActive) {
+                        item.classList.remove('active');
+                    } else {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
             } else {
-                authLinks.classList.remove('hidden');
-                userLinks.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeMobileMenu(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (event && !mobileMenu.contains(event.target) && event.target !== mobileMenuBtn && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            } else if (!event) {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', closeMobileMenu);
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
             }
         });
 
-        logoutBtn.addEventListener('click', () => logout());
+        // Update copyright year automatically
+        function updateCopyrightYear() {
+            const currentYear = new Date().getFullYear();
+            const yearElement = document.getElementById('currentYear');
+            if (yearElement) {
+                yearElement.textContent = currentYear;
+            }
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Initialize copyright year on page load
+        document.addEventListener('DOMContentLoaded', updateCopyrightYear);
+    </script>
+
+    <!-- Authentication Integration -->
+    <script type="module">
+        import { initAuthStateListener, logout } from './js/auth.js';
+
+        // Initialize auth state listener
+        initAuthStateListener((event, session) => {
+            const navActions = document.querySelector('.nav-actions');
+            
+            if (session) {
+                // User is logged in - show dashboard link
+                navActions.innerHTML = `
+                    <a href="dashboard.html" class="btn btn-login">Dashboard</a>
+                    <button id="logoutBtn" class="btn btn-primary">Logout</button>
+                `;
+                
+                // Add logout handler
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => logout());
+                }
+            } else {
+                // User is not logged in - show login/signup
+                navActions.innerHTML = `
+                    <a href="signin.html" class="btn btn-login">Login</a>
+                    <a href="signup.html" class="btn btn-primary">Get Started</a>
+                `;
+            }
+        });
     </script>
 </body>
+
 </html>

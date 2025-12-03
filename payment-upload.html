@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Payment - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px;">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Upload Payment Proof</h1>
+                <p style="color: var(--text-muted);">Please transfer the funds to our escrow account and upload the receipt.</p>
+            </div>
+
+            <div class="alert alert-info mb-4">
+                <strong>Bank Details:</strong><br>
+                Bank: National Bank of Malawi<br>
+                Account: 100xxxxxxx<br>
+                Name: Sogolo Escrow
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label class="form-label">Amount Paid</label>
+                    <input type="number" id="amount" class="form-input" required step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Proof of Payment (Screenshot/Photo)</label>
+                    <input type="file" id="proof" class="form-input" required accept="image/*" onchange="previewImage(this)">
+                    <div id="preview" class="file-preview"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Submit Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { uploadPaymentProof } from './js/transaction.js';
+        import { initAuthStateListener } from './js/auth.js';
+
+        initAuthStateListener();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        window.previewImage = (input) => {
+            const container = document.getElementById('preview');
+            container.innerHTML = '';
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    container.innerHTML = `<div class="file-preview-item"><img src="${e.target.result}"></div>`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            const amount = document.getElementById('amount').value;
+            const file = document.getElementById('proof').files[0];
+
+            const { error } = await uploadPaymentProof(transactionId, file, amount);
+
+            if (error) {
+                alert('Error: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = 'Submit Payment';
+            } else {
+                alert('Payment uploaded! We will verify it shortly.');
+                window.location.href = `transaction-status.html?id=${transactionId}`;
+            }
+        });
+    </script>
+</body>
+</html>

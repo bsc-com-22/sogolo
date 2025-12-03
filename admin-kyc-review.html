@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review KYC - Sogolo Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body { background-color: #f9fafb; }
+        .container-md { max-width: 800px; margin: 100px auto 2rem; padding: 0 24px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .detail-item label { display: block; color: #6b7280; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .detail-item p { color: #1f2937; font-weight: 500; }
+        
+        .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .doc-item img { width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; cursor: pointer; }
+        .doc-item label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        
+        .action-bar { display: flex; gap: 1rem; border-top: 1px solid #e5e7eb; padding-top: 2rem; }
+        .btn-reject { background: white; color: #ef4444; border: 1px solid #ef4444; }
+        .btn-reject:hover { background: #fef2f2; }
+    </style>
+</head>
+<body>
+    <div class="container-md">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; color: #1f2937; margin: 0;">Review KYC Application</h1>
+                <a href="admin-dashboard.html" class="btn btn-secondary">Back to List</a>
+            </div>
+
+            <div id="content">Loading...</div>
+
+            <div class="action-bar">
+                <button onclick="updateStatus('rejected')" class="btn btn-reject" style="flex: 1; justify-content: center;">Reject Application</button>
+                <button onclick="updateStatus('approved')" class="btn btn-primary" style="flex: 1; justify-content: center;">Approve Application</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+        import { getCurrentUser } from './js/auth.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        async function init() {
+            const admin = await getCurrentUser();
+            if (!admin || admin.profile?.role !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadProfile();
+        }
+
+        async function loadProfile() {
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            if (error) {
+                alert('Error loading profile');
+                return;
+            }
+
+            // Get signed URLs for images
+            const { data: idFront } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.id_front_url, 3600);
+            const { data: idBack } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.id_back_url, 3600);
+            const { data: selfie } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.selfie_url, 3600);
+
+            document.getElementById('content').innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item"><label>Full Name</label><p>${profile.full_name}</p></div>
+                    <div class="detail-item"><label>Phone</label><p>${profile.phone}</p></div>
+                    <div class="detail-item"><label>Address</label><p>${profile.address}</p></div>
+                    <div class="detail-item"><label>City</label><p>${profile.city}</p></div>
+                    <div class="detail-item"><label>Next of Kin</label><p>${profile.next_of_kin_name}</p></div>
+                    <div class="detail-item"><label>Kin Phone</label><p>${profile.next_of_kin_phone}</p></div>
+                </div>
+
+                <h3>Documents</h3>
+                <div class="doc-grid">
+                    <div class="doc-item">
+                        <label>ID Front</label>
+                        <img src="${idFront?.signedUrl}" onclick="window.open(this.src)">
+                    </div>
+                    <div class="doc-item">
+                        <label>ID Back</label>
+                        <img src="${idBack?.signedUrl}" onclick="window.open(this.src)">
+                    </div>
+                </div>
+                <div class="doc-item" style="max-width: 50%;">
+                    <label>Selfie</label>
+                    <img src="${selfie?.signedUrl}" onclick="window.open(this.src)">
+                </div>
+            `;
+        }
+
+        window.updateStatus = async (status) => {
+            if (!confirm(`Are you sure you want to ${status} this application?`)) return;
+
+            const { error } = await supabase
+                .from('profiles')
+                .update({ kyc_status: status })
+                .eq('id', userId);
+
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert(`Application ${status}`);
+                window.location.href = 'admin-dashboard.html';
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>

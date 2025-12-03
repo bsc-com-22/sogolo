@@ -3,1160 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sogolo - User Dashboard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background-color: #f8fafc;
-            overflow-x: hidden;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        
-        /* Header */
-        .header {
-            background: #ffffff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            border-bottom: 1px solid #f3f4f6;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .header.scrolled {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .header .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 24px;
-            height: 72px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 82px;
-            height: 82px;
-            object-fit: contain;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #6b7280;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-link:hover {
-            color: #1f2937;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            text-decoration: none;
-        }
-
-        .btn-login {
-            background: transparent;
-            color: #6b7280;
-        }
-
-        .btn-login:hover {
-            color: #1f2937;
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .btn-cta {
-            padding: 14px 28px;
-            font-size: 16px;
-        }
-
-        /* User menu in header */
-        .user-menu {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .user-menu-trigger {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 10px;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .user-menu-trigger:hover { background: #f3f4f6; }
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            overflow: hidden;
-        }
-        .user-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .user-name { font-size: 14px; color: #374151; font-weight: 600; }
-        .user-dropdown {
-            position: absolute;
-            top: 48px;
-            right: 0;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            border-radius: 10px;
-            padding: 8px;
-            width: 200px;
-            display: none;
-            z-index: 1002;
-        }
-        .user-dropdown.active { display: block; }
-        .user-dropdown button {
-            width: 100%;
-            background: transparent;
-            border: none;
-            text-align: left;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #374151;
-            cursor: pointer;
-        }
-        .user-dropdown button:hover { background: #f9fafb; }
-
-        .main-content {
-            margin-top: 100px;
-            padding-bottom: 40px;
-        }
-        .dashboard-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: #1e40af;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 24px;
-        }
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .card {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #1e40af;
-        }
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            overflow: hidden;
-        }
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-name {
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .profile-email {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            outline: none;
-        }
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #1e40af;
-        }
-        .btn-outline {
-            border: 1px solid #3b82f6;
-            color: #3b82f6;
-        }
-        .btn-outline:hover {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 16px;
-            background-color: #ffffff;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-pending {
-            background-color: #fefcbf;
-            color: #7a5c00;
-        }
-        .status-approved {
-            background-color: #dcfce7;
-            color: #1f640a;
-        }
-        .status-rejected {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-        .transaction-list {
-            margin-top: 16px;
-        }
-        .transaction-item {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 0;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 16px;
-            align-items: center;
-        }
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-        .transaction-item .product {
-            font-weight: 500;
-        }
-        .transaction-item .amount {
-            font-family: monospace;
-        }
-        @media (max-width: 480px) {
-            .transaction-item {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
-        .empty-state {
-            text-align: center;
-            padding: 24px 0;
-            color: #6b7280;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 16px;
-        }
-        .tab {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 16px;
-            color: #6b7280;
-            transition: all 0.2s ease;
-        }
-        .tab.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
-        }
-        .tab:hover:not(.active) {
-            color: #1f2937;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .kyc-info {
-            margin-bottom: 16px;
-        }
-        .alert {
-            padding: 16px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-        }
-        .alert-info {
-            background-color: #dbeafe;
-            color: #1a4971;
-        }
-        .file-upload {
-            border: 2px dashed #e2e8f0;
-            border-radius: 6px;
-            padding: 24px 16px;
-            text-align: center;
-            margin-bottom: 16px;
-            cursor: pointer;
-        }
-        .file-upload:hover {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-        }
-        .file-upload input {
-            display: none;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1001;
-            background: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .mobile-menu-btn svg {
-            width: 24px;
-            height: 24px;
-            color: #6b7280;
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .mobile-menu-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            padding: 2rem;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active .mobile-menu-content {
-            transform: translateX(0);
-        }
-
-        .mobile-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .mobile-menu-logo {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .mobile-menu-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .mobile-menu-close svg {
-            width: 20px;
-            height: 20px;
-            color: #6b7280;
-        }
-
-        .mobile-nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .mobile-nav-link {
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f3f4f6;
-            transition: color 0.2s ease;
-        }
-
-        .mobile-nav-link:hover {
-            color: #3b82f6;
-        }
-
-        .mobile-auth-container {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .mobile-auth-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
-        }
-
-        .mobile-auth-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .mobile-auth-btn {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .mobile-auth-btn.primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .mobile-auth-btn.primary:hover {
-            background: #2563eb;
-        }
-
-        .mobile-auth-btn.secondary {
-            background: white;
-            color: #6b7280;
-            border: 1px solid #d1d5db;
-        }
-
-        .mobile-auth-btn.secondary:hover {
-            color: #3b82f6;
-            border-color: #3b82f6;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-menu,
-            .nav-actions {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
-            .mobile-menu-content {
-                width: 300px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .mobile-menu-content {
-                width: 280px;
-            }
-        }
-       
-
-        /* Footer */
-        .footer {
-            background: #1f2937;
-            padding: 3rem 2rem 2rem;
-            color: white;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: #9ca3af;
-            text-decoration: none;
-            line-height: 1.6;
-            transition: color 0.2s ease;
-        }
-
-        .footer-section a:hover {
-            color: #3b82f6;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #374151;
-            padding-top: 2rem;
-            text-align: center;
-        }
-
-        .footer-credit {
-            color: #9ca3af;
-            font-size: 0.875rem;
-        }
-
-        .footer-credit a {
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .footer-credit a:hover {
-            color: #60a5fa;
-        }
-
-        .heart {
-            color: #ef4444;
-            margin: 0 2px;
-        }
-
-    </style>
+    <title>Dashboard - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
             </a>
-            <nav class="nav-menu">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="support.html" class="nav-link">Support</a>
-            </nav>
-            <div class="user-menu" id="userMenu">
-                <div class="user-menu-trigger" id="userMenuTrigger">
-                    <div class="user-avatar"><img id="headerAvatarImg" alt="" style="display:none;"></div>
-                    <span class="user-name" id="headerUserName">User</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    <button type="button" onclick="openProfileModal()">Edit Profile</button>
-                    <button type="button" id="logoutBtn">Logout</button>
-                </div>
+            <div class="flex gap-4 items-center">
+                <a href="admin-dashboard.html" id="adminBtn" class="btn btn-primary hidden">Admin Dashboard</a>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu" onclick="closeMobileMenu(event)">
-        <div class="mobile-menu-content">
-            <div class="mobile-menu-header">
-                <div class="mobile-menu-logo">Sogolo</div>
-                <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="mobile-nav-links">
-                <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
-                <a href="index.html#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
-                <a href="index.html#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
-                <a href="index.html#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
-                <a href="support.html" class="mobile-nav-link">Support</a>
-            </div>
-
-            <div class="mobile-auth-container">
-                <div class="mobile-auth-title">Get Started</div>
-                <div class="mobile-auth-buttons">
-                    <a href="signin.html" class="mobile-auth-btn primary">Sign Up</a>
-                    <a href="signin.html" class="mobile-auth-btn secondary">Login</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <main class="main-content">
-        <div class="container">
-            <h1 class="dashboard-title">User Dashboard</h1>
-
-            <div class="dashboard-grid">
+    <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
+        <!-- User Welcome & KYC Status -->
+        <div class="card mb-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div id="userAvatar" style="width: 48px; height: 48px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 600;">U</div>
                 <div>
-                    <div class="card">
-                        <h2 class="card-title">User Profile</h2>
-                        <div class="profile-avatar" id="profileAvatar">
-                            <img src="" alt="Profile" id="avatarImg" style="display: none;">
-                            <span class="material-icons-outlined" style="font-size: 48px; color: #9ca3af;">person</span>
-                        </div>
-                        <div class="profile-name" id="profileName">Loading...</div>
-                        <div class="profile-email" id="profileEmail"></div>
-                        <button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="openProfileModal()">Edit Profile</button>
-                        <button class="btn btn-outline" style="width: 100%;" onclick="authService.signOut(); window.location.href='index.html';">Logout</button>
-                    </div>
-
-                    <div class="card">
-                        <h2 class="card-title">KYC Verification</h2>
-                        <div class="kyc-info" id="kycStatus">
-                            <p>Status: <span class="status-badge status-pending" id="kycBadge">Pending</span></p>
-                            <p style="margin-top: 8px;">Complete your KYC verification to unlock all features.</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="openKycModal()">Submit KYC Documents</button>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="card">
-                        <h2 class="card-title">Transactions</h2>
-                        <div class="tabs">
-                            <button class="tab active" data-tab="all">All</button>
-                            <button class="tab" data-tab="pending">Pending</button>
-                            <button class="tab" data-tab="completed">Completed</button>
-                        </div>
-                        <div class="tab-content active" id="all">
-                            <div class="transaction-list" id="transactionListAll">
-                                <div class="empty-state">No transactions found.</div>
-                            </div>
-                        </div>
-                        <div class="tab-content" id="pending">
-                            <div class="transaction-list" id="transactionListPending">
-                                <div class="empty-state">No pending transactions.</div>
-                            </div>
-                        </div>
-                        <div class="tab-content" id="completed">
-                            <div class="transaction-list" id="transactionListCompleted">
-                                <div class="empty-state">No completed transactions.</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" style="margin-top: 16px;" onclick="startTransaction()">Start New Transaction</button>
-                    </div>
+                    <h2 id="userEmail" style="font-size: 1.25rem; font-weight: 600;">Loading...</h2>
+                    <p style="color: var(--text-muted);">Welcome back!</p>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-e41befc6-25d0-4ad4-bd42-34b291485fe4" data-elfsight-app-lazy></div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <img src="logo2.png" alt="sogolo logo" height="50px">
-                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
-                    verified products, and complete buyer protection.</p>
-            </div>
-
-            <div class="footer-section">
-                <h3>Platform</h3>
-                <div class="footer-links">
-                    <a href="#about">About Us</a>
-                    <a href="#how-it-works">How It Works</a>
-                    <a href="#features">Features</a>
-                    <a href="pricing.html">Pricing</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Support</h3>
-                <div class="footer-links">
-                    <a href="#ai">Help Center</a>
-                    <a href="support.html">Contact Support</a>
-                    <a href="#FAQs">FAQ</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Legal</h3>
-                <div class="footer-links">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#security">Security</a>
-                </div>
+            <div id="kycStatusBadge">
+                <!-- Injected via JS -->
             </div>
         </div>
 
-        <div class="footer-bottom">
-            <p class="footer-credit">
-                &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
-            </p>
-            <p class="footer-credit" style="margin-top: 0.5rem;">
-                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
-                    Creatives</a>
-            </p>
-        </div>
-    </footer>
+        <!-- Transactions -->
+        <div class="card">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="font-size: 1.25rem; font-weight: 600;">My Transactions</h3>
+                <a href="create-transaction.html" class="btn btn-primary">Create New Transaction</a>
+            </div>
 
-    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001;">
-        <div style="background: white; width: 90%; max-width: 500px; margin: 50px auto; padding: 24px; border-radius: 8px; position: relative;">
-            <h2 style="margin-bottom: 24px;">Edit Profile</h2>
-            <span class="material-icons-outlined" onclick="closeProfileModal()" style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: #6b7280;">close</span>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" class="form-control" placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" class="form-control" placeholder="+265 123 456 789">
-                </div>
-                <div style="display: flex; gap: 16px; justify-content: flex-end;">
-                    <button type="button" class="btn btn-outline" onclick="closeProfileModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+            <div id="transactionList">
+                <p style="color: var(--text-muted);">Loading transactions...</p>
+            </div>
         </div>
     </div>
 
-    <div id="kycModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001;">
-        <div style="background: white; width: 90%; max-width: 600px; margin: 50px auto; padding: 24px; border-radius: 8px; position: relative;">
-            <h2 style="margin-bottom: 24px;">KYC Verification</h2>
-            <span class="material-icons-outlined" onclick="closeKycModal()" style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: #6b7280;">close</span>
-            <div class="alert alert-info">
-                <p>Upload clear photos of your identification documents.</p>
-            </div>
-            <form id="kycForm">
-                <div class="form-group">
-                    <label for="documentType">Document Type</label>
-                    <select id="documentType" class="form-control">
-                        <option value="passport">Passport</option>
-                        <option value="national-id">National ID</option>
-                        <option value="drivers-license">Driver's License</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 16px; justify-content: flex-end;">
-                    <button type="button" class="btn btn-outline" onclick="closeKycModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <script type="module">
+        import { logout, getCurrentUser, initAuthStateListener } from './js/auth.js';
+        import { supabase } from './js/supabaseClient.js';
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/services/auth-service.js"></script>
-    <script src="js/services/database-service.js"></script>
-    <script src="js/utils/helpers.js"></script>
-    <script>
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-        });
+        initAuthStateListener();
 
-        document.addEventListener('click', (e) => {
-            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
-                mobileMenu.classList.remove('active');
+        async function loadDashboard() {
+            const user = await getCurrentUser();
+            if (!user) return; // Auth listener will redirect
+
+            // 1. User Info
+            document.getElementById('userEmail').textContent = user.email;
+            if (user.email) {
+                document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
             }
-        });
 
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 10) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+            // 2. Admin Button
+            if (user.profile?.role === 'admin') {
+                document.getElementById('adminBtn').classList.remove('hidden');
             }
-        });
 
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                
-                tab.classList.add('active');
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        function openProfileModal() {
-            document.getElementById('profileModal').style.display = 'block';
-        }
-        function closeProfileModal() {
-            document.getElementById('profileModal').style.display = 'none';
-        }
-
-        function openKycModal() {
-            document.getElementById('kycModal').style.display = 'block';
-        }
-        function closeKycModal() {
-            document.getElementById('kycModal').style.display = 'none';
-        }
-
-        window.addEventListener('click', function(event) {
-            if (event.target.className.includes('modal')) {
-                closeProfileModal();
-                closeKycModal();
-            }
-        });
-
-        // Initialize dashboard when everything is loaded
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('DOM Content Loaded - Starting dashboard initialization...');
+            // 3. KYC Status
+            const kycStatus = user.profile?.kyc_status || 'pending';
+            const kycBadge = document.getElementById('kycStatusBadge');
             
-            try {
-                // Check if required services are available
-                console.log('Checking services availability...');
-                console.log('window.supabase:', typeof window.supabase);
-                console.log('window.supabaseClient:', typeof window.supabaseClient);
-                console.log('window.authService:', typeof window.authService);
-                console.log('window.databaseService:', typeof window.databaseService);
-                
-                // Ensure Supabase is initialized
-                if (!window.supabaseClient) {
-                    console.log('Initializing Supabase client...');
-                    if (typeof initializeSupabase === 'function') {
-                        initializeSupabase();
-                    } else {
-                        console.error('initializeSupabase function not found');
-                        throw new Error('Supabase initialization failed');
-                    }
-                }
-                
-                // Wait for services to be ready
-                let retries = 0;
-                while ((!window.authService || !window.databaseService) && retries < 10) {
-                    console.log(`Waiting for services... retry ${retries + 1}`);
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                    retries++;
-                }
-                
-                if (!window.authService || !window.databaseService) {
-                    throw new Error('Required services not available after waiting');
-                }
-                
-                console.log('Services ready, checking authentication...');
-                
-                // Check auth and load data
-                const authResult = await checkAuth();
-                if (authResult) {
-                    console.log('Authentication successful, loading user data...');
-                    await loadUserData();
-                } else {
-                    console.log('Authentication failed, redirecting...');
-                }
-            } catch (error) {
-                console.error('Dashboard initialization error:', error);
-                Helpers.showToast('Failed to initialize dashboard. Redirecting to sign in...', 'error');
-                setTimeout(() => {
-                    window.location.href = 'signin.html';
-                }, 2000);
+            if (kycStatus === 'approved') {
+                kycBadge.innerHTML = `<span class="badge badge-green">KYC Verified</span>`;
+            } else if (kycStatus === 'under_review') {
+                kycBadge.innerHTML = `<span class="badge badge-yellow">KYC Under Review</span>`;
+            } else if (kycStatus === 'rejected') {
+                kycBadge.innerHTML = `<span class="badge badge-red">KYC Rejected</span> <a href="kyc.html" style="font-size: 0.875rem; margin-left: 0.5rem;">Retry</a>`;
+            } else {
+                kycBadge.innerHTML = `<a href="kyc.html" class="btn btn-secondary" style="font-size: 0.875rem;">Complete Verification</a>`;
             }
-        });
 
-        async function checkAuth() {
-            try {
-                const result = await authService.getCurrentUser();
-                if (!result.success || !result.user) {
-                    console.log('No authenticated user found, redirecting to signin');
-                    window.location.href = 'signin.html';
-                    return false;
-                }
-                console.log('User authenticated:', result.user.email);
-                return true;
-            } catch (error) {
-                console.error('Auth check error:', error);
-                window.location.href = 'signin.html';
-                return false;
-            }
+            // 4. Load Transactions
+            loadTransactions(user.id);
         }
 
-        async function loadUserData() {
-            try {
-                console.log('Loading user data...');
-                const userResult = await authService.getCurrentUser();
-                if (!(userResult.success && userResult.user)) {
-                    console.error('Failed to get current user');
-                    return;
-                }
+        async function loadTransactions(userId) {
+            const { data: transactions, error } = await supabase
+                .from('transactions')
+                .select('*')
+                .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+                .order('created_at', { ascending: false });
 
-                const user = userResult.user;
-                const meta = user.user_metadata || {};
-                console.log('User metadata:', meta);
-
-                // Try DB profile first
-                let profileData = null;
-                try {
-                    console.log('Fetching profile from database...');
-                    const prof = await databaseService.getUserProfile(user.id);
-                    if (prof.success && prof.data) {
-                        console.log('Profile found in database:', prof.data);
-                        profileData = prof.data;
-                    } else {
-                        console.log('No profile in database, creating from auth metadata...');
-                        // Create initial profile from auth metadata
-                        const initial = {
-                            full_name: meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : 'User'),
-                            email: user.email || '',
-                            phone: meta.phone || '',
-                            avatar_url: meta.avatar_url || meta.picture || ''
-                        };
-                        console.log('Creating profile with data:', initial);
-                        const createResult = await databaseService.createUserProfile(user.id, initial);
-                        if (createResult.success) {
-                            console.log('Profile created successfully');
-                        } else {
-                            console.error('Failed to create profile:', createResult.error);
-                        }
-                        profileData = initial;
-                    }
-                } catch (dbError) {
-                    console.error('Database error, using auth metadata fallback:', dbError);
-                    // If DB unavailable, fall back to auth metadata only
-                    profileData = {
-                        full_name: meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : 'User'),
-                        email: user.email || '',
-                        phone: meta.phone || '',
-                        avatar_url: meta.avatar_url || meta.picture || ''
-                    };
-                }
-
-                console.log('Final profile data:', profileData);
-
-                // Populate UI (profile card and header)
-                const displayName = profileData.full_name || 'User';
-                
-                // Update profile card
-                const profileNameEl = document.getElementById('profileName');
-                const profileEmailEl = document.getElementById('profileEmail');
-                const fullNameEl = document.getElementById('fullName');
-                const phoneEl = document.getElementById('phone');
-                const avatarImgEl = document.getElementById('avatarImg');
-                
-                if (profileNameEl) profileNameEl.textContent = displayName;
-                if (profileEmailEl) profileEmailEl.textContent = profileData.email || '';
-                if (fullNameEl) fullNameEl.value = profileData.full_name || '';
-                if (phoneEl) phoneEl.value = profileData.phone || '';
-                
-                // Update header user menu
-                const headerUserNameEl = document.getElementById('headerUserName');
-                const headerAvatarImgEl = document.getElementById('headerAvatarImg');
-                
-                if (headerUserNameEl) headerUserNameEl.textContent = displayName;
-                
-                // Set avatars (profile card and header)
-                if (profileData.avatar_url) {
-                    if (avatarImgEl) {
-                        avatarImgEl.src = profileData.avatar_url;
-                        avatarImgEl.style.display = 'block';
-                    }
-                    if (headerAvatarImgEl) {
-                        headerAvatarImgEl.src = profileData.avatar_url;
-                        headerAvatarImgEl.style.display = 'block';
-                    }
-                }
-                
-                console.log('User data loaded successfully');
-            } catch (error) {
-                console.error('Error loading user data:', error);
+            const listContainer = document.getElementById('transactionList');
+            
+            if (error) {
+                listContainer.innerHTML = `<div class="alert alert-error">Error loading transactions: ${error.message}</div>`;
+                return;
             }
+
+            if (!transactions || transactions.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 3rem 0;">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">No transactions yet.</p>
+                        <a href="create-transaction.html" class="btn btn-secondary">Start your first transaction</a>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = transactions.map(t => {
+                const isBuyer = t.buyer_id === userId;
+                const role = isBuyer ? 'Buyer' : 'Seller';
+                
+                let statusClass = 'badge-gray';
+                if (t.status === 'funds_released') statusClass = 'badge-green';
+                if (t.status === 'payment_verified') statusClass = 'badge-blue';
+                if (t.status === 'rejected') statusClass = 'badge-red';
+
+                return `
+                    <div class="flex justify-between items-center" style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <h4 style="font-weight: 600; margin-bottom: 0.25rem;">${t.title}</h4>
+                            <div class="flex items-center gap-2">
+                                <span class="badge badge-blue">${role}</span>
+                                <span style="font-size: 0.875rem; color: var(--text-muted);">${new Date(t.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="badge ${statusClass}" style="margin-bottom: 0.5rem;">${t.status.replace('_', ' ').toUpperCase()}</span>
+                            <br>
+                            <a href="transaction-status.html?id=${t.id}" style="font-size: 0.875rem; font-weight: 500;">View Details &rarr;</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // User menu dropdown functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            const userMenuTrigger = document.getElementById('userMenuTrigger');
-            const userDropdown = document.getElementById('userDropdown');
-            const logoutBtn = document.getElementById('logoutBtn');
+        loadDashboard();
 
-            // Toggle dropdown on click
-            userMenuTrigger?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('active');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!document.getElementById('userMenu').contains(e.target)) {
-                    userDropdown.classList.remove('active');
-                }
-            });
-
-            // Logout functionality
-            logoutBtn?.addEventListener('click', async () => {
-                await authService.signOut();
-                window.location.href = 'index.html';
-            });
-        });
-
-        // Handle profile form submit: update auth metadata and DB profile
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('profileForm');
-            if (!form) return;
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('fullName').value.trim();
-                const phone = document.getElementById('phone').value.trim();
-                const userResult = await authService.getCurrentUser();
-                if (!(userResult.success && userResult.user)) return;
-                const user = userResult.user;
-
-                // Update auth metadata
-                await authService.updateUserMetadata({ full_name: name, phone });
-
-                // Update DB profile
-                try {
-                    await databaseService.updateUserProfile(user.id, { full_name: name, phone });
-                } catch (_) {}
-
-                // Update UI (profile card and header) and close modal
-                const displayName = name || document.getElementById('profileName').textContent;
-                document.getElementById('profileName').textContent = displayName;
-                document.getElementById('headerUserName').textContent = displayName;
-                closeProfileModal();
-                alert('Profile updated successfully');
-            });
-        });
-
-        function startTransaction() {
-            alert('Start new transaction functionality coming soon.');
-        }
+        document.getElementById('logoutBtn').addEventListener('click', () => logout());
     </script>
 </body>
 </html>

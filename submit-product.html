@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Product - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px; padding-bottom: 4rem;">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Submit Product Details</h1>
+                <p style="color: var(--text-muted);">Provide accurate details and photos for the buyer to review.</p>
+            </div>
+
+            <form id="submitProductForm">
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" id="productName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Price (MWK)</label>
+                    <input type="number" id="price" class="form-input" required min="0" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Detailed Description & Condition</label>
+                    <textarea id="productDescription" class="form-textarea" required placeholder="Describe the item's condition, included accessories, and any defects..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Product Photos (Minimum 5)</label>
+                    <div class="alert alert-info">Please upload at least 5 clear photos from different angles.</div>
+                    <input type="file" id="productImages" class="form-input" multiple accept="image/*" onchange="previewImages(this)">
+                    <div id="imagePreview" class="file-preview"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Submit Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { submitProduct, uploadProductImages } from './js/transaction.js';
+        import { getCurrentUser, initAuthStateListener } from './js/auth.js';
+
+        initAuthStateListener();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+        const form = document.getElementById('submitProductForm');
+
+        if (!transactionId) {
+            alert('Invalid transaction ID');
+            window.location.href = 'dashboard.html';
+        }
+
+        window.previewImages = (input) => {
+            const container = document.getElementById('imagePreview');
+            container.innerHTML = '';
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'file-preview-item';
+                        div.innerHTML = `<img src="${e.target.result}">`;
+                        container.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const user = await getCurrentUser();
+            if (!user) return;
+
+            const files = document.getElementById('productImages').files;
+            if (files.length < 5) {
+                alert('Please upload at least 5 photos.');
+                return;
+            }
+
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Uploading Images...';
+
+            try {
+                // 1. Upload Images
+                const { urls, error: uploadError } = await uploadProductImages(transactionId, files);
+                if (uploadError) throw uploadError;
+
+                btn.textContent = 'Submitting Details...';
+
+                // 2. Submit Data
+                const productName = document.getElementById('productName').value;
+                const price = document.getElementById('price').value;
+                const description = document.getElementById('productDescription').value;
+
+                const { error: submitError } = await submitProduct(transactionId, productName, description, price);
+                if (submitError) throw submitError;
+
+                alert('Product submitted successfully!');
+                window.location.href = `transaction-status.html?id=${transactionId}`;
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Submit Product';
+            }
+        });
+    </script>
+</body>
+</html>

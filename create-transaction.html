@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Transaction - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px;">
+        <div class="card">
+            <div id="createFormState">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Create New Transaction</h1>
+                    <p style="color: var(--text-muted);">Start a secure transaction. You'll get a link to share with the seller.</p>
+                </div>
+
+                <form id="createTransactionForm">
+                    <div class="form-group">
+                        <label class="form-label" for="title">Transaction Title</label>
+                        <input type="text" id="title" class="form-input" placeholder="e.g., iPhone 13 Pro Max" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Description (Optional)</label>
+                        <textarea id="description" class="form-textarea" placeholder="Any specific details about the deal..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Create Transaction</button>
+                </form>
+            </div>
+
+            <div id="successState" class="hidden" style="text-align: center;">
+                <div style="width: 64px; height: 64px; background: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2rem;">✓</div>
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Transaction Created!</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Share this link with the seller so they can join and submit product details.</p>
+                
+                <div id="shareLink" style="background: var(--background); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; word-break: break-all; font-family: monospace; border: 1px solid var(--border);">Generating link...</div>
+                
+                <button class="btn btn-secondary" onclick="copyLink()">Copy Link</button>
+                <a href="dashboard.html" class="btn btn-primary btn-full mt-4">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createTransaction } from './js/transaction.js';
+        import { getCurrentUser, initAuthStateListener } from './js/auth.js';
+
+        initAuthStateListener();
+
+        const form = document.getElementById('createTransactionForm');
+        const createFormState = document.getElementById('createFormState');
+        const successState = document.getElementById('successState');
+        const shareLinkDiv = document.getElementById('shareLink');
+
+        // Check KYC Status
+        (async () => {
+            const user = await getCurrentUser();
+            if (user) {
+                const kycStatus = user.profile?.kyc_status;
+                if (kycStatus !== 'approved') {
+                    createFormState.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <h2 style="color: var(--danger); margin-bottom: 1rem;">KYC Verification Required</h2>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You must complete identity verification before creating a transaction.</p>
+                            <a href="kyc.html" class="btn btn-primary">Complete KYC</a>
+                        </div>
+                    `;
+                }
+            }
+        })();
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const user = await getCurrentUser();
+            if (!user) return;
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+
+            const { data, error } = await createTransaction(title, description, user.id);
+
+            if (error) {
+                alert('Error creating transaction: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Transaction';
+                return;
+            }
+
+            const transactionId = data.id;
+            const link = `${window.location.origin}/join-transaction.html?id=${transactionId}`;
+            
+            shareLinkDiv.textContent = link;
+            createFormState.classList.add('hidden');
+            successState.classList.remove('hidden');
+        });
+
+        window.copyLink = () => {
+            const link = shareLinkDiv.textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.querySelector('button[onclick="copyLink()"]');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = originalText, 2000);
+            });
+        };
+    </script>
+</body>
+</html>

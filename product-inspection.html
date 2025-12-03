@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Inspection - Sogolo Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body { background-color: #f9fafb; }
+        .container-md { max-width: 800px; margin: 100px auto 2rem; padding: 0 24px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .checklist-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #e5e7eb; }
+        .checklist-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="container-md">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; color: #1f2937; margin: 0;">Product Inspection</h1>
+                <a href="admin-dashboard.html" class="btn btn-secondary">Back</a>
+            </div>
+
+            <div id="content">Loading...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getTransaction, getProductDetails, passInspection, failInspection } from './js/transaction.js';
+        import { getCurrentUser } from './js/auth.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        async function init() {
+            const admin = await getCurrentUser();
+            if (!admin || admin.profile?.role !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadData();
+        }
+
+        async function loadData() {
+            const { data: transaction } = await getTransaction(transactionId);
+            const { submission, images } = await getProductDetails(transactionId);
+
+            if (!transaction) {
+                document.getElementById('content').textContent = 'Transaction not found.';
+                return;
+            }
+
+            let html = `
+                <div class="alert alert-info mb-4">Verify the physical item matches the details below.</div>
+                
+                <h3 style="margin-bottom: 0.5rem;">Seller's Description</h3>
+                <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <p><strong>Name:</strong> ${submission?.product_name}</p>
+                    <p><strong>Description:</strong> ${submission?.product_description}</p>
+                </div>
+
+                <h3 style="margin-bottom: 0.5rem;">Seller's Photos</h3>
+                <div class="file-preview mb-4">
+                    ${images ? images.map(img => `<div class="file-preview-item"><a href="${img.image_url}" target="_blank"><img src="${img.image_url}"></a></div>`).join('') : 'No images'}
+                </div>
+
+                <h3 style="margin-bottom: 0.5rem;">Inspection Checklist</h3>
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 2rem;">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1"> <label for="check1">Item matches description</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2"> <label for="check2">No undisclosed damage</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3"> <label for="check3">All accessories included</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4"> <label for="check4">Functionality verified</label>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="handleFail()" class="btn btn-danger" style="flex: 1;">Fail Inspection</button>
+                    <button onclick="handlePass()" class="btn btn-primary" style="flex: 1;">Pass Inspection</button>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        window.handlePass = async () => {
+            const checks = document.querySelectorAll('input[type="checkbox"]');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            
+            if (!allChecked) {
+                if(!confirm('Not all checklist items are marked. Pass anyway?')) return;
+            } else {
+                if(!confirm('Confirm inspection passed?')) return;
+            }
+            
+            const { error } = await passInspection(transactionId);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Inspection Passed!');
+                window.location.href = 'admin-dashboard.html';
+            }
+        };
+
+        window.handleFail = async () => {
+            if (!confirm('Are you sure you want to fail this inspection?')) return;
+            
+            const { error } = await failInspection(transactionId);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Inspection Failed.');
+                window.location.href = 'admin-dashboard.html';
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>

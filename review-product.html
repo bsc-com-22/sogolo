@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Product - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px; padding-bottom: 4rem;">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Review Product</h1>
+                <p style="color: var(--text-muted);">Review the seller's submission before proceeding to payment.</p>
+            </div>
+
+            <div id="loadingState" style="text-align: center; padding: 2rem;">Loading...</div>
+
+            <div id="contentState" class="hidden">
+                <!-- Images -->
+                <div id="imageGrid" class="file-preview mb-4"></div>
+
+                <!-- Details -->
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <div id="productName" class="form-input" style="background: var(--background);"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price</label>
+                    <div id="price" class="form-input" style="background: var(--background);"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <div id="description" class="form-input" style="background: var(--background); min-height: 100px; white-space: pre-wrap;"></div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-4 mt-4">
+                    <button onclick="handleReject()" class="btn btn-danger" style="flex: 1;">Reject</button>
+                    <button onclick="handleApprove()" class="btn btn-primary" style="flex: 1;">Approve & Pay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getProductDetails, approveProduct, rejectProduct } from './js/transaction.js';
+        import { initAuthStateListener } from './js/auth.js';
+
+        initAuthStateListener();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        if (!transactionId) window.location.href = 'dashboard.html';
+
+        (async () => {
+            const { submission, images, error } = await getProductDetails(transactionId);
+
+            if (error || !submission) {
+                document.getElementById('loadingState').textContent = 'Error loading details.';
+                return;
+            }
+
+            document.getElementById('productName').textContent = submission.product_name;
+            document.getElementById('price').textContent = `MWK ${submission.price}`;
+            document.getElementById('description').textContent = submission.product_description;
+
+            const imgGrid = document.getElementById('imageGrid');
+            images.forEach(img => {
+                imgGrid.innerHTML += `
+                    <div class="file-preview-item">
+                        <a href="${img.image_url}" target="_blank">
+                            <img src="${img.image_url}">
+                        </a>
+                    </div>
+                `;
+            });
+
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('contentState').classList.remove('hidden');
+        })();
+
+        window.handleApprove = async () => {
+            if (!confirm('Are you sure you want to approve this product? You will be asked to upload payment proof next.')) return;
+            
+            const btn = document.querySelector('button[onclick="handleApprove()"]');
+            btn.disabled = true;
+            btn.textContent = 'Approving...';
+
+            const { error } = await approveProduct(transactionId);
+            if (error) {
+                alert('Error: ' + error.message);
+                btn.disabled = false;
+            } else {
+                window.location.href = `payment-upload.html?id=${transactionId}`;
+            }
+        };
+
+        window.handleReject = async () => {
+            if (!confirm('Are you sure you want to reject this submission?')) return;
+            
+            const { error } = await rejectProduct(transactionId);
+            if (error) {
+                alert('Error: ' + error.message);
+            } else {
+                alert('Product rejected.');
+                window.location.href = 'dashboard.html';
+            }
+        };
+    </script>
+</body>
+</html>

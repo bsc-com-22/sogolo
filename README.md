@@ -1,206 +1,294 @@
-# Sogolo - Secure Social Trading Platform
+# Sogolo Escrow Marketplace
 
-A modern, responsive website for Sogolo, a secure escrow service that bridges trust between buyers and sellers in Malawi's social media marketplace.
+A secure escrow-based buyer-seller marketplace with KYC verification, transaction management, and admin oversight.
 
-## 🚀 Features
+## Features
 
-### Core Pages
-- **Home Page** (`index.html`) - Landing page with hero section, features, testimonials, and FAQ
-- **Sign In Page** (`signin.html`) - Authentication page with login and signup forms
-- **Support Page** (`support.html`) - Customer support with contact methods and help resources
+✅ **KYC Verification** - Mandatory identity verification before transactions  
+✅ **Escrow System** - Funds held securely until product inspection  
+✅ **Admin Oversight** - Manual verification of payments and products  
+✅ **Multi-stage Tracking** - Complete visibility of transaction lifecycle  
+✅ **Real-time Notifications** - Stay updated on transaction progress  
+✅ **Secure Authentication** - Email/Password and Google OAuth support  
 
-### Key Components
-- **Responsive Design** - Mobile-first approach with hamburger navigation
-- **Interactive Elements** - FAQ accordion, form validation, mobile menu
-- **Modern UI** - Clean design with smooth animations and hover effects
-- **Cross-Browser Compatible** - Works on all modern browsers
+## Technology Stack
 
-## 📱 Mobile Features
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+- **Authentication**: Supabase Auth (Email/Password, Google OAuth)
+- **Storage**: Supabase Storage Buckets
+- **Security**: Row Level Security (RLS) policies
 
-### Hamburger Menu System
-- Fixed hamburger button (top-right corner)
-- Slide-out navigation menu (280-300px width)
-- Left-aligned content as requested
-- Smooth CSS animations and JavaScript functionality
+## Prerequisites
 
-### Responsive Breakpoints
-- **768px** - Primary mobile/tablet breakpoint
-- **480px** - Small mobile devices optimization
+- Supabase account ([Create one here](https://supabase.com))
+- Modern web browser
+- Text editor or IDE
 
-### Mobile Optimizations
-- Left-aligned hero sections and footer content
-- Touch-friendly button sizes
-- Optimized form layouts (stacked inputs)
-- Reduced padding and margins for mobile screens
+## Setup Instructions
 
-## 🎨 Design System
+### 1. Database Setup
 
-### Color Palette
-- **Primary Blue**: `#3b82f6`
-- **Dark Blue**: `#1e40af` 
-- **Gray Scale**: `#1f2937`, `#6b7280`, `#9ca3af`
-- **Background**: Light gradient (`#f8fafc` to `#e2e8f0`)
+1. Create a new Supabase project at [https://supabase.com](https://supabase.com)
 
-### Typography
-- **Font Family**: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
-- **Responsive Font Sizes**: Scales from desktop to mobile
-- **Font Weights**: 400 (normal), 500 (medium), 600 (semibold), 700 (bold)
+2. Copy your Supabase URL and Anon Key from Project Settings > API
 
-## 📁 Project Structure
+3. Update `js/supabase-config.js` with your credentials:
+   ```javascript
+   const SUPABASE_URL = 'your-project-url';
+   const SUPABASE_ANON_KEY = 'your-anon-key';
+   ```
+
+4. Execute the database schema:
+   - Open Supabase SQL Editor
+   - Copy the contents of `database-schema.sql`
+   - Execute the SQL script
+   - This will create all tables, RLS policies, functions, and triggers
+
+### 2. Storage Buckets Setup
+
+1. Go to Supabase Dashboard > Storage
+
+2. Create three public buckets:
+   - `kyc-documents` - For ID photos and selfies
+   - `product-images` - For product photos
+   - `payment-proofs` - For payment proof screenshots
+
+3. Set bucket policies (Supabase Dashboard > Storage > Policies):
+
+   **kyc-documents:**
+   - Users can upload: `auth.uid() = (storage.foldername(name))[1]::uuid`
+   - Admins can view all: `(SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'`
+
+   **product-images:**
+   - Sellers can upload: `EXISTS (SELECT 1 FROM transactions WHERE id = (storage.foldername(name))[1]::uuid AND seller_id = auth.uid())`
+   - Transaction participants can view: `EXISTS (SELECT 1 FROM transactions WHERE id = (storage.foldername(name))[1]::uuid AND (buyer_id = auth.uid() OR seller_id = auth.uid()))`
+
+   **payment-proofs:**
+   - Buyers can upload: `EXISTS (SELECT 1 FROM transactions WHERE id = (storage.foldername(name))[1]::uuid AND buyer_id = auth.uid())`
+   - Admins can view all: `(SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'`
+
+### 3. Authentication Setup
+
+1. Enable Email/Password authentication:
+   - Go to Authentication > Providers
+   - Enable Email provider
+   - Configure email templates (optional)
+
+2. Enable Google OAuth (optional):
+   - Go to Authentication > Providers
+   - Enable Google provider
+   - Add your Google OAuth credentials
+   - Add authorized redirect URLs
+
+### 4. Admin User Setup
+
+After creating your first user account:
+
+1. Go to Supabase Dashboard > Table Editor > profiles
+2. Find your user record
+3. Change the `role` field from `user` to `admin`
+4. Save the changes
+
+### 5. Local Development
+
+1. Clone or download this repository
+
+2. Open `index.html` in a web browser, or use a local server:
+   ```bash
+   # Using Python
+   python -m http.server 8000
+   
+   # Using Node.js http-server
+   npx http-server
+   ```
+
+3. Navigate to `http://localhost:8000`
+
+## Project Structure
 
 ```
-sogolo-website/
-├── index.html          # Home page
-├── signin.html         # Authentication page
-├── support.html        # Support page
+sogolo/
+├── index.html                    # Landing page
+├── login.html                    # Login/signup (to be created)
+├── dashboard.html                # User dashboard (to be created)
+├── admin-dashboard.html          # Admin dashboard (to be created)
+├── kyc.html                      # KYC verification form (to be created)
+├── transaction.html              # Transaction page (to be created)
 ├── css/
-│   └── styles.css      # External CSS (if used)
+│   └── main.css                  # Global styles
 ├── js/
-│   └── app.js          # External JavaScript (if used)
-├── logo.png            # Company logo
-└── README.md           # This file
+│   ├── supabase-config.js        # Supabase client initialization
+│   ├── services/
+│   │   ├── auth-service.js       # Authentication logic
+│   │   ├── kyc-service.js        # KYC operations
+│   │   ├── transaction-service.js # Transaction operations
+│   │   ├── storage-service.js    # File upload logic
+│   │   └── notification-service.js # Notifications
+│   └── utils/
+│       ├── validators.js         # Form validation
+│       └── helpers.js            # Utility functions
+├── database-schema.sql           # Complete database schema
+├── API-DOCUMENTATION.md          # API reference
+└── README.md                     # This file
 ```
 
-## 🔧 Setup Instructions
+## User Flows
 
-### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Local web server (optional, for development)
+### 1. KYC Verification
 
-### Installation
-1. **Clone or Download** the project files
-2. **Open** `index.html` in your web browser
-3. **Navigate** between pages using the navigation menu
+1. User signs up/logs in
+2. Dashboard prompts for KYC completion
+3. User fills KYC form with personal details
+4. User uploads ID documents (front, back, selfie)
+5. Admin reviews and approves/rejects
+6. User receives notification of status
 
-### Development Server (Optional)
-For local development with live reload:
+### 2. Transaction Creation (Buyer)
 
-```bash
-# Using Python (if installed)
-python -m http.server 8000
+1. Buyer creates new transaction (requires approved KYC)
+2. System generates unique transaction ID and link
+3. Buyer shares link with seller
 
-# Using Node.js (if installed)
-npx serve .
+### 3. Product Submission (Seller)
 
-# Using PHP (if installed)
-php -S localhost:8000
-```
+1. Seller opens transaction link
+2. Seller fills product details
+3. Seller uploads minimum 5 product images
+4. Buyer receives notification
 
-Then visit `http://localhost:8000` in your browser.
+### 4. Product Review (Buyer)
 
-## 📋 Page Details
+1. Buyer reviews product details and images
+2. Buyer approves or requests changes
+3. System displays payment instructions
 
-### Home Page (`index.html`)
-- **Hero Section** - Main value proposition with call-to-action
-- **About Section** - Company mission and key features
-- **How It Works** - 4-step process explanation
-- **Why Choose Us** - 6 feature cards with SVG icons
-- **FAQ Section** - Expandable accordion with common questions
-- **Testimonials** - User reviews with avatars and verification badges
-- **CTA Section** - Final call-to-action with gradient background
-- **Footer** - Links, company info, and Nyasa Creatives credit
+### 5. Payment & Escrow
 
-### Sign In Page (`signin.html`)
-- **Toggle Forms** - Switch between Login and Sign Up
-- **Form Validation** - Password matching and required fields
-- **Social Login** - Google sign-in integration ready
-- **Mobile Menu** - Account access options in mobile navigation
-- **Light Background** - Soft gradient for better UX
+1. Buyer makes payment (bank transfer/mobile money)
+2. Buyer uploads payment proof
+3. Admin verifies payment
+4. Funds marked as "In Escrow"
 
-### Support Page (`support.html`)
-- **Contact Methods** - Email, Phone, and Blantyre office location
-- **Contact Form** - Comprehensive support ticket form
-- **FAQ Section** - Support-specific questions and answers
-- **Same Header/Footer** - Consistent with home page design
+### 6. Product Delivery & Fund Release
 
-## 🛠 Technical Features
+1. Seller delivers product to office
+2. Admin inspects product
+3. Admin releases funds to seller
+4. Transaction marked as complete
 
-### JavaScript Functionality
-- **Mobile Menu Toggle** - Smooth slide-in/out animations
-- **FAQ Accordion** - Expandable question/answer sections
-- **Form Validation** - Client-side validation for better UX
-- **Auto Copyright Year** - Automatically updates to current year
-- **Header Scroll Effect** - Shadow appears on scroll
+## Transaction Statuses
 
-### CSS Features
-- **CSS Grid & Flexbox** - Modern layout techniques
-- **CSS Animations** - Smooth transitions and hover effects
-- **Media Queries** - Responsive design for all devices
-- **CSS Variables** - Consistent color and spacing system
+| Status | Description |
+|--------|-------------|
+| `created` | Transaction created by buyer |
+| `seller_submitted` | Seller submitted product details |
+| `buyer_approved` | Buyer approved product description |
+| `payment_submitted` | Buyer uploaded payment proof |
+| `payment_received` | Admin confirmed payment (Escrow) |
+| `product_delivered` | Seller delivered to office |
+| `inspection_complete` | Admin inspected product |
+| `funds_released` | Funds released to seller |
+| `completed` | Transaction closed |
+| `cancelled` | Transaction cancelled |
+| `disputed` | Dispute raised |
+| `refunded` | Buyer refunded |
 
-### Accessibility
-- **Semantic HTML** - Proper heading hierarchy and landmarks
-- **Alt Text** - Descriptive alt text for images
-- **Keyboard Navigation** - All interactive elements are keyboard accessible
-- **Color Contrast** - WCAG compliant color combinations
+## API Documentation
 
-## 🎯 Browser Support
+See [API-DOCUMENTATION.md](./API-DOCUMENTATION.md) for complete API reference with code examples.
 
-- **Chrome** 90+
-- **Firefox** 88+
-- **Safari** 14+
-- **Edge** 90+
-- **Mobile Browsers** - iOS Safari, Chrome Mobile
+## Security Features
 
-## 📞 Contact Information
+- **Row Level Security (RLS)**: Database-level access control
+- **JWT Authentication**: Secure token-based authentication
+- **Storage Policies**: Granular file access control
+- **Input Validation**: Client and server-side validation
+- **XSS Protection**: HTML sanitization
+- **HTTPS Only**: Enforce secure connections in production
 
-### Business Details
-- **Company**: Sogolo
-- **Location**: Blantyre, Malawi
-- **Email**: support@sogolo.com
-- **Phone**: +265 1 234 567
+## Payment Methods
 
-### Development
-- **Developed by**: Nyasa Creatives
-- **Website**: https://nyasacreatives.com
+Currently supported payment methods:
+- Bank Transfer
+- Airtel Money
+- TNM Mpamba
 
-## 📄 License
+**Note**: Current implementation uses manual payment verification. For production, consider integrating automated payment gateways (Stripe, Paystack, etc.).
 
-© Sogolo.com 2025 All rights reserved.
+## Development Roadmap
 
-## 🔄 Version History
+### Phase 1: Core Backend ✅
+- [x] Database schema
+- [x] Authentication system
+- [x] Service layer (KYC, Transactions, Notifications)
+- [x] Utility functions
 
-### v1.0.0 (Current)
-- Initial website launch
-- Responsive design implementation
-- Mobile hamburger menu
-- FAQ and testimonials sections
-- Contact forms and support pages
-- Auto-updating copyright year
+### Phase 2: User Interface (In Progress)
+- [ ] Login/Signup pages
+- [ ] User dashboard
+- [ ] KYC form
+- [ ] Transaction pages
+- [ ] Admin dashboard
 
-## 🚀 Future Enhancements
+### Phase 3: Testing & Deployment
+- [ ] End-to-end testing
+- [ ] Security audit
+- [ ] Performance optimization
+- [ ] Production deployment
 
-### Planned Features
-- **User Dashboard** - Account management interface
-- **Transaction Tracking** - Real-time transaction status
-- **Payment Integration** - Mobile money and card processing
-- **Multi-language Support** - English and Chichewa
-- **Progressive Web App** - Offline functionality
-- **Analytics Integration** - User behavior tracking
+### Future Enhancements
+- [ ] Automated payment integration
+- [ ] Real-time chat between buyer/seller
+- [ ] Dispute resolution system
+- [ ] Rating and review system
+- [ ] Multi-currency support
+- [ ] Mobile app (React Native/Flutter)
 
-### Technical Improvements
-- **Performance Optimization** - Image compression and lazy loading
-- **SEO Enhancement** - Meta tags and structured data
-- **Security Headers** - Content Security Policy implementation
-- **API Integration** - Backend service connections
+## Troubleshooting
 
-## 📚 Documentation
+### Database Connection Issues
+- Verify Supabase URL and Anon Key are correct
+- Check if Supabase project is active
+- Ensure RLS policies are properly configured
 
-### Code Comments
-All major functions and sections are documented with inline comments for easy maintenance and updates.
+### File Upload Failures
+- Verify storage buckets are created
+- Check storage policies allow upload
+- Ensure file size is under 5MB
+- Verify file type is image (JPEG, PNG, WebP)
 
-### Naming Conventions
-- **CSS Classes**: kebab-case (e.g., `mobile-menu-btn`)
-- **JavaScript Functions**: camelCase (e.g., `toggleMobileMenu`)
-- **File Names**: lowercase with hyphens (e.g., `signin.html`)
+### Authentication Errors
+- Clear browser cache and cookies
+- Check if email provider is enabled in Supabase
+- Verify redirect URLs for OAuth
 
-### Best Practices
-- Mobile-first responsive design
-- Progressive enhancement approach
-- Semantic HTML structure
-- Accessible form design
-- Performance-optimized assets
+### RLS Policy Errors
+- Ensure user has proper role (user/admin)
+- Check if KYC is approved for transaction operations
+- Verify user is authenticated
+
+### Admin Access Issues
+- If you are not redirected to the admin dashboard, your user role might still be 'user'.
+- Run the `update-admin-role.sql` script in Supabase SQL Editor to update your role.
+- Ensure you have logged out and logged back in after role update.
+
+## Support
+
+For issues and questions:
+1. Check the [API Documentation](./API-DOCUMENTATION.md)
+2. Review the [System Specification](./.agent/workflows/sogolo-system-spec.md)
+3. Contact the development team
+
+## License
+
+Proprietary - All rights reserved
+
+## Contributors
+
+- Development Team
 
 ---
 
-**Built with ♥ by Nyasa Creatives**
+**Version**: 1.0.0  
+**Last Updated**: November 2025

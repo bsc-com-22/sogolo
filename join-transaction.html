@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Transaction - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px;">
+        <div class="card">
+            <div id="loadingState" style="text-align: center; padding: 2rem;">
+                <p>Loading transaction details...</p>
+            </div>
+
+            <div id="joinState" class="hidden">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Join Transaction</h1>
+                    <p style="color: var(--text-muted);">You have been invited to sell an item.</p>
+                </div>
+
+                <div style="background: var(--background); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem;">
+                    <h3 id="transTitle" style="font-weight: 600; margin-bottom: 0.5rem;">Loading...</h3>
+                    <p id="transDesc" style="color: var(--text-muted); font-size: 0.9rem;">Loading...</p>
+                </div>
+
+                <button id="joinBtn" class="btn btn-primary btn-full">Accept & Join Transaction</button>
+            </div>
+
+            <div id="errorState" class="hidden" style="text-align: center; padding: 2rem;">
+                <h2 style="color: var(--danger); margin-bottom: 1rem;">Unable to Join</h2>
+                <p id="errorMsg" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+                <a href="dashboard.html" class="btn btn-secondary">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getTransaction, joinTransaction } from './js/transaction.js';
+        import { getCurrentUser, initAuthStateListener } from './js/auth.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        const loadingState = document.getElementById('loadingState');
+        const joinState = document.getElementById('joinState');
+        const errorState = document.getElementById('errorState');
+        const errorMsg = document.getElementById('errorMsg');
+
+        initAuthStateListener((event, session) => {
+            if (!session) {
+                // Redirect to login with return URL
+                window.location.href = `signin.html?returnUrl=${encodeURIComponent(window.location.href)}`;
+            }
+        });
+
+        (async () => {
+            if (!transactionId) {
+                showError('Invalid transaction link.');
+                return;
+            }
+
+            const user = await getCurrentUser();
+            if (!user) return; // Auth listener handles redirect
+
+            // Check KYC
+            if (user.profile?.kyc_status !== 'approved') {
+                showError('You must complete KYC verification to join transactions.');
+                errorState.innerHTML += `<a href="kyc.html" class="btn btn-primary mt-4">Complete KYC</a>`;
+                return;
+            }
+
+            // Fetch Transaction
+            const { data: transaction, error } = await getTransaction(transactionId);
+
+            if (error || !transaction) {
+                showError('Transaction not found.');
+                return;
+            }
+
+            if (transaction.seller_id) {
+                if (transaction.seller_id === user.id) {
+                    // Already joined, redirect to submit product
+                    window.location.href = `submit-product.html?id=${transactionId}`;
+                } else {
+                    showError('This transaction has already been accepted by another seller.');
+                }
+                return;
+            }
+
+            if (transaction.buyer_id === user.id) {
+                showError('You cannot join your own transaction as a seller.');
+                return;
+            }
+
+            // Show Join UI
+            document.getElementById('transTitle').textContent = transaction.title;
+            document.getElementById('transDesc').textContent = transaction.description || 'No description provided.';
+            
+            loadingState.classList.add('hidden');
+            joinState.classList.remove('hidden');
+
+            // Handle Join
+            document.getElementById('joinBtn').addEventListener('click', async () => {
+                const btn = document.getElementById('joinBtn');
+                btn.disabled = true;
+                btn.textContent = 'Joining...';
+
+                const { error: joinError } = await joinTransaction(transactionId, user.id);
+
+                if (joinError) {
+                    alert('Error joining: ' + joinError.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Accept & Join Transaction';
+                } else {
+                    window.location.href = `submit-product.html?id=${transactionId}`;
+                }
+            });
+        })();
+
+        function showError(msg) {
+            loadingState.classList.add('hidden');
+            joinState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            errorMsg.textContent = msg;
+        }
+    </script>
+</body>
+</html>

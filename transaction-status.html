@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Status - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
+        <div class="flex flex-col gap-4">
+            <!-- Header Card -->
+            <div class="card">
+                <h1 id="transTitle" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Loading...</h1>
+                <p id="transDesc" style="color: var(--text-muted);">Loading details...</p>
+                <div class="mt-4">
+                    <span id="statusBadge" class="badge badge-gray">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Action Card (Dynamic) -->
+            <div id="actionCard" class="card hidden" style="border-color: var(--primary); background: #eff6ff;">
+                <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Action Required</h3>
+                <p id="actionText" style="margin-bottom: 1rem;"></p>
+                <a id="actionBtn" href="#" class="btn btn-primary">Take Action</a>
+                <button id="actionBtnDynamic" class="btn btn-primary hidden"></button>
+            </div>
+
+            <!-- Timeline -->
+            <div class="card">
+                <h3 style="font-weight: 600; margin-bottom: 1.5rem;">Transaction Progress</h3>
+                <div class="timeline">
+                    <div class="timeline-item" id="step_created">
+                        <div class="timeline-title">Transaction Created</div>
+                        <div class="timeline-date">Waiting for seller...</div>
+                    </div>
+                    <div class="timeline-item" id="step_product_submitted">
+                        <div class="timeline-title">Product Submitted</div>
+                        <div class="timeline-date">Seller has added details</div>
+                    </div>
+                    <div class="timeline-item" id="step_product_approved">
+                        <div class="timeline-title">Product Approved</div>
+                        <div class="timeline-date">Buyer accepted condition</div>
+                    </div>
+                    <div class="timeline-item" id="step_payment_uploaded">
+                        <div class="timeline-title">Payment Sent</div>
+                        <div class="timeline-date">Buyer uploaded proof</div>
+                    </div>
+                    <div class="timeline-item" id="step_payment_verified">
+                        <div class="timeline-title">Payment Verified (Escrow)</div>
+                        <div class="timeline-date">Funds secured by Sogolo</div>
+                    </div>
+                    <div class="timeline-item" id="step_product_delivered">
+                        <div class="timeline-title">Delivered for Inspection</div>
+                        <div class="timeline-date">Item at Sogolo office</div>
+                    </div>
+                    <div class="timeline-item" id="step_inspection_passed">
+                        <div class="timeline-title">Inspection Passed</div>
+                        <div class="timeline-date">Item verified</div>
+                    </div>
+                    <div class="timeline-item" id="step_funds_released">
+                        <div class="timeline-title">Completed</div>
+                        <div class="timeline-date">Funds released to seller</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getTransaction, subscribeToTransaction, markProductDelivered, setDeliveryDetails } from './js/transaction.js';
+        import { getCurrentUser, initAuthStateListener } from './js/auth.js';
+
+        initAuthStateListener();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        if (!transactionId) window.location.href = 'dashboard.html';
+
+        let currentUser = null;
+
+        async function init() {
+            currentUser = await getCurrentUser();
+            if (!currentUser) return; // Auth listener redirects
+
+            const { data: transaction, error } = await getTransaction(transactionId);
+            if (error) {
+                alert('Error loading transaction');
+                return;
+            }
+
+            updateUI(transaction);
+            subscribeToTransaction(transactionId, (newTrans) => {
+                updateUI(newTrans);
+            });
+        }
+
+        function updateUI(t) {
+            // 1. Header
+            document.getElementById('transTitle').textContent = t.title;
+            document.getElementById('transDesc').textContent = t.description || 'No description.';
+            document.getElementById('statusBadge').textContent = t.status.replace('_', ' ').toUpperCase();
+
+            // 2. Timeline
+            const steps = [
+                'created', 'product_submitted', 'product_approved', 
+                'payment_uploaded', 'payment_verified', 'product_delivered',
+                'inspection_passed', 'funds_released'
+            ];
+            
+            let passed = true;
+            steps.forEach(step => {
+                const el = document.getElementById(`step_${step}`);
+                if (passed) {
+                    el.classList.add('completed');
+                    if (t.status === step) {
+                        el.classList.add('active');
+                        passed = false; // Stop marking future steps
+                    }
+                } else {
+                    el.classList.remove('completed', 'active');
+                }
+            });
+
+            // 3. Action Card Logic
+            const actionCard = document.getElementById('actionCard');
+            const actionText = document.getElementById('actionText');
+            const actionBtn = document.getElementById('actionBtn');
+            const actionBtnDynamic = document.getElementById('actionBtnDynamic');
+            const isBuyer = t.buyer_id === currentUser.id;
+            const isSeller = t.seller_id === currentUser.id;
+
+            actionCard.classList.add('hidden');
+            actionBtn.classList.remove('hidden');
+            actionBtnDynamic.classList.add('hidden');
+
+            if (isSeller && t.status === 'created') {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Please submit product details and photos.';
+                actionBtn.textContent = 'Submit Product';
+                actionBtn.href = `submit-product.html?id=${t.id}`;
+            }
+            else if (isBuyer && t.status === 'product_submitted') {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Seller has submitted details. Please review.';
+                actionBtn.textContent = 'Review Product';
+                actionBtn.href = `review-product.html?id=${t.id}`;
+            }
+            else if (isBuyer && t.status === 'product_approved') {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Please upload proof of payment.';
+                actionBtn.textContent = 'Upload Payment';
+                actionBtn.href = `payment-upload.html?id=${t.id}`;
+            }
+            else if (isSeller && t.status === 'payment_verified') {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Payment secured! Please deliver the item to our office.';
+                actionBtn.classList.add('hidden');
+                actionBtnDynamic.classList.remove('hidden');
+                actionBtnDynamic.textContent = 'Mark as Delivered';
+                actionBtnDynamic.onclick = async () => {
+                    if(!confirm('Confirm that you have delivered the item to Sogolo office?')) return;
+                    actionBtnDynamic.disabled = true;
+                    actionBtnDynamic.textContent = 'Updating...';
+                    await markProductDelivered(t.id);
+                };
+            }
+            else if (t.status === 'product_delivered') {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Item is currently under inspection at Sogolo office.';
+                actionBtn.style.display = 'none';
+            }
+            else if (isBuyer && t.status === 'funds_released' && !t.delivery_method) {
+                actionCard.classList.remove('hidden');
+                actionText.textContent = 'Funds released! Please choose your delivery method.';
+                actionBtn.classList.add('hidden');
+                
+                // Inject Delivery Form
+                if (!document.getElementById('deliveryForm')) {
+                    const formHtml = `
+                        <div id="deliveryForm" class="mt-4">
+                            <div class="mb-3">
+                                <label class="block text-sm font-medium text-gray-700">Delivery Option</label>
+                                <select id="deliveryMethod" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="">Select Option...</option>
+                                    <option value="pickup">Office Walk-In Pickup</option>
+                                    <option value="courier_cts">Courier - CTS</option>
+                                    <option value="courier_speed">Courier - Speed</option>
+                                </select>
+                            </div>
+                            
+                            <div id="branchField" class="mb-3 hidden">
+                                <label class="block text-sm font-medium text-gray-700">Select Branch</label>
+                                <select id="deliveryBranch" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    <!-- Populated by JS -->
+                                </select>
+                            </div>
+
+                            <button id="submitDelivery" class="btn btn-primary w-full">Confirm Delivery Details</button>
+                        </div>
+                    `;
+                    actionCard.insertAdjacentHTML('beforeend', formHtml);
+
+                    // Event Listeners
+                    const methodSelect = document.getElementById('deliveryMethod');
+                    const branchField = document.getElementById('branchField');
+                    const branchSelect = document.getElementById('deliveryBranch');
+                    const submitBtn = document.getElementById('submitDelivery');
+
+                    const ctsBranches = ['Area 3 – Lilongwe', 'Area 25 – Lilongwe', 'Mzuzu City Centre', 'Zomba City Centre', 'Balaka', 'Dedza Town', 'Salima Town'];
+                    const speedBranches = ['Blantyre — Livingstone Towers', 'Lilongwe — Old Town Mall', 'Lilongwe — City Centre', 'Mzuzu Shoprite Mall', 'Mangochi', 'Karonga', 'Kasungu', 'Ntcheu', 'Mchinji'];
+
+                    methodSelect.onchange = () => {
+                        branchField.classList.add('hidden');
+                        branchSelect.innerHTML = '';
+                        
+                        if (methodSelect.value.startsWith('courier')) {
+                            branchField.classList.remove('hidden');
+                            const branches = methodSelect.value === 'courier_cts' ? ctsBranches : speedBranches;
+                            branchSelect.innerHTML = branches.map(b => `<option value="${b}">${b}</option>`).join('');
+                        }
+                    };
+
+                    submitBtn.onclick = async () => {
+                        const method = methodSelect.value;
+                        const branch = method.startsWith('courier') ? branchSelect.value : null;
+
+                        if (!method) return alert('Please select a delivery method');
+                        
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Saving...';
+                        
+                        const { error } = await setDeliveryDetails(t.id, method, branch);
+                        if (error) {
+                            alert('Error: ' + error.message);
+                            submitBtn.disabled = false;
+                        } else {
+                            location.reload();
+                        }
+                    };
+                }
+            }
+            else if (t.status === 'dispatched' || (t.status === 'funds_released' && t.delivery_method)) {
+                actionCard.classList.remove('hidden');
+                actionCard.style.background = '#f0fdf4';
+                actionCard.style.borderColor = '#16a34a';
+                
+                let msg = `Delivery Method: <strong>${t.delivery_method === 'pickup' ? 'Office Pickup' : 'Courier'}</strong>`;
+                if (t.delivery_branch) msg += `<br>Branch: ${t.delivery_branch}`;
+                
+                if (t.status === 'dispatched') {
+                    msg += `<br><br><span class="badge badge-green">DISPATCHED</span>`;
+                    if (t.dispatch_receipt_url) {
+                        msg += `<br><br><a href="${t.dispatch_receipt_url}" target="_blank" class="btn btn-primary">Download Dispatch Receipt</a>`;
+                    }
+                } else {
+                    msg += `<br><br><em>Waiting for admin to dispatch...</em>`;
+                }
+                
+                actionText.innerHTML = msg;
+                actionBtn.style.display = 'none';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

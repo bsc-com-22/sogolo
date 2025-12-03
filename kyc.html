@@ -3,954 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KYC Verification - Complete Your Profile</title>
+    <title>KYC Verification - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background-color: #f9fafb;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* Header */
-        .header {
-            background: #ffffff;
-            border-bottom: 1px solid #f3f4f6;
-            padding: 16px 0;
-        }
-
-        .header .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        /* Progress Steps */
-        .progress-container {
-            background: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .progress-steps {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            padding: 0 1rem;
-        }
-
-        .progress-line {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #e5e7eb;
-            z-index: 0;
-        }
-
-        .progress-line-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: #3b82f6;
-            transition: width 0.3s ease;
-        }
-
-        .progress-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-            flex: 1;
-        }
-
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #9ca3af;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-step.active .step-circle {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
-        }
-
-        .progress-step.completed .step-circle {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        .step-label {
-            font-size: 0.875rem;
-            color: #6b7280;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .progress-step.active .step-label {
-            color: #3b82f6;
-            font-weight: 600;
-        }
-
-        /* Form Container */
-        .form-wrapper {
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-step {
-            display: none;
-        }
-
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .step-header {
-            margin-bottom: 2rem;
-        }
-
-        .step-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-
-        .step-description {
-            color: #6b7280;
-            font-size: 1rem;
-        }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-label .required {
-            color: #ef4444;
-            margin-left: 2px;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        /* File Upload */
-        .file-upload {
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #f9fafb;
-        }
-
-        .file-upload:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
-        }
-
-        .file-upload.has-file {
-            border-color: #10b981;
-            background: #f0fdf4;
-        }
-
-        .file-upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 1rem;
-            color: #9ca3af;
-        }
-
-        .file-upload-text {
-            color: #6b7280;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .file-upload-hint {
-            color: #9ca3af;
-            font-size: 0.75rem;
-        }
-
-        .file-name {
-            color: #10b981;
-            font-weight: 500;
-            margin-top: 0.5rem;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        /* OTP Input */
-        .otp-container {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            margin: 1.5rem 0;
-        }
-
-        .otp-input {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            border: 2px solid #d1d5db;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .otp-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .resend-otp {
-            text-align: center;
-            margin-top: 1rem;
-        }
-
-        .resend-link {
-            color: #3b82f6;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .resend-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Review Summary */
-        .review-section {
-            margin-bottom: 2rem;
-        }
-
-        .review-section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .review-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .review-label {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-
-        .review-value {
-            color: #1f2937;
-            font-weight: 500;
-            font-size: 0.875rem;
-            text-align: right;
-        }
-
-        /* Checkbox */
-        .checkbox-group {
-            margin-bottom: 1rem;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            cursor: pointer;
-        }
-
-        .checkbox-input {
-            width: 18px;
-            height: 18px;
-            margin-top: 2px;
-            cursor: pointer;
-        }
-
-        .checkbox-text {
-            font-size: 0.875rem;
-            color: #374151;
-            line-height: 1.6;
-        }
-
-        .checkbox-text a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .checkbox-text a:hover {
-            text-decoration: underline;
-        }
-
-        /* Buttons */
-        .btn {
-            border: none;
-            padding: 0.875rem 1.75rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-
-        .btn-primary:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn-group .btn {
-            flex: 1;
-        }
-
-        /* Success Message */
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 3rem 2rem;
-        }
-
-        .success-message.active {
-            display: block;
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: #10b981;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .success-icon svg {
-            width: 48px;
-            height: 48px;
-            color: white;
-        }
-
-        .success-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-
-        .success-text {
-            color: #6b7280;
-            margin-bottom: 2rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-wrapper {
-                padding: 2rem 1.5rem;
-                margin: 0 1rem 2rem;
-            }
-
-            .progress-steps {
-                padding: 0 0.5rem;
-            }
-
-            .step-circle {
-                width: 36px;
-                height: 36px;
-                font-size: 0.875rem;
-            }
-
-            .step-label {
-                font-size: 0.75rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .step-title {
-                font-size: 1.5rem;
-            }
-
-            .otp-input {
-                width: 45px;
-                height: 45px;
-                font-size: 1.25rem;
-            }
-
-            .btn-group {
-                flex-direction: column-reverse;
-            }
-        }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
+    <header class="header">
         <div class="container">
-            <div class="logo">KYC Verification</div>
-            <div style="color: #6b7280; font-size: 0.875rem;">Secure & Confidential</div>
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" style="width: 32px; height: 32px;">
+                Sogolo
+            </a>
+            <div class="flex gap-4 items-center">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-sm" style="margin-top: 100px; padding-bottom: 4rem;">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Identity Verification</h1>
+                <p style="color: var(--text-muted);">Complete these steps to unlock transactions.</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="flex justify-between mb-4" style="position: relative; padding: 0 1rem;">
+                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: var(--border); z-index: 0;"></div>
+                <div class="step-indicator active" style="z-index: 1; background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">1</div>
+                <div class="step-indicator" style="z-index: 1; background: var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">2</div>
+                <div class="step-indicator" style="z-index: 1; background: var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">3</div>
+                <div class="step-indicator" style="z-index: 1; background: var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">4</div>
+            </div>
+            <div class="flex justify-between mb-4" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem;">
+                <span>Personal</span>
+                <span>ID Card</span>
+                <span>Selfie</span>
+                <span>Review</span>
+            </div>
+
+            <form id="kycForm">
+                <!-- Step 1: Personal Info -->
+                <div id="step1" class="step-content active">
+                    <h3 class="mb-4" style="font-weight: 600;">Personal Information</h3>
+                    <div class="form-group">
+                        <label class="form-label">Residential Address</label>
+                        <input type="text" id="address" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City / District</label>
+                        <input type="text" id="city" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" class="form-input" required placeholder="+265...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next of Kin Name</label>
+                        <input type="text" id="kinName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next of Kin Phone</label>
+                        <input type="tel" id="kinPhone" class="form-input" required>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-full" onclick="nextStep(2)">Next: Upload ID</button>
+                </div>
+
+                <!-- Step 2: ID Upload -->
+                <div id="step2" class="step-content">
+                    <h3 class="mb-4" style="font-weight: 600;">National ID Upload</h3>
+                    <div class="form-group">
+                        <label class="form-label">Front of ID</label>
+                        <input type="file" id="idFront" class="form-input" accept="image/*" required onchange="previewImage(this, 'previewFront')">
+                        <div id="previewFront" class="file-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Back of ID</label>
+                        <input type="file" id="idBack" class="form-input" accept="image/*" required onchange="previewImage(this, 'previewBack')">
+                        <div id="previewBack" class="file-preview"></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevStep(1)">Back</button>
+                        <button type="button" class="btn btn-primary" style="flex: 1;" onclick="nextStep(3)">Next: Selfie</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Selfie -->
+                <div id="step3" class="step-content">
+                    <h3 class="mb-4" style="font-weight: 600;">Take a Selfie</h3>
+                    <p class="alert alert-info">Please upload a clear photo of yourself holding your ID card.</p>
+                    <div class="form-group">
+                        <label class="form-label">Selfie with ID</label>
+                        <input type="file" id="selfie" class="form-input" accept="image/*" required onchange="previewImage(this, 'previewSelfie')">
+                        <div id="previewSelfie" class="file-preview"></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary" style="flex: 1;" onclick="nextStep(4)">Next: Review</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review -->
+                <div id="step4" class="step-content">
+                    <h3 class="mb-4" style="font-weight: 600;">Review & Submit</h3>
+                    <div class="alert alert-info">Please verify all information is correct before submitting.</div>
+                    
+                    <div id="reviewData" style="background: var(--background); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevStep(3)">Back</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Submit Application</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Progress Steps -->
-    <div class="progress-container">
-        <div class="progress-steps">
-            <div class="progress-line">
-                <div class="progress-line-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-            <div class="progress-step active" data-step="1">
-                <div class="step-circle">1</div>
-                <div class="step-label">Personal Info</div>
-            </div>
-            <div class="progress-step" data-step="2">
-                <div class="step-circle">2</div>
-                <div class="step-label">Identity</div>
-            </div>
-            <div class="progress-step" data-step="3">
-                <div class="step-circle">3</div>
-                <div class="step-label">Emergency Contact</div>
-            </div>
-            <div class="progress-step" data-step="4">
-                <div class="step-circle">4</div>
-                <div class="step-label">Review</div>
-            </div>
-        </div>
-    </div>
+    <script type="module">
+        import { getCurrentUser, uploadKYCDocument, submitKYC, logout, initAuthStateListener } from './js/auth.js';
 
-    <!-- Form Container -->
-    <div class="form-wrapper">
-        <!-- Step 1: Personal Information -->
-        <div class="form-step active" id="step1">
-            <div class="step-header">
-                <h2 class="step-title">Personal Information</h2>
-                <p class="step-description">Please provide your personal details as they appear on your official ID.</p>
-            </div>
+        initAuthStateListener();
 
-            <div class="form-group">
-                <label class="form-label">Full Legal Name <span class="required">*</span></label>
-                <input type="text" class="form-input" id="fullName" placeholder="Enter your full name as on ID" required>
-            </div>
+        let currentUser = null;
 
-            <div class="form-group">
-                <label class="form-label">Phone Number <span class="required">*</span></label>
-                <input type="tel" class="form-input" id="phone" placeholder="+265 XXX XXX XXX" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Date of Birth <span class="required">*</span></label>
-                <input type="date" class="form-input" id="dob" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Current Address <span class="required">*</span></label>
-                <input type="text" class="form-input" id="address" placeholder="Street address" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">District <span class="required">*</span></label>
-                <select class="form-select" id="district" required>
-                    <option value="">Select your district</option>
-                    <option value="Balaka">Balaka</option>
-                    <option value="Blantyre">Blantyre</option>
-                    <option value="Chikwawa">Chikwawa</option>
-                    <option value="Chiradzulu">Chiradzulu</option>
-                    <option value="Chitipa">Chitipa</option>
-                    <option value="Dedza">Dedza</option>
-                    <option value="Dowa">Dowa</option>
-                    <option value="Karonga">Karonga</option>
-                    <option value="Kasungu">Kasungu</option>
-                    <option value="Likoma">Likoma</option>
-                    <option value="Lilongwe">Lilongwe</option>
-                    <option value="Machinga">Machinga</option>
-                    <option value="Mangochi">Mangochi</option>
-                    <option value="Mchinji">Mchinji</option>
-                    <option value="Mulanje">Mulanje</option>
-                    <option value="Mwanza">Mwanza</option>
-                    <option value="Mzimba">Mzimba</option>
-                    <option value="Neno">Neno</option>
-                    <option value="Nkhata Bay">Nkhata Bay</option>
-                    <option value="Nkhotakota">Nkhotakota</option>
-                    <option value="Nsanje">Nsanje</option>
-                    <option value="Ntcheu">Ntcheu</option>
-                    <option value="Ntchisi">Ntchisi</option>
-                    <option value="Phalombe">Phalombe</option>
-                    <option value="Rumphi">Rumphi</option>
-                    <option value="Salima">Salima</option>
-                    <option value="Thyolo">Thyolo</option>
-                    <option value="Zomba">Zomba</option>
-                </select>
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="nextStep(1)">Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 2: Identity Verification -->
-        <div class="form-step" id="step2">
-            <div class="step-header">
-                <h2 class="step-title">Identity Verification</h2>
-                <p class="step-description">Please provide your National ID information and upload clear photos.</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">National ID Number <span class="required">*</span></label>
-                <input type="text" class="form-input" id="nationalId" placeholder="Enter your National ID number" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Upload National ID (Front) <span class="required">*</span></label>
-                <label for="idFront" class="file-upload" id="idFrontLabel">
-                    <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <div class="file-upload-text">Click to upload or drag and drop</div>
-                    <div class="file-upload-hint">PNG, JPG up to 5MB</div>
-                    <div class="file-name" id="idFrontName"></div>
-                </label>
-                <input type="file" id="idFront" accept="image/*" onchange="handleFileUpload(this, 'idFrontLabel', 'idFrontName')">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Upload National ID (Back) <span class="required">*</span></label>
-                <label for="idBack" class="file-upload" id="idBackLabel">
-                    <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <div class="file-upload-text">Click to upload or drag and drop</div>
-                    <div class="file-upload-hint">PNG, JPG up to 5MB</div>
-                    <div class="file-name" id="idBackName"></div>
-                </label>
-                <input type="file" id="idBack" accept="image/*" onchange="handleFileUpload(this, 'idBackLabel', 'idBackName')">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Upload Selfie <span class="required">*</span></label>
-                <label for="selfie" class="file-upload" id="selfieLabel">
-                    <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <div class="file-upload-text">Click to upload or drag and drop</div>
-                    <div class="file-upload-hint">Clear photo of your face - PNG, JPG up to 5MB</div>
-                    <div class="file-name" id="selfieName"></div>
-                </label>
-                <input type="file" id="selfie" accept="image/*" onchange="handleFileUpload(this, 'selfieLabel', 'selfieName')">
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="prevStep(2)">Back</button>
-                <button class="btn btn-primary" onclick="nextStep(2)">Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 3: Emergency Contact -->
-        <div class="form-step" id="step3">
-            <div class="step-header">
-                <h2 class="step-title">Emergency Contact</h2>
-                <p class="step-description">Please provide details of your next of kin for emergency purposes.</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Next of Kin Full Name <span class="required">*</span></label>
-                <input type="text" class="form-input" id="kinName" placeholder="Enter full name" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Relationship to You <span class="required">*</span></label>
-                <select class="form-select" id="kinRelationship" required>
-                    <option value="">Select relationship</option>
-                    <option value="Spouse">Spouse</option>
-                    <option value="Parent">Parent</option>
-                    <option value="Sibling">Sibling</option>
-                    <option value="Child">Child</option>
-                    <option value="Other Relative">Other Relative</option>
-                    <option value="Friend">Friend</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Next of Kin Phone Number <span class="required">*</span></label>
-                <input type="tel" class="form-input" id="kinPhone" placeholder="+265 XXX XXX XXX" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Next of Kin Address <span style="color: #9ca3af; font-weight: 400;">(Optional)</span></label>
-                <input type="text" class="form-input" id="kinAddress" placeholder="Street address">
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="prevStep(3)">Back</button>
-                <button class="btn btn-primary" onclick="nextStep(3)">Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 4: Review & Submit -->
-        <div class="form-step" id="step4">
-            <div class="step-header">
-                <h2 class="step-title">Review & Submit</h2>
-                <p class="step-description">Please review your information before submitting for verification.</p>
-            </div>
-
-            <div class="review-section">
-                <h3 class="review-section-title">Personal Information</h3>
-                <div class="review-item">
-                    <span class="review-label">Full Name</span>
-                    <span class="review-value" id="reviewName">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Phone Number</span>
-                    <span class="review-value" id="reviewPhone">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Date of Birth</span>
-                    <span class="review-value" id="reviewDob">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Address</span>
-                    <span class="review-value" id="reviewAddress">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">District</span>
-                    <span class="review-value" id="reviewDistrict">-</span>
-                </div>
-            </div>
-
-            <div class="review-section">
-                <h3 class="review-section-title">Identity Verification</h3>
-                <div class="review-item">
-                    <span class="review-label">National ID Number</span>
-                    <span class="review-value" id="reviewNationalId">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Documents Uploaded</span>
-                    <span class="review-value" id="reviewDocuments">-</span>
-                </div>
-            </div>
-
-            <div class="review-section">
-                <h3 class="review-section-title">Emergency Contact</h3>
-                <div class="review-item">
-                    <span class="review-label">Next of Kin Name</span>
-                    <span class="review-value" id="reviewKinName">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Relationship</span>
-                    <span class="review-value" id="reviewKinRelation">-</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">Next of Kin Phone</span>
-                    <span class="review-value" id="reviewKinPhone">-</span>
-                </div>
-            </div>
-
-            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="checkbox-input" id="consentData" required>
-                        <span class="checkbox-text">I consent to the processing of my personal data as described in the <a href="#">Privacy Policy</a>.</span>
-                    </label>
-                </div>
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="checkbox-input" id="consentTerms" required>
-                        <span class="checkbox-text">I have read and agree to the <a href="#">Terms and Conditions</a>.</span>
-                    </label>
-                </div>
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" class="checkbox-input" id="consentAccuracy" required>
-                        <span class="checkbox-text">I confirm that all information provided is accurate and complete to the best of my knowledge.</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="prevStep(4)">Back</button>
-                <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Submit for Verification</button>
-            </div>
-        </div>
-
-        <!-- Success Message -->
-        <div class="success-message" id="successMessage">
-            <div class="success-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <h2 class="success-title">Verification Submitted!</h2>
-            <p class="success-text">Your KYC application has been submitted successfully. We will review your information and notify you within 24-48 hours.</p>
-            <button class="btn btn-primary" onclick="location.reload()">Done</button>
-        </div>
-    </div>
-
-    <script>
-        let currentStep = 1;
-        const totalSteps = 4;
-
-        function nextStep(step) {
-            if (validateStep(step)) {
-                if (step === 4) {
-                    updateReviewData();
-                }
-                currentStep++;
-                updateStepDisplay();
-            }
-        }
-
-        function prevStep(step) {
-            currentStep--;
-            updateStepDisplay();
-        }
-
-        function updateStepDisplay() {
-            // Hide all steps
-            document.querySelectorAll('.form-step').forEach(step => {
-                step.classList.remove('active');
-            });
-
-            // Show current step
-            document.getElementById('step' + currentStep).classList.add('active');
-
-            // Update progress
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-
-            // Update step indicators
-            document.querySelectorAll('.progress-step').forEach((step, index) => {
-                const stepNum = index + 1;
-                step.classList.remove('active', 'completed');
-                
-                if (stepNum === currentStep) {
-                    step.classList.add('active');
-                } else if (stepNum < currentStep) {
-                    step.classList.add('completed');
-                }
-            });
-        }
-
-        function validateStep(step) {
-            let isValid = true;
-
-            if (step === 1) {
-                const fullName = document.getElementById('fullName').value.trim();
-                const phone = document.getElementById('phone').value.trim();
-                const dob = document.getElementById('dob').value;
-                const address = document.getElementById('address').value.trim();
-                const district = document.getElementById('district').value;
-
-                if (!fullName || !phone || !dob || !address || !district) {
-                    alert('Please fill in all required fields.');
-                    isValid = false;
-                }
-            } else if (step === 2) {
-                const nationalId = document.getElementById('nationalId').value.trim();
-                const idFront = document.getElementById('idFront').files.length;
-                const idBack = document.getElementById('idBack').files.length;
-                const selfie = document.getElementById('selfie').files.length;
-
-                if (!nationalId || !idFront || !idBack || !selfie) {
-                    alert('Please complete all identity verification requirements.');
-                    isValid = false;
-                }
-            } else if (step === 3) {
-                const kinName = document.getElementById('kinName').value.trim();
-                const kinRelationship = document.getElementById('kinRelationship').value;
-                const kinPhone = document.getElementById('kinPhone').value.trim();
-
-                if (!kinName || !kinRelationship || !kinPhone) {
-                    alert('Please fill in all required emergency contact fields.');
-                    isValid = false;
-                }
-            }
-
-            return isValid;
-        }
-
-        function handleFileUpload(input, labelId, nameId) {
-            const label = document.getElementById(labelId);
-            const nameSpan = document.getElementById(nameId);
-            
-            if (input.files && input.files[0]) {
-                const fileName = input.files[0].name;
-                nameSpan.textContent = fileName;
-                label.classList.add('has-file');
-            }
-        }
-
-        function updateReviewData() {
-            // Personal Information
-            document.getElementById('reviewName').textContent = document.getElementById('fullName').value;
-            document.getElementById('reviewPhone').textContent = document.getElementById('phone').value;
-            document.getElementById('reviewDob').textContent = document.getElementById('dob').value;
-            document.getElementById('reviewAddress').textContent = document.getElementById('address').value;
-            document.getElementById('reviewDistrict').textContent = document.getElementById('district').value;
-
-            // Identity Verification
-            document.getElementById('reviewNationalId').textContent = document.getElementById('nationalId').value;
-            
-            const docs = [];
-            if (document.getElementById('idFront').files.length) docs.push('ID Front');
-            if (document.getElementById('idBack').files.length) docs.push('ID Back');
-            if (document.getElementById('selfie').files.length) docs.push('Selfie');
-            document.getElementById('reviewDocuments').textContent = docs.join(', ');
-
-            // Emergency Contact
-            document.getElementById('reviewKinName').textContent = document.getElementById('kinName').value;
-            document.getElementById('reviewKinRelation').textContent = document.getElementById('kinRelationship').value;
-            document.getElementById('reviewKinPhone').textContent = document.getElementById('kinPhone').value;
-        }
-
-        function submitForm() {
-            const consentData = document.getElementById('consentData').checked;
-            const consentTerms = document.getElementById('consentTerms').checked;
-            const consentAccuracy = document.getElementById('consentAccuracy').checked;
-
-            if (!consentData || !consentTerms || !consentAccuracy) {
-                alert('Please accept all consent checkboxes to proceed.');
+        // Check Auth & Status
+        (async () => {
+            const user = await getCurrentUser();
+            if (!user) {
+                window.location.href = 'signin.html';
                 return;
             }
+            currentUser = user;
 
-            // Simulate form submission
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            if (user.profile?.kyc_status === 'approved') {
+                alert('Your KYC is already approved!');
+                window.location.href = 'dashboard.html';
+            } else if (user.profile?.kyc_status === 'under_review') {
+                alert('Your KYC is currently under review.');
+                window.location.href = 'dashboard.html';
+            }
+        })();
 
-            setTimeout(() => {
-                document.getElementById('step4').classList.remove('active');
-                document.getElementById('successMessage').classList.add('active');
-                
-                // Update progress to 100%
-                document.getElementById('progressFill').style.width = '100%';
-                document.querySelectorAll('.progress-step').forEach(step => {
-                    step.classList.add('completed');
-                    step.classList.remove('active');
-                });
-            }, 2000);
+        // Navigation
+        window.nextStep = (step) => {
+            // Simple validation
+            const currentStepDiv = document.querySelector('.step-content.active');
+            const inputs = currentStepDiv.querySelectorAll('input[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.style.borderColor = 'var(--danger)';
+                } else {
+                    input.style.borderColor = 'var(--border)';
+                }
+            });
+
+            if (!valid) return;
+
+            if (step === 4) populateReview();
+
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            updateIndicators(step);
+        };
+
+        window.prevStep = (step) => {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            updateIndicators(step);
+        };
+
+        function updateIndicators(step) {
+            const indicators = document.querySelectorAll('.step-indicator');
+            indicators.forEach((ind, index) => {
+                if (index < step) {
+                    ind.style.background = 'var(--primary)';
+                    ind.style.color = 'white';
+                } else {
+                    ind.style.background = 'var(--border)';
+                    ind.style.color = 'var(--text-muted)';
+                }
+            });
         }
 
-        // Initialize
-        updateProgress();
+        // Preview
+        window.previewImage = (input, targetId) => {
+            const container = document.getElementById(targetId);
+            container.innerHTML = '';
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    container.innerHTML = `<div class="file-preview-item"><img src="${e.target.result}"></div>`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        function populateReview() {
+            const data = {
+                Address: document.getElementById('address').value,
+                City: document.getElementById('city').value,
+                Phone: document.getElementById('phone').value,
+                'Next of Kin': document.getElementById('kinName').value,
+                'Kin Phone': document.getElementById('kinPhone').value,
+                'ID Front': document.getElementById('idFront').files[0]?.name,
+                'ID Back': document.getElementById('idBack').files[0]?.name,
+                'Selfie': document.getElementById('selfie').files[0]?.name
+            };
+
+            const html = Object.entries(data).map(([key, val]) => `
+                <div class="flex justify-between mb-2">
+                    <span style="color: var(--text-muted);">${key}:</span>
+                    <span style="font-weight: 500;">${val}</span>
+                </div>
+            `).join('');
+            document.getElementById('reviewData').innerHTML = html;
+        }
+
+        // Submission
+        document.getElementById('kycForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                // Upload files
+                const idFront = await uploadKYCDocument(currentUser.id, document.getElementById('idFront').files[0], 'id_front');
+                const idBack = await uploadKYCDocument(currentUser.id, document.getElementById('idBack').files[0], 'id_back');
+                const selfie = await uploadKYCDocument(currentUser.id, document.getElementById('selfie').files[0], 'selfie');
+
+                if (idFront.error || idBack.error || selfie.error) throw new Error('File upload failed');
+
+                // Submit data
+                const formData = {
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    phone: document.getElementById('phone').value,
+                    next_of_kin_name: document.getElementById('kinName').value,
+                    next_of_kin_phone: document.getElementById('kinPhone').value,
+                    id_front_url: idFront.path,
+                    id_back_url: idBack.path,
+                    selfie_url: selfie.path
+                };
+
+                const { error } = await submitKYC(currentUser.id, formData);
+                if (error) throw error;
+
+                alert('KYC Submitted Successfully! We will review it shortly.');
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Submit Application';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => logout());
     </script>
 </body>
 </html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug KYC</title>
+    <style>
+        body { font-family: monospace; padding: 2rem; }
+        pre { background: #f4f4f4; padding: 1rem; border: 1px solid #ddd; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Debug KYC Data</h1>
+    <div id="output">Loading...</div>
+
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+        
+        async function runDebug() {
+            const out = document.getElementById('output');
+            
+            // 1. Check User
+            const { data: { user } } = await supabase.auth.getUser();
+            let log = `Current User: ${user ? user.email : 'Not Logged In'}\n`;
+            
+            if (user) {
+                const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                log += `My Profile: ${JSON.stringify(profile, null, 2)}\n\n`;
+            }
+
+            // 2. Fetch All Profiles
+            log += `Fetching ALL profiles...\n`;
+            const { data: profiles, error } = await supabase
+                .from('profiles')
+                .select('*');
+            
+            if (error) {
+                log += `Error: ${JSON.stringify(error, null, 2)}`;
+            } else {
+                log += `Found ${profiles.length} profiles:\n`;
+                log += JSON.stringify(profiles, null, 2);
+            }
+
+            out.innerText = log;
+        }
+
+        runDebug();
+    </script>
+</body>
+</html>

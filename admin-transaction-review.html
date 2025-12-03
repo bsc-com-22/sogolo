@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Transaction - Sogolo Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body { background-color: #f9fafb; }
+        .container-md { max-width: 800px; margin: 100px auto 2rem; padding: 0 24px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+        .label { color: #6b7280; }
+        .value { font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container-md">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; color: #1f2937; margin: 0;">Transaction Review</h1>
+                <a href="admin-dashboard.html" class="btn btn-secondary">Back</a>
+            </div>
+
+            <div id="content">Loading...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getTransaction, getProductDetails, getPaymentProof, verifyPayment, rejectPayment, releaseFunds, uploadDispatchReceipt } from './js/transaction.js';
+        import { getCurrentUser } from './js/auth.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        async function init() {
+            const admin = await getCurrentUser();
+            if (!admin || admin.profile?.role !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadData();
+        }
+
+        async function loadData() {
+            const { data: transaction } = await getTransaction(transactionId);
+            const { submission, images } = await getProductDetails(transactionId);
+            const { data: payment } = await getPaymentProof(transactionId);
+
+            if (!transaction) {
+                document.getElementById('content').textContent = 'Transaction not found.';
+                return;
+            }
+
+            let html = `
+                <div class="section-title">Transaction Details</div>
+                <div class="detail-row"><span class="label">Title</span><span class="value">${transaction.title}</span></div>
+                <div class="detail-row"><span class="label">Status</span><span class="badge badge-blue">${transaction.status.toUpperCase()}</span></div>
+                <div class="detail-row"><span class="label">Price</span><span class="value">MWK ${transaction.price || 'N/A'}</span></div>
+                
+                <div class="section-title mt-4">Product Details</div>
+                <div class="detail-row"><span class="label">Name</span><span class="value">${submission?.product_name || 'N/A'}</span></div>
+                <div class="detail-row"><span class="label">Description</span><span class="value">${submission?.product_description || 'N/A'}</span></div>
+                
+                <div class="file-preview mt-4">
+                    ${images ? images.map(img => `<div class="file-preview-item"><a href="${img.image_url}" target="_blank"><img src="${img.image_url}"></a></div>`).join('') : 'No images'}
+                </div>
+            `;
+
+            if (payment) {
+                html += `
+                    <div class="section-title mt-4">Payment Proof</div>
+                    <div class="detail-row"><span class="label">Amount Reported</span><span class="value">MWK ${payment.amount}</span></div>
+                    <div class="file-preview mt-4">
+                        <div class="file-preview-item" style="width: 200px; height: auto;">
+                            <a href="${payment.proof_url}" target="_blank"><img src="${payment.proof_url}" style="width: 100%;"></a>
+                        </div>
+                    </div>
+                `;
+
+                if (transaction.status === 'payment_uploaded') {
+                    html += `
+                        <div class="flex gap-4 mt-4" style="border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
+                            <button onclick="handleReject()" class="btn btn-danger" style="flex: 1;">Reject Payment</button>
+                            <button onclick="handleVerify()" class="btn btn-primary" style="flex: 1;">Verify Payment & Secure Funds</button>
+                        </div>
+                    `;
+                } else if (transaction.status === 'inspection_passed') {
+                    html += `
+                        <div class="flex gap-4 mt-4" style="border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
+                            <button onclick="handleRelease()" class="btn btn-primary" style="flex: 1; background: #16a34a;">Release Funds to Seller</button>
+                        </div>
+                    `;
+                }
+            } else {
+                html += `<div class="alert alert-info mt-4">No payment proof uploaded yet.</div>`;
+            }
+
+            if (transaction.delivery_method) {
+                html += `
+                    <div class="section-title mt-4">Delivery Details</div>
+                    <div class="detail-row"><span class="label">Method</span><span class="value">${transaction.delivery_method === 'pickup' ? 'Office Pickup' : 'Courier'}</span></div>
+                    ${transaction.delivery_branch ? `<div class="detail-row"><span class="label">Branch</span><span class="value">${transaction.delivery_branch}</span></div>` : ''}
+                `;
+
+                if (transaction.status === 'funds_released' || transaction.status === 'dispatched') {
+                    html += `
+                        <div class="section-title mt-4">Dispatch</div>
+                    `;
+                    
+                    if (transaction.dispatch_receipt_url) {
+                        html += `
+                            <div class="alert alert-success mb-4">Item Dispatched</div>
+                            <a href="${transaction.dispatch_receipt_url}" target="_blank" class="btn btn-secondary w-full text-center">View Receipt</a>
+                            <div class="mt-4 text-sm text-gray-500 text-center">Upload new receipt to replace:</div>
+                        `;
+                    }
+
+                    html += `
+                        <div class="mt-2">
+                            <input type="file" id="receiptFile" accept="application/pdf,image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                            <button onclick="handleDispatch()" class="btn btn-primary w-full mt-2">Upload Dispatch Receipt & Mark Dispatched</button>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        window.handleDispatch = async () => {
+            const fileInput = document.getElementById('receiptFile');
+            const file = fileInput.files[0];
+            
+            if (!file) return alert('Please select a receipt file first.');
+            if (!confirm('Confirm upload and mark as dispatched?')) return;
+
+            const btn = document.querySelector('button[onclick="handleDispatch()"]');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            const { error } = await uploadDispatchReceipt(transactionId, file);
+            if (error) {
+                alert('Error: ' + error.message);
+                btn.disabled = false;
+            } else {
+                alert('Receipt Uploaded & Dispatched!');
+                location.reload();
+            }
+        };
+
+        window.handleRelease = async () => {
+            if (!confirm('Are you sure you want to release funds to the seller? This action is irreversible.')) return;
+            
+            const { error } = await releaseFunds(transactionId);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Funds Released!');
+                location.reload();
+            }
+        };
+
+        window.handleVerify = async () => {
+            if (!confirm('Are you sure you want to verify this payment? Funds will be marked as secured.')) return;
+            
+            const { error } = await verifyPayment(transactionId);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Payment Verified!');
+                location.reload();
+            }
+        };
+
+        window.handleReject = async () => {
+            if (!confirm('Are you sure you want to reject this payment?')) return;
+            
+            const { error } = await rejectPayment(transactionId);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Payment Rejected.');
+                location.reload();
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>

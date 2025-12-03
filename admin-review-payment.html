@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Review Payment - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body { background-color: #f9fafb; }
+        .container-md { max-width: 800px; margin: 100px auto 2rem; padding: 0 24px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .proof-img { width: 100%; border-radius: 8px; margin: 1rem 0; border: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="container-md">
+        <div class="card">
+            <h1>Review Payment</h1>
+            <div id="content">Loading...</div>
+            <div class="action-buttons" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button onclick="verify()" class="btn btn-primary" style="flex: 1; justify-content: center;">Confirm Payment Received</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+        import { verifyPayment } from './js/transaction.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('id');
+
+        async function load() {
+            // Fetch payment proof
+            const { data: proof } = await supabase
+                .from('payment_proofs')
+                .select('*')
+                .eq('transaction_id', transactionId)
+                .single();
+
+            if (proof) {
+                document.getElementById('content').innerHTML = `
+                    <p><strong>Amount:</strong> MWK ${proof.amount}</p>
+                    <img src="${proof.proof_url}" class="proof-img">
+                `;
+            } else {
+                document.getElementById('content').textContent = 'No proof found.';
+            }
+        }
+
+        window.verify = async () => {
+            if (!confirm('Confirm funds received?')) return;
+            await verifyPayment(transactionId);
+            alert('Payment Verified');
+            window.location.href = 'dashboard.html'; // Or admin dashboard
+        };
+
+        load();
+    </script>
+</body>
+</html>

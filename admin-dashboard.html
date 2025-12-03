@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body { background-color: #f9fafb; }
+        .container-md { max-width: 1000px; margin: 100px auto 2rem; padding: 0 24px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { font-weight: 600; color: #4b5563; background: #f9fafb; }
+        tr:hover { background: #f9fafb; }
+        
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 500; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-under_review { background: #dbeafe; color: #2563eb; }
+        .status-approved { background: #dcfce7; color: #166534; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-payment_uploaded { background: #fef9c3; color: #a16207; }
+        .status-payment_verified { background: #dcfce7; color: #15803d; }
+
+        .tabs { display: flex; gap: 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 2rem; }
+        .tab { padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" class="logo-icon" style="width: 40px; height: 40px;">
+                Sogolo Admin
+            </a>
+            <div class="nav-actions">
+                <a href="#" onclick="logout()" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-md">
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('kyc')">KYC Submissions</div>
+                <div class="tab" onclick="switchTab('transactions')">Transactions</div>
+            </div>
+
+            <!-- KYC Section -->
+            <div id="kycSection">
+                <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Pending KYC</h2>
+                <div id="kycLoading">Loading...</div>
+                <table id="kycTable" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kycList"></tbody>
+                </table>
+            </div>
+
+            <!-- Transactions Section -->
+            <div id="transactionsSection" class="hidden">
+                <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Ongoing Transactions</h2>
+                <div id="transLoading">Loading...</div>
+                <table id="transTable" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transList"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+        import { getCurrentUser, logout } from './js/auth.js';
+        import { getAllTransactions } from './js/transaction.js';
+
+        window.logout = logout;
+
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'kyc') {
+                document.getElementById('kycSection').classList.remove('hidden');
+                document.getElementById('transactionsSection').classList.add('hidden');
+            } else {
+                document.getElementById('kycSection').classList.add('hidden');
+                document.getElementById('transactionsSection').classList.remove('hidden');
+                loadTransactions();
+            }
+        };
+
+        async function init() {
+            const user = await getCurrentUser();
+            if (!user || user.profile?.role !== 'admin') {
+                alert('Access Denied');
+                window.location.href = 'index.html';
+                return;
+            }
+            loadKYCList();
+        }
+
+        async function loadKYCList() {
+            const { data: profiles, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .in('kyc_status', ['pending', 'under_review'])
+                .order('updated_at', { ascending: false });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const tbody = document.getElementById('kycList');
+            tbody.innerHTML = profiles.map(p => `
+                <tr>
+                    <td>${p.full_name || 'N/A'}</td>
+                    <td>${new Date(p.updated_at || Date.now()).toLocaleDateString()}</td>
+                    <td><span class="status-badge status-${p.kyc_status}">${p.kyc_status.replace('_', ' ')}</span></td>
+                    <td>
+                        <a href="admin-kyc-review.html?id=${p.id}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Review</a>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('kycLoading').classList.add('hidden');
+            document.getElementById('kycTable').classList.remove('hidden');
+        }
+
+        async function loadTransactions() {
+            const { data: transactions, error } = await getAllTransactions();
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const tbody = document.getElementById('transList');
+            tbody.innerHTML = transactions.map(t => {
+                let actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">View</a>`;
+                
+                if (t.status === 'payment_uploaded') {
+                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Verify Payment</a>`;
+                } else if (t.status === 'product_delivered') {
+                    actionBtn = `<a href="product-inspection.html?id=${t.id}" class="btn btn-warning" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: #f59e0b; color: white;">Inspect Product</a>`;
+                } else if (t.status === 'inspection_passed') {
+                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: #16a34a; color: white;">Release Funds</a>`;
+                }
+
+                return `
+                    <tr>
+                        <td>${t.title}</td>
+                        <td><span class="status-badge status-${t.status}">${t.status.replace('_', ' ').toUpperCase()}</span></td>
+                        <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('transLoading').classList.add('hidden');
+            document.getElementById('transTable').classList.remove('hidden');
+        }
+
+        init();
+    </script>
+</body>
+</html>

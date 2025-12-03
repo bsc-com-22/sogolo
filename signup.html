@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Sogolo</title>
+    <title>Sign Up - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -11,23 +11,27 @@
     
     <div class="card" style="width: 100%; max-width: 400px;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Welcome Back</h1>
-            <p style="color: var(--text-muted);">Sign in to your account</p>
+            <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Create Account</h1>
+            <p style="color: var(--text-muted);">Join Sogolo today</p>
         </div>
 
-        <form id="signinForm">
+        <form id="signupForm">
+            <div class="form-group">
+                <label class="form-label" for="fullName">Full Name</label>
+                <input type="text" id="fullName" class="form-input" required placeholder="John Doe">
+            </div>
             <div class="form-group">
                 <label class="form-label" for="email">Email Address</label>
-                <input type="email" id="email" class="form-input" required>
+                <input type="email" id="email" class="form-input" required placeholder="you@example.com">
             </div>
             <div class="form-group">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" class="form-input" required>
+                <input type="password" id="password" class="form-input" required placeholder="••••••••">
             </div>
             
             <div id="errorMsg" class="alert alert-error hidden"></div>
 
-            <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
         </form>
 
         <div class="flex items-center gap-4" style="margin: 1.5rem 0;">
@@ -36,44 +40,46 @@
             <div style="flex: 1; height: 1px; background: var(--border);"></div>
         </div>
 
-        <button id="googleLoginBtn" class="btn btn-secondary btn-full">
+        <button id="googleSignupBtn" class="btn btn-secondary btn-full">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px;">
-            Sign in with Google
+            Sign up with Google
         </button>
 
         <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem;">
-            <p><a href="forgot-password.html">Forgot your password?</a></p>
-            <p class="mt-4">Don't have an account? <a href="signup.html">Sign up</a></p>
+            Already have an account? <a href="signin.html">Sign in</a>
         </div>
     </div>
 
     <script type="module">
-        import { loginWithEmail, loginWithGoogle, initAuthStateListener } from './js/auth.js';
+        import { signUp, loginWithGoogle, initAuthStateListener } from './js/auth.js';
 
         initAuthStateListener();
 
-        const form = document.getElementById('signinForm');
-        const googleBtn = document.getElementById('googleLoginBtn');
+        const form = document.getElementById('signupForm');
+        const googleBtn = document.getElementById('googleSignupBtn');
         const errorMsg = document.getElementById('errorMsg');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMsg.classList.add('hidden');
             
+            const fullName = document.getElementById('fullName').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const btn = form.querySelector('button[type="submit"]');
 
             btn.disabled = true;
-            btn.textContent = 'Signing In...';
+            btn.textContent = 'Creating Account...';
 
-            const { error } = await loginWithEmail(email, password);
+            const { error } = await signUp(email, password, fullName);
 
             if (error) {
                 errorMsg.textContent = error.message;
                 errorMsg.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Sign In';
+                btn.textContent = 'Sign Up';
+            } else {
+                // Auth listener will handle redirect
             }
         });
 

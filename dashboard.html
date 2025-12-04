@@ -71,8 +71,15 @@
             }
 
             // 2. Admin Button
+            console.log('User profile:', user.profile);
+            console.log('User role:', user.profile?.role);
+            
             if (user.profile?.role === 'admin') {
+                console.log('User is admin - showing admin links');
                 document.getElementById('adminBtn').classList.remove('hidden');
+                document.getElementById('adminMobileLink')?.classList.remove('hidden');
+            } else {
+                console.log('User is NOT admin - hiding admin links');
             }
 
             // 3. KYC Status
@@ -164,6 +171,149 @@
                 }
             });
         }
+    </script>
+</body>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
+                <a href="admin-dashboard.html" id="adminMobileLink" class="mobile-nav-link hidden">Admin Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser, logout } from './js/auth.js';
+        import './js/headerAuth.js';
+
+        let currentUser = null;
+
+        async function loadDashboard() {
+            const user = await getCurrentUser();
+            if (!user) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            currentUser = user;
+
+            // Display user info
+            document.getElementById('userEmail').textContent = user.email;
+            
+            // Update avatar with initials
+            const avatarDiv = document.getElementById('userAvatar');
+            const initials = user.profile?.full_name 
+                ? user.profile.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                : user.email.substring(0, 2).toUpperCase();
+            avatarDiv.textContent = initials;
+
+            // Show admin button if admin
+            if (user.profile?.role === 'admin') {
+                document.getElementById('adminBtn').classList.remove('hidden');
+                document.getElementById('adminMobileLink')?.classList.remove('hidden');
+            }
+
+            // Display KYC status
+            displayKYCStatus(user.profile?.kyc_status || 'not_submitted');
+
+            // Load transactions
+            loadTransactions(user.id);
+        }
+
+        function displayKYCStatus(status) {
+            const badge = document.getElementById('kycStatusBadge');
+            const statusMap = {
+                'not_submitted': { text: 'KYC Not Submitted', class: 'badge-gray', action: true },
+                'under_review': { text: 'KYC Under Review', class: 'badge-yellow', action: false },
+                'approved': { text: 'KYC Approved', class: 'badge-green', action: false },
+                'rejected': { text: 'KYC Rejected', class: 'badge-red', action: true }
+            };
+
+            const config = statusMap[status] || statusMap['not_submitted'];
+            
+            badge.innerHTML = `
+                <div class="flex items-center gap-4" style="flex-wrap: wrap;">
+                    <span class="badge ${config.class}">${config.text}</span>
+                    ${config.action ? '<a href="kyc.html" class="btn btn-primary btn-full-mobile">Complete KYC Verification</a>' : ''}
+                </div>
+            `;
+        }
+
+        async function loadTransactions(userId) {
+            const { data: transactions, error } = await supabase
+                .from('transactions')
+                .select('*')
+                .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+                .order('created_at', { ascending: false });
+
+            const list = document.getElementById('transactionsList');
+            
+            if (error || !transactions || transactions.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No transactions yet. <a href="create-transaction.html">Create your first transaction</a></p>';
+                return;
+            }
+
+            list.innerHTML = transactions.map(t => `
+                <div class="card" style="margin-bottom: 1rem; padding: 1.5rem;">
+                    <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 1rem;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <h4 style="font-weight: 600; margin-bottom: 0.25rem;">${t.product_name || 'Transaction'}</h4>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">ID: ${t.id.substring(0, 8)}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-weight: 600; color: var(--primary); margin-bottom: 0.25rem;">MWK ${t.amount?.toLocaleString() || '0'}</p>
+                            <span class="badge badge-${getStatusColor(t.status)}">${t.status}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="transaction-status.html?id=${t.id}" class="btn btn-secondary btn-full-mobile">View Details</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'yellow',
+                'awaiting_product': 'blue',
+                'product_submitted': 'blue',
+                'product_approved': 'blue',
+                'payment_pending': 'yellow',
+                'payment_uploaded': 'yellow',
+                'payment_verified': 'green',
+                'in_transit': 'blue',
+                'delivered': 'blue',
+                'completed': 'green',
+                'disputed': 'red',
+                'cancelled': 'gray'
+            };
+            return colors[status] || 'gray';
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        });
+
+        document.getElementById('mobileMenu')?.addEventListener('click', (e) => {
+            if (e.target.id === 'mobileMenu') {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+
+        // Initialize
+        loadDashboard();
     </script>
 </body>
 </html>

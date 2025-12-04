@@ -13,8 +13,13 @@
             <a href="index.html" class="logo">
                 <img src="logo.png" alt="Sogolo" style="height: 42px;">
             </a>
-            <div class="flex gap-4 items-center">
-                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div class="nav-actions">
+                <!-- Populated by headerAuth.js -->
             </div>
         </div>
     </header>
@@ -120,6 +125,35 @@
                 setTimeout(() => btn.textContent = originalText, 2000);
             });
         };
+    </script>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import './js/headerAuth.js';
+        
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn')?.addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        });
+        
+        document.getElementById('mobileMenu')?.addEventListener('click', (e) => {
+            if (e.target.id === 'mobileMenu') {
+                e.target.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>

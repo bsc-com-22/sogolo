@@ -229,6 +229,22 @@
             font-size: 0.875rem;
         }
 
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+
         /* Transaction List */
         .transaction-list {
             display: flex;
@@ -313,6 +329,29 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
+            }
+
+            /* Mobile button fixes */
+            .btn-secondary {
+                background: #3b82f6 !important;
+                color: white !important;
+                border: 1px solid #3b82f6 !important;
+            }
+
+            .btn-secondary:hover {
+                background: #2563eb !important;
+                color: white !important;
+            }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .transaction-meta {
+                width: 100%;
+                justify-content: flex-end;
             }
         }
     </style>

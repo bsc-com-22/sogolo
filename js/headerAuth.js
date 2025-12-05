@@ -17,10 +17,6 @@ export async function initHeaderAuth() {
 }
 
 function updateHeaderForUser(user) {
-    const navActions = document.querySelector('.nav-actions');
-    const mobileMenuContent = document.querySelector('.mobile-menu-content');
-    const userAvatarBtn = document.getElementById('userAvatarBtn');
-
     // Get Avatar URL
     let avatarUrl = null;
     if (user.profile && user.profile.selfie_url) {
@@ -31,38 +27,37 @@ function updateHeaderForUser(user) {
     }
 
     const initials = getInitials(user.profile?.full_name || user.email);
+    const isAdmin = user.profile?.role === 'admin';
 
-    // 1. Update Desktop Header
-    if (navActions) {
-        navActions.innerHTML = `
-            <div class="user-menu-container">
-                <a href="dashboard.html" class="user-avatar-link" title="Go to Dashboard">
-                    ${avatarUrl
-                ? `<img src="${avatarUrl}" alt="Profile" class="user-avatar-img">`
-                : `<div class="user-avatar-placeholder">${initials}</div>`
-            }
-                </a>
-                <div class="user-dropdown">
-                    <a href="dashboard.html" class="dropdown-item">Dashboard</a>
-                    <button id="headerLogoutBtn" class="dropdown-item">Logout</button>
-                </div>
-            </div>
-        `;
+    // 1. Hide Desktop Auth Buttons, Show Desktop Avatar
+    const desktopAuthButtons = document.getElementById('desktopAuthButtons');
+    const userAvatarContainer = document.getElementById('userAvatarContainer');
 
-        // Add logout listener
-        const logoutBtn = document.getElementById('headerLogoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => logout());
+    if (desktopAuthButtons) desktopAuthButtons.style.display = 'none';
+    if (userAvatarContainer) {
+        userAvatarContainer.classList.remove('hidden');
+        const desktopUserInitials = document.getElementById('desktopUserInitials');
+        const desktopUserAvatarBtn = document.getElementById('desktopUserAvatarBtn');
+
+        if (desktopUserInitials && !avatarUrl) {
+            desktopUserInitials.textContent = initials;
+        }
+        if (desktopUserAvatarBtn && avatarUrl) {
+            desktopUserAvatarBtn.innerHTML = `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         }
     }
 
-    // 2. Update Mobile Avatar Button
-    if (userAvatarBtn) {
-        userAvatarBtn.classList.remove('hidden');
+    // 2. Show Mobile Avatar Button
+    const mobileUserAvatarBtn = document.getElementById('userAvatarBtn');
+    if (mobileUserAvatarBtn) {
+        mobileUserAvatarBtn.classList.remove('hidden');
+        const userInitials = document.getElementById('userInitials');
+
+        if (userInitials && !avatarUrl) {
+            userInitials.textContent = initials;
+        }
         if (avatarUrl) {
-            userAvatarBtn.innerHTML = `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-        } else {
-            userAvatarBtn.textContent = initials;
+            mobileUserAvatarBtn.innerHTML = `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         }
     }
 
@@ -81,70 +76,73 @@ function updateHeaderForUser(user) {
     if (dropdownName) dropdownName.textContent = user.profile?.full_name || 'User';
     if (dropdownEmail) dropdownEmail.textContent = user.email;
 
-
-    // 4. Update Mobile Menu (Hamburger Content)
-    if (mobileMenuContent) {
-        const mobileAuthContainer = mobileMenuContent.querySelector('.mobile-auth-container');
-        if (mobileAuthContainer) {
-            // When logged in, maybe we don't need the big auth buttons in the menu anymore?
-            // Or we can keep them as "Dashboard" / "Logout"
-            mobileAuthContainer.innerHTML = `
-                <div class="mobile-user-profile">
-                    <div class="mobile-avatar-container">
-                        ${avatarUrl
-                    ? `<img src="${avatarUrl}" alt="Profile" class="mobile-avatar-img">`
-                    : `<div class="mobile-avatar-placeholder">${initials}</div>`
-                }
-                    </div>
-                    <div class="mobile-user-info">
-                        <span class="mobile-user-name">${user.profile?.full_name || 'User'}</span>
-                        <span class="mobile-user-email">${user.email}</span>
-                    </div>
+    // 4. Update Mobile Menu Auth Container
+    const mobileAuthContainer = document.querySelector('.mobile-auth-container');
+    if (mobileAuthContainer) {
+        mobileAuthContainer.innerHTML = `
+            <div style="padding: 1.25rem 1.5rem; background: #f9fafb; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; gap: 0.875rem;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; overflow: hidden; flex-shrink: 0;">
+                    ${avatarUrl ? `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">` : initials}
                 </div>
-                <div class="mobile-auth-buttons">
-                    <a href="dashboard.html" class="mobile-auth-btn primary">Dashboard</a>
-                    <button id="mobileLogoutBtn" class="mobile-auth-btn secondary">Logout</button>
+                <div>
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0;">${user.profile?.full_name || 'User'}</h3>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">${user.email}</p>
                 </div>
-            `;
+            </div>
+            <div class="mobile-nav-links">
+                <a href="dashboard.html" class="mobile-nav-link">
+                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Dashboard
+                </a>
+                ${isAdmin ? `
+                <a href="admin-dashboard.html" class="mobile-nav-link">
+                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    Admin Dashboard
+                </a>
+                ` : ''}
+                <div class="mobile-nav-divider"></div>
+                <button id="mobileMenuLogoutBtn" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; color: #ef4444;">
+                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #ef4444;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        `;
 
-            const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
-            if (mobileLogoutBtn) {
-                mobileLogoutBtn.addEventListener('click', () => logout());
-            }
+        const mobileMenuLogoutBtn = document.getElementById('mobileMenuLogoutBtn');
+        if (mobileMenuLogoutBtn) {
+            mobileMenuLogoutBtn.addEventListener('click', () => logout());
         }
     }
 }
 
 function updateHeaderForGuest() {
-    const navActions = document.querySelector('.nav-actions');
-    const mobileMenuContent = document.querySelector('.mobile-menu-content');
-    const userAvatarBtn = document.getElementById('userAvatarBtn');
+    // 1. Show Desktop Auth Buttons, Hide Desktop Avatar
+    const desktopAuthButtons = document.getElementById('desktopAuthButtons');
+    const userAvatarContainer = document.getElementById('userAvatarContainer');
 
-    // 1. Desktop
-    if (navActions) {
-        navActions.innerHTML = `
-            <a href="signin.html" class="btn btn-login">Login</a>
-            <a href="signup.html" class="btn btn-primary">Get Started</a>
+    if (desktopAuthButtons) desktopAuthButtons.style.display = 'flex';
+    if (userAvatarContainer) userAvatarContainer.classList.add('hidden');
+
+    // 2. Hide Mobile Avatar Button
+    const mobileUserAvatarBtn = document.getElementById('userAvatarBtn');
+    if (mobileUserAvatarBtn) mobileUserAvatarBtn.classList.add('hidden');
+
+    // 3. Reset Mobile Menu Auth Container to default
+    const mobileAuthContainer = document.querySelector('.mobile-auth-container');
+    if (mobileAuthContainer) {
+        mobileAuthContainer.innerHTML = `
+            <div class="mobile-auth-title">Get started with Sogolo</div>
+            <div class="mobile-auth-buttons">
+                <a href="signin.html#signupForm" class="mobile-auth-btn primary">Sign Up</a>
+                <a href="signin.html#loginForm" class="mobile-auth-btn secondary">Login</a>
+            </div>
         `;
-    }
-
-    // 2. Mobile Avatar Button - Hide it
-    if (userAvatarBtn) {
-        userAvatarBtn.classList.add('hidden');
-    }
-
-    // 3. Mobile Menu
-    if (mobileMenuContent) {
-        const mobileAuthContainer = mobileMenuContent.querySelector('.mobile-auth-container');
-        if (mobileAuthContainer) {
-            mobileAuthContainer.innerHTML = `
-                <div class="mobile-auth-title">Get Started</div>
-                <div class="mobile-auth-buttons">
-                    <a href="signup.html" class="mobile-auth-btn primary">Sign Up</a>
-                    <a href="signin.html" class="mobile-auth-btn secondary">Login</a>
-                </div>
-            `;
-        }
     }
 }
 

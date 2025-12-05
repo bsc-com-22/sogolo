@@ -68,35 +68,62 @@
                 return;
             }
 
-            // Get signed URLs for images
-            const { data: idFront } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.id_front_url, 3600);
-            const { data: idBack } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.id_back_url, 3600);
-            const { data: selfie } = await supabase.storage.from('kyc-documents').createSignedUrl(profile.selfie_url, 3600);
+            // Check if KYC is submitted
+            if (!profile.address && !profile.id_front_url) {
+                document.getElementById('content').innerHTML = `
+                    <div class="alert alert-warning" style="margin-bottom: 2rem;">
+                        <strong>Not Submitted:</strong> This user has not submitted their KYC details yet.
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><label>Full Name</label><p>${profile.full_name || 'N/A'}</p></div>
+                        <div class="detail-item"><label>Email</label><p>${profile.email || 'N/A'}</p></div>
+                        <div class="detail-item"><label>Status</label><p>${profile.kyc_status || 'Pending'}</p></div>
+                    </div>
+                `;
+                // Disable Approve button
+                const approveBtn = document.querySelector('button[onclick="updateStatus(\'approved\')"]');
+                if (approveBtn) {
+                    approveBtn.disabled = true;
+                    approveBtn.style.opacity = '0.5';
+                    approveBtn.style.cursor = 'not-allowed';
+                    approveBtn.title = "Cannot approve unsubmitted application";
+                }
+                return;
+            }
+
+            // Helper to safely get signed URL
+            const getUrl = async (path) => {
+                if (!path) return null;
+                const { data, error } = await supabase.storage.from('kyc-documents').createSignedUrl(path, 3600);
+                return error ? null : data?.signedUrl;
+            };
+
+            const idFrontUrl = await getUrl(profile.id_front_url);
+            const idBackUrl = await getUrl(profile.id_back_url);
+            const selfieUrl = await getUrl(profile.selfie_url);
+
+            const renderImage = (url, label) => {
+                if (!url) return `<div class="doc-item"><label>${label}</label><div style="height: 200px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #9ca3af;">No Image</div></div>`;
+                return `<div class="doc-item"><label>${label}</label><img src="${url}" onclick="window.open(this.src)"></div>`;
+            };
 
             document.getElementById('content').innerHTML = `
                 <div class="detail-grid">
-                    <div class="detail-item"><label>Full Name</label><p>${profile.full_name}</p></div>
-                    <div class="detail-item"><label>Phone</label><p>${profile.phone}</p></div>
-                    <div class="detail-item"><label>Address</label><p>${profile.address}</p></div>
-                    <div class="detail-item"><label>City</label><p>${profile.city}</p></div>
-                    <div class="detail-item"><label>Next of Kin</label><p>${profile.next_of_kin_name}</p></div>
-                    <div class="detail-item"><label>Kin Phone</label><p>${profile.next_of_kin_phone}</p></div>
+                    <div class="detail-item"><label>Full Name</label><p>${profile.full_name || 'N/A'}</p></div>
+                    <div class="detail-item"><label>Phone</label><p>${profile.phone || 'N/A'}</p></div>
+                    <div class="detail-item"><label>Address</label><p>${profile.address || 'N/A'}</p></div>
+                    <div class="detail-item"><label>City</label><p>${profile.city || 'N/A'}</p></div>
+                    <div class="detail-item"><label>Next of Kin</label><p>${profile.next_of_kin_name || 'N/A'}</p></div>
+                    <div class="detail-item"><label>Kin Phone</label><p>${profile.next_of_kin_phone || 'N/A'}</p></div>
                 </div>
 
                 <h3>Documents</h3>
                 <div class="doc-grid">
-                    <div class="doc-item">
-                        <label>ID Front</label>
-                        <img src="${idFront?.signedUrl}" onclick="window.open(this.src)">
-                    </div>
-                    <div class="doc-item">
-                        <label>ID Back</label>
-                        <img src="${idBack?.signedUrl}" onclick="window.open(this.src)">
-                    </div>
+                    ${renderImage(idFrontUrl, 'ID Front')}
+                    ${renderImage(idBackUrl, 'ID Back')}
                 </div>
-                <div class="doc-item" style="max-width: 50%;">
-                    <label>Selfie</label>
-                    <img src="${selfie?.signedUrl}" onclick="window.open(this.src)">
+                <div style="max-width: 50%;">
+                    ${renderImage(selfieUrl, 'Selfie')}
                 </div>
             `;
         }

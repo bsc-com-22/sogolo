@@ -20,36 +20,108 @@
                 </svg>
             </button>
             <div class="nav-actions" id="navActions">
-                <a href="admin-dashboard.html" id="adminBtn" class="btn btn-primary hidden">Admin Dashboard</a>
-                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                <!-- Populated by headerAuth.js -->
             </div>
         </div>
     </header>
 
     <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
-        <!-- User Welcome & KYC Status -->
-        <div class="card mb-4" style="display: flex; flex-direction: column; gap: 1rem;">
-            <div class="flex items-center gap-4" style="flex-wrap: wrap;">
-                <div id="userAvatar" style="width: 48px; height: 48px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 600;">U</div>
-                <div style="flex: 1; min-width: 200px;">
-                    <h2 id="userEmail" style="font-size: clamp(1.125rem, 3vw, 1.25rem); font-weight: 600;">Loading...</h2>
-                    <p style="color: var(--text-muted); font-size: clamp(0.875rem, 2vw, 1rem);">Welcome back!</p>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Sidebar / Profile Summary -->
+            <aside class="dashboard-sidebar">
+                <div class="card profile-card">
+                    <div class="profile-header">
+                        <div id="userAvatar" class="profile-avatar-large">U</div>
+                        <h2 id="userEmail" class="profile-email">Loading...</h2>
+                        <p class="profile-role">User</p>
+                    </div>
+                    <div id="kycStatusBadge" class="kyc-status-container">
+                        <!-- Injected via JS -->
+                    </div>
+                    <nav class="sidebar-nav">
+                        <a href="#" class="sidebar-link active">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            Overview
+                        </a>
+                        <a href="create-transaction.html" class="sidebar-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            New Transaction
+                        </a>
+                        <a href="kyc.html" class="sidebar-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            KYC Verification
+                        </a>
+                        <a href="support.html" class="sidebar-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Support
+                        </a>
+                    </nav>
                 </div>
-            </div>
-            <div id="kycStatusBadge">
-                <!-- Injected via JS -->
-            </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Stats Row -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue-100 text-blue-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Transactions</h3>
+                            <p id="totalTransactions">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green-100 text-green-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Completed</h3>
+                            <p id="completedTransactions">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-yellow-100 text-yellow-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active</h3>
+                            <p id="activeTransactions">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card">
+                    <div class="section-header-flex">
+                        <h3>Recent Transactions</h3>
+                        <a href="create-transaction.html" class="btn btn-primary btn-sm">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            New Transaction
+                        </a>
+                    </div>
+
+                    <div id="transactionList" class="transaction-list">
+                        <p class="text-muted text-center py-4">Loading transactions...</p>
+                    </div>
+                </div>
+            </main>
         </div>
+    </div>
 
-        <!-- Transactions -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                <h3 style="font-size: clamp(1.125rem, 3vw, 1.25rem); font-weight: 600;">My Transactions</h3>
-                <a href="create-transaction.html" class="btn btn-primary btn-full-mobile">Create New Transaction</a>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
             </div>
-
-            <div id="transactionList">
-                <p style="color: var(--text-muted);">Loading transactions...</p>
+            <div class="mobile-nav-links">
+                <a href="dashboard.html" class="mobile-nav-link active">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
             </div>
         </div>
     </div>
@@ -57,6 +129,7 @@
     <script type="module">
         import { logout, getCurrentUser, initAuthStateListener } from './js/auth.js';
         import { supabase } from './js/supabaseClient.js';
+        import './js/headerAuth.js';
 
         initAuthStateListener();
 
@@ -66,38 +139,57 @@
 
             // 1. User Info
             document.getElementById('userEmail').textContent = user.email;
-            if (user.email) {
-                document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+            if (user.profile?.full_name) {
+                document.querySelector('.profile-role').textContent = user.profile.full_name;
             }
-
-            // 2. Admin Button
-            console.log('User profile:', user.profile);
-            console.log('User role:', user.profile?.role);
             
-            if (user.profile?.role === 'admin') {
-                console.log('User is admin - showing admin links');
-                document.getElementById('adminBtn').classList.remove('hidden');
-                document.getElementById('adminMobileLink')?.classList.remove('hidden');
+            // Avatar
+            const avatarEl = document.getElementById('userAvatar');
+            if (user.profile?.selfie_url) {
+                const { data } = supabase.storage.from('kyc-documents').getPublicUrl(user.profile.selfie_url);
+                avatarEl.innerHTML = `<img src="${data.publicUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                avatarEl.style.background = 'transparent';
+                avatarEl.textContent = '';
             } else {
-                console.log('User is NOT admin - hiding admin links');
+                const initials = user.profile?.full_name 
+                    ? user.profile.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                    : user.email.substring(0, 2).toUpperCase();
+                avatarEl.textContent = initials;
             }
 
-            // 3. KYC Status
+            // 2. KYC Status
             const kycStatus = user.profile?.kyc_status || 'pending';
             const kycBadge = document.getElementById('kycStatusBadge');
             
             if (kycStatus === 'approved') {
-                kycBadge.innerHTML = `<span class="badge badge-green">KYC Verified</span>`;
+                kycBadge.innerHTML = `<div class="kyc-status success"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Verified</div>`;
             } else if (kycStatus === 'under_review') {
-                kycBadge.innerHTML = `<span class="badge badge-yellow">KYC Under Review</span>`;
+                kycBadge.innerHTML = `<div class="kyc-status warning">Under Review</div>`;
             } else if (kycStatus === 'rejected') {
-                kycBadge.innerHTML = `<span class="badge badge-red">KYC Rejected</span> <a href="kyc.html" style="font-size: 0.875rem; margin-left: 0.5rem;">Retry</a>`;
+                kycBadge.innerHTML = `<div class="kyc-status danger">Rejected</div><a href="kyc.html" class="btn btn-sm btn-secondary mt-2">Retry</a>`;
             } else {
-                kycBadge.innerHTML = `<a href="kyc.html" class="btn btn-secondary" style="font-size: 0.875rem;">Complete Verification</a>`;
+                kycBadge.innerHTML = `<a href="kyc.html" class="btn btn-primary btn-full">Verify Identity</a>`;
             }
 
-            // 4. Load Transactions
+            // 3. Load Transactions
             loadTransactions(user.id);
+
+            // 4. Admin Link in Mobile Menu
+            if (user.profile?.role === 'admin') {
+                const mobileNavLinks = document.querySelector('.mobile-nav-links');
+                const adminLink = document.createElement('a');
+                adminLink.href = 'admin-dashboard.html';
+                adminLink.className = 'mobile-nav-link';
+                adminLink.textContent = 'Admin Dashboard';
+                
+                // Insert before the divider
+                const divider = mobileNavLinks.querySelector('.mobile-nav-divider');
+                if (divider) {
+                    mobileNavLinks.insertBefore(adminLink, divider);
+                } else {
+                    mobileNavLinks.appendChild(adminLink);
+                }
+            }
         }
 
         async function loadTransactions(userId) {
@@ -114,11 +206,23 @@
                 return;
             }
 
+            // Update Stats
+            const total = transactions?.length || 0;
+            const completed = transactions?.filter(t => t.status === 'completed' || t.status === 'funds_released').length || 0;
+            const active = total - completed - (transactions?.filter(t => t.status === 'cancelled' || t.status === 'rejected').length || 0);
+
+            document.getElementById('totalTransactions').textContent = total;
+            document.getElementById('completedTransactions').textContent = completed;
+            document.getElementById('activeTransactions').textContent = active;
+
             if (!transactions || transactions.length === 0) {
                 listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 3rem 0;">
-                        <p style="color: var(--text-muted); margin-bottom: 1rem;">No transactions yet.</p>
-                        <a href="create-transaction.html" class="btn btn-secondary">Start your first transaction</a>
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        </div>
+                        <p>No transactions yet.</p>
+                        <a href="create-transaction.html" class="btn btn-primary mt-4">Start your first transaction</a>
                     </div>
                 `;
                 return;
@@ -129,191 +233,89 @@
                 const role = isBuyer ? 'Buyer' : 'Seller';
                 
                 let statusClass = 'badge-gray';
-                if (t.status === 'funds_released') statusClass = 'badge-green';
-                if (t.status === 'payment_verified') statusClass = 'badge-blue';
-                if (t.status === 'rejected') statusClass = 'badge-red';
+                if (t.status === 'funds_released' || t.status === 'completed') statusClass = 'badge-green';
+                if (t.status === 'payment_verified' || t.status === 'in_transit') statusClass = 'badge-blue';
+                if (t.status === 'rejected' || t.status === 'disputed') statusClass = 'badge-red';
+                if (t.status === 'pending' || t.status === 'payment_pending') statusClass = 'badge-yellow';
 
                 return `
-                    <div class="flex justify-between items-center" style="padding: 1rem; border-bottom: 1px solid var(--border);">
-                        <div>
-                            <h4 style="font-weight: 600; margin-bottom: 0.25rem;">${t.title}</h4>
-                            <div class="flex items-center gap-2">
-                                <span class="badge badge-blue">${role}</span>
-                                <span style="font-size: 0.875rem; color: var(--text-muted);">${new Date(t.created_at).toLocaleDateString()}</span>
-                            </div>
+                    <div class="transaction-item">
+                        <div class="transaction-icon ${isBuyer ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBuyer ? 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' : 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg>
                         </div>
-                        <div style="text-align: right;">
-                            <span class="badge ${statusClass}" style="margin-bottom: 0.5rem;">${t.status.replace('_', ' ').toUpperCase()}</span>
-                            <br>
-                            <a href="transaction-status.html?id=${t.id}" style="font-size: 0.875rem; font-weight: 500;">View Details &rarr;</a>
+                        <div class="transaction-details">
+                            <h4>${t.title || t.product_name || 'Transaction'}</h4>
+                            <span class="transaction-meta">${role} • ${new Date(t.created_at).toLocaleDateString()}</span>
                         </div>
+                        <div class="transaction-status">
+                            <span class="badge ${statusClass}">${t.status.replace(/_/g, ' ').toUpperCase()}</span>
+                            <span class="transaction-amount">MWK ${t.amount?.toLocaleString() || '0'}</span>
+                        </div>
+                        <a href="transaction-status.html?id=${t.id}" class="btn btn-sm btn-secondary">View</a>
                     </div>
                 `;
             }).join('');
         }
 
         loadDashboard();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard(); // Renamed from initDashboard to loadDashboard
 
-        document.getElementById('logoutBtn').addEventListener('click', () => logout());
+            // Mobile Sidebar Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+            const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
+            const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
+            
+            function toggleMenu() {
+                mobileMenuOverlay.classList.toggle('active');
+                mobileMenuDrawer.classList.toggle('active');
+                document.body.style.overflow = mobileMenuDrawer.classList.contains('active') ? 'hidden' : '';
+            }
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navActions = document.getElementById('navActions');
-        
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                navActions.classList.toggle('active');
-            });
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+            }
 
-            document.addEventListener('click', (e) => {
-                if (!mobileMenuBtn.contains(e.target) && !navActions.contains(e.target)) {
-                    navActions.classList.remove('active');
-                }
-            });
-        }
+            if (mobileMenuCloseBtn) {
+                mobileMenuCloseBtn.addEventListener('click', toggleMenu);
+            }
+
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', toggleMenu);
+            }
+        });
     </script>
-</body>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-content">
-            <div class="mobile-auth-container">
-                <!-- Populated by headerAuth.js -->
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu-drawer" id="mobileMenuDrawer">
+        <div class="mobile-menu-header">
+            <div class="mobile-menu-logo">
+                <div class="mobile-menu-logo-icon">S</div>
+                Sogolo
             </div>
-            <div class="mobile-nav-links">
-                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
-                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
-                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
-                <a href="admin-dashboard.html" id="adminMobileLink" class="mobile-nav-link hidden">Admin Dashboard</a>
-            </div>
+            <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mobile-nav-links">
+            <a href="#" class="mobile-nav-link">Overview</a>
+            <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+            <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
+            <a href="support.html" class="mobile-nav-link">Support</a>
+            <div class="mobile-nav-divider"></div>
+            <button onclick="logout()" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Logout</button>
         </div>
     </div>
-
-    <script type="module">
-        import { getCurrentUser, logout } from './js/auth.js';
-        import './js/headerAuth.js';
-
-        let currentUser = null;
-
-        async function loadDashboard() {
-            const user = await getCurrentUser();
-            if (!user) {
-                window.location.href = 'signin.html';
-                return;
-            }
-
-            currentUser = user;
-
-            // Display user info
-            document.getElementById('userEmail').textContent = user.email;
-            
-            // Update avatar with initials
-            const avatarDiv = document.getElementById('userAvatar');
-            const initials = user.profile?.full_name 
-                ? user.profile.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-                : user.email.substring(0, 2).toUpperCase();
-            avatarDiv.textContent = initials;
-
-            // Show admin button if admin
-            if (user.profile?.role === 'admin') {
-                document.getElementById('adminBtn').classList.remove('hidden');
-                document.getElementById('adminMobileLink')?.classList.remove('hidden');
-            }
-
-            // Display KYC status
-            displayKYCStatus(user.profile?.kyc_status || 'not_submitted');
-
-            // Load transactions
-            loadTransactions(user.id);
-        }
-
-        function displayKYCStatus(status) {
-            const badge = document.getElementById('kycStatusBadge');
-            const statusMap = {
-                'not_submitted': { text: 'KYC Not Submitted', class: 'badge-gray', action: true },
-                'under_review': { text: 'KYC Under Review', class: 'badge-yellow', action: false },
-                'approved': { text: 'KYC Approved', class: 'badge-green', action: false },
-                'rejected': { text: 'KYC Rejected', class: 'badge-red', action: true }
-            };
-
-            const config = statusMap[status] || statusMap['not_submitted'];
-            
-            badge.innerHTML = `
-                <div class="flex items-center gap-4" style="flex-wrap: wrap;">
-                    <span class="badge ${config.class}">${config.text}</span>
-                    ${config.action ? '<a href="kyc.html" class="btn btn-primary btn-full-mobile">Complete KYC Verification</a>' : ''}
-                </div>
-            `;
-        }
-
-        async function loadTransactions(userId) {
-            const { data: transactions, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
-                .order('created_at', { ascending: false });
-
-            const list = document.getElementById('transactionsList');
-            
-            if (error || !transactions || transactions.length === 0) {
-                list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No transactions yet. <a href="create-transaction.html">Create your first transaction</a></p>';
-                return;
-            }
-
-            list.innerHTML = transactions.map(t => `
-                <div class="card" style="margin-bottom: 1rem; padding: 1.5rem;">
-                    <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 1rem;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <h4 style="font-weight: 600; margin-bottom: 0.25rem;">${t.product_name || 'Transaction'}</h4>
-                            <p style="color: var(--text-muted); font-size: 0.875rem;">ID: ${t.id.substring(0, 8)}</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="font-weight: 600; color: var(--primary); margin-bottom: 0.25rem;">MWK ${t.amount?.toLocaleString() || '0'}</p>
-                            <span class="badge badge-${getStatusColor(t.status)}">${t.status}</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 1rem;">
-                        <a href="transaction-status.html?id=${t.id}" class="btn btn-secondary btn-full-mobile">View Details</a>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                'pending': 'yellow',
-                'awaiting_product': 'blue',
-                'product_submitted': 'blue',
-                'product_approved': 'blue',
-                'payment_pending': 'yellow',
-                'payment_uploaded': 'yellow',
-                'payment_verified': 'green',
-                'in_transit': 'blue',
-                'delivered': 'blue',
-                'completed': 'green',
-                'disputed': 'red',
-                'cancelled': 'gray'
-            };
-            return colors[status] || 'gray';
-        }
-
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('active');
-        });
-
-        document.getElementById('mobileMenu')?.addEventListener('click', (e) => {
-            if (e.target.id === 'mobileMenu') {
-                e.target.classList.remove('active');
-            }
-        });
-
-        // Logout
-        document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
-
-        // Initialize
-        loadDashboard();
-    </script>
 </body>
 </html>

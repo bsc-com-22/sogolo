@@ -29,6 +29,7 @@
 
     <script type="module">
         import { getTransaction, getProductDetails, getPaymentProof, verifyPayment, rejectPayment, releaseFunds, uploadDispatchReceipt } from './js/transaction.js';
+        import { supabase } from './js/supabaseClient.js';
         import { getCurrentUser } from './js/auth.js';
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -53,12 +54,36 @@
                 return;
             }
 
+            // Fetch Buyer and Seller details
+            let buyer = null;
+            let seller = null;
+
+            if (transaction.buyer_id) {
+                const { data } = await supabase.from('profiles').select('*').eq('id', transaction.buyer_id).single();
+                buyer = data;
+            }
+            if (transaction.seller_id) {
+                const { data } = await supabase.from('profiles').select('*').eq('id', transaction.seller_id).single();
+                seller = data;
+            }
+
             let html = `
                 <div class="section-title">Transaction Details</div>
                 <div class="detail-row"><span class="label">Title</span><span class="value">${transaction.title}</span></div>
                 <div class="detail-row"><span class="label">Status</span><span class="badge badge-blue">${transaction.status.toUpperCase()}</span></div>
                 <div class="detail-row"><span class="label">Price</span><span class="value">MWK ${transaction.price || 'N/A'}</span></div>
                 
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <div class="section-title">Buyer Details</div>
+                        <div class="detail-row"><span class="label">Name</span><span class="value">${buyer?.full_name || 'N/A'}</span></div>
+                    </div>
+                    <div>
+                        <div class="section-title">Seller Details</div>
+                        <div class="detail-row"><span class="label">Name</span><span class="value">${seller?.full_name || 'N/A'}</span></div>
+                    </div>
+                </div>
+
                 <div class="section-title mt-4">Product Details</div>
                 <div class="detail-row"><span class="label">Name</span><span class="value">${submission?.product_name || 'N/A'}</span></div>
                 <div class="detail-row"><span class="label">Description</span><span class="value">${submission?.product_description || 'N/A'}</span></div>

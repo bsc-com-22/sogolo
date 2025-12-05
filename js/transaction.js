@@ -273,7 +273,7 @@ export async function uploadDispatchReceipt(transactionId, file) {
     const { error: updateError } = await supabase
         .from('transactions')
         .update({
-            status: 'dispatched',
+            status: 'completed', // Changed from 'dispatched' as per requirement
             dispatch_receipt_url: publicUrl
         })
         .eq('id', transactionId)

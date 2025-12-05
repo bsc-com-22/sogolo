@@ -31,57 +31,149 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo" class="logo-icon" style="height: 42px;">
+                <img src="logo.png" alt="Sogolo" style="height: 42px;">
             </a>
-            <div class="nav-actions">
-                <a href="#" onclick="logout()" class="btn btn-secondary">Logout</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div class="nav-actions" id="navActions">
+                <!-- Populated by headerAuth.js -->
             </div>
         </div>
     </header>
 
-    <div class="container-md">
-        <div class="card">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('kyc')">KYC Submissions</div>
-                <div class="tab" onclick="switchTab('transactions')">Transactions</div>
-            </div>
+    <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="card profile-card">
+                    <div class="profile-header">
+                        <div id="adminAvatar" class="profile-avatar-large" style="background: var(--primary-dark);">A</div>
+                        <h2 id="adminEmail" class="profile-email">Loading...</h2>
+                        <p class="profile-role" style="color: var(--primary); font-weight: 600;">Administrator</p>
+                    </div>
+                    
+                    <nav class="sidebar-nav">
+                        <button onclick="switchView('overview')" class="sidebar-link active" id="nav-overview">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            Overview
+                        </button>
+                        <button onclick="switchView('kyc')" class="sidebar-link" id="nav-kyc">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .884-.896 1.667-2 1.667a2.001 2.001 0 00-2 2m4 0c0 .884.896 1.667 2 1.667a2.001 2.001 0 002-2m-2 0V5m-4 0h4"></path></svg>
+                            KYC Management
+                        </button>
+                        <button onclick="switchView('transactions')" class="sidebar-link" id="nav-transactions">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Transactions
+                        </button>
+                        <button onclick="switchView('users')" class="sidebar-link" id="nav-users">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Users
+                        </button>
+                    </nav>
+                </div>
+            </aside>
 
-            <!-- KYC Section -->
-            <div id="kycSection">
-                <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Pending KYC</h2>
-                <div id="kycLoading">Loading...</div>
-                <table id="kycTable" class="hidden">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="kycList"></tbody>
-                </table>
-            </div>
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Stats Row -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-yellow-100 text-yellow-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Pending KYC</h3>
+                            <p id="statsPendingKYC">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue-100 text-blue-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Transactions</h3>
+                            <p id="statsActiveTrans">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green-100 text-green-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Completed</h3>
+                            <p id="statsCompletedTrans">0</p>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Transactions Section -->
-            <div id="transactionsSection" class="hidden">
-                <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Ongoing Transactions</h2>
-                <div id="transLoading">Loading...</div>
-                <table id="transTable" class="hidden">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transList"></tbody>
-                </table>
+                <!-- KYC Section -->
+                <div id="kycSection" class="card mb-4">
+                    <div class="section-header-flex">
+                        <h3>All KYC Applications</h3>
+                        <button onclick="loadKYCList()" class="btn btn-sm btn-secondary">Refresh</button>
+                    </div>
+                    <div id="kycList" class="transaction-list">
+                        <p class="text-muted text-center py-4">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Transactions Section -->
+                <div id="transactionsSection" class="card hidden">
+                    <div class="section-header-flex">
+                        <h3>All Transactions</h3>
+                        <button onclick="loadTransactions()" class="btn btn-sm btn-secondary">Refresh</button>
+                    </div>
+                    <div id="transList" class="transaction-list">
+                        <p class="text-muted text-center py-4">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="usersSection" class="card hidden">
+                    <div class="section-header-flex">
+                        <h3>All Users</h3>
+                        <button onclick="loadUsers()" class="btn btn-sm btn-secondary">Refresh</button>
+                    </div>
+                    <div id="usersList" class="transaction-list">
+                        <p class="text-muted text-center py-4">Loading...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu-drawer" id="mobileMenuDrawer">
+        <div class="mobile-menu-header">
+            <div class="mobile-menu-logo">
+                <div class="mobile-menu-logo-icon">S</div>
+                Sogolo Admin
             </div>
+            <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mobile-nav-links">
+            <button onclick="switchView('overview')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Overview</button>
+            <button onclick="switchView('kyc')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">KYC Management</button>
+            <button onclick="switchView('transactions')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Transactions</button>
+            <button onclick="switchView('users')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Users</button>
+            <div class="mobile-nav-divider"></div>
+            <button onclick="logout()" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Logout</button>
         </div>
     </div>
 
@@ -89,22 +181,49 @@
         import { supabase } from './js/supabaseClient.js';
         import { getCurrentUser, logout } from './js/auth.js';
         import { getAllTransactions } from './js/transaction.js';
+        import './js/headerAuth.js';
 
         window.logout = logout;
 
-        window.switchTab = (tab) => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
-            
-            if (tab === 'kyc') {
-                document.getElementById('kycSection').classList.remove('hidden');
-                document.getElementById('transactionsSection').classList.add('hidden');
-            } else {
-                document.getElementById('kycSection').classList.add('hidden');
-                document.getElementById('transactionsSection').classList.remove('hidden');
-                loadTransactions();
+        // View Switching Logic
+        window.switchView = (view) => {
+            // Update Sidebar Active State
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${view === 'overview' ? 'overview' : view}`);
+            if(activeNav) activeNav.classList.add('active');
+
+            // Show/Hide Sections
+            const kycSection = document.getElementById('kycSection');
+            const transSection = document.getElementById('transactionsSection');
+            const usersSection = document.getElementById('usersSection');
+
+            kycSection.classList.add('hidden');
+            transSection.classList.add('hidden');
+            usersSection.classList.add('hidden');
+
+            if (view === 'overview') {
+                kycSection.classList.remove('hidden');
+                transSection.classList.remove('hidden');
+            } else if (view === 'kyc') {
+                kycSection.classList.remove('hidden');
+            } else if (view === 'transactions') {
+                transSection.classList.remove('hidden');
+            } else if (view === 'users') {
+                usersSection.classList.remove('hidden');
+                loadUsers();
             }
         };
+
+        window.toggleMobileMenu = () => {
+             const menu = document.getElementById('mobileMenu');
+             if(menu) menu.classList.toggle('active');
+        };
+
+        // Mobile Menu Event Listeners
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleMobileMenu);
+        document.getElementById('mobileMenu')?.addEventListener('click', (e) => {
+            if (e.target.id === 'mobileMenu') toggleMobileMenu();
+        });
 
         async function init() {
             const user = await getCurrentUser();
@@ -113,14 +232,132 @@
                 window.location.href = 'index.html';
                 return;
             }
+
+            document.getElementById('adminEmail').textContent = user.email;
+            
+            // Mobile Sidebar Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+            const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
+            const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
+            
+            function toggleMenu() {
+                mobileMenuOverlay.classList.toggle('active');
+                mobileMenuDrawer.classList.toggle('active');
+                document.body.style.overflow = mobileMenuDrawer.classList.contains('active') ? 'hidden' : '';
+            }
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+            }
+
+            if (mobileMenuCloseBtn) {
+                mobileMenuCloseBtn.addEventListener('click', toggleMenu);
+            }
+
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', toggleMenu);
+            }
+
+            // Initial Load
             loadKYCList();
+            loadTransactions();
+        }
+
+        window.switchView = function(view) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+
+            // Show selected view
+            document.getElementById(`kycSection`).classList.add('hidden'); // Hide KYC by default
+            document.getElementById(`transactionsSection`).classList.add('hidden'); // Hide Transactions by default
+            document.getElementById(`usersSection`).classList.add('hidden'); // Hide Users by default
+
+            if (view === 'overview') {
+                document.getElementById('kycSection').classList.remove('hidden');
+                document.getElementById('transactionsSection').classList.remove('hidden');
+                document.getElementById(`nav-overview`).classList.add('active');
+            } else if (view === 'kyc') {
+                document.getElementById('kycSection').classList.remove('hidden');
+                document.getElementById(`nav-kyc`).classList.add('active');
+            } else if (view === 'transactions') {
+                document.getElementById('transactionsSection').classList.remove('hidden');
+                document.getElementById(`nav-transactions`).classList.add('active');
+            } else if (view === 'users') {
+                document.getElementById('usersSection').classList.remove('hidden');
+                document.getElementById(`nav-users`).classList.add('active');
+                loadUsers();
+            }
+
+            // Close mobile menu if open
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+            const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
+            if (mobileMenuDrawer && mobileMenuDrawer.classList.contains('active')) {
+                mobileMenuOverlay.classList.remove('active');
+                mobileMenuDrawer.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        };
+
+        async function loadUsers() {
+            const { data: users, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('updated_at', { ascending: false });
+
+            const container = document.getElementById('usersList');
+            
+            if (error) {
+                console.error('Error loading users:', error);
+                container.innerHTML = `<div class="alert alert-error">Error loading users</div>`;
+                return;
+            }
+
+            if (!users || users.length === 0) {
+                container.innerHTML = `<div class="empty-state"><p>No users found.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = users.map(u => {
+                const initials = u.full_name 
+                    ? u.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                    : 'U';
+                
+                let kycBadge = '<span class="badge badge-gray">Not Submitted</span>';
+                if (u.kyc_status === 'approved') kycBadge = '<span class="badge badge-green">Verified</span>';
+                if (u.kyc_status === 'under_review') kycBadge = '<span class="badge badge-yellow">Under Review</span>';
+                if (u.kyc_status === 'rejected') kycBadge = '<span class="badge badge-red">Rejected</span>';
+
+                return `
+                    <div class="transaction-item">
+                        <div class="transaction-icon bg-blue-50 text-blue-600" style="font-weight:600; font-size:1rem;">
+                            ${initials}
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${u.full_name || 'No Name'}</h4>
+                            <span class="transaction-meta">Role: ${u.role} • Joined: ${new Date(u.created_at || Date.now()).toLocaleDateString()}</span>
+                        </div>
+                        <div class="transaction-status">
+                            ${kycBadge}
+                            <div style="margin-top: 0.25rem;">
+                                <a href="admin-kyc-review.html?id=${u.id}" class="btn btn-sm btn-secondary">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         async function loadKYCList() {
             const { data: profiles, error } = await supabase
                 .from('profiles')
                 .select('*')
-                .in('kyc_status', ['pending', 'under_review'])
+                // Removed filter to show all KYC submissions
+                .neq('kyc_status', null) // Optional: ensure we only get rows with a status
                 .order('updated_at', { ascending: false });
 
             if (error) {
@@ -128,20 +365,49 @@
                 return;
             }
 
-            const tbody = document.getElementById('kycList');
-            tbody.innerHTML = profiles.map(p => `
-                <tr>
-                    <td>${p.full_name || 'N/A'}</td>
-                    <td>${new Date(p.updated_at || Date.now()).toLocaleDateString()}</td>
-                    <td><span class="status-badge status-${p.kyc_status}">${p.kyc_status.replace('_', ' ')}</span></td>
-                    <td>
-                        <a href="admin-kyc-review.html?id=${p.id}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Review</a>
-                    </td>
-                </tr>
-            `).join('');
+            // Calculate pending for the stat card
+            const pendingCount = profiles?.filter(p => ['pending', 'under_review'].includes(p.kyc_status)).length || 0;
+            document.getElementById('statsPendingKYC').textContent = pendingCount;
 
-            document.getElementById('kycLoading').classList.add('hidden');
-            document.getElementById('kycTable').classList.remove('hidden');
+            const container = document.getElementById('kycList');
+            if (!profiles || profiles.length === 0) {
+                container.innerHTML = `<div class="empty-state"><p>No KYC applications found.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = profiles.map(p => {
+                let badgeClass = 'badge-gray';
+                let statusLabel = 'Unknown';
+
+                if (p.kyc_status === 'approved') {
+                    badgeClass = 'badge-green';
+                    statusLabel = 'VERIFIED';
+                } else if (p.kyc_status === 'rejected') {
+                    badgeClass = 'badge-red';
+                    statusLabel = 'REJECTED';
+                } else if (p.kyc_status === 'under_review') {
+                    badgeClass = 'badge-yellow';
+                    statusLabel = 'PENDING REVIEW';
+                } else if (p.kyc_status === 'pending') {
+                    badgeClass = 'badge-gray';
+                    statusLabel = 'NOT SUBMITTED';
+                }
+
+                return `
+                <div class="transaction-item">
+                    <div class="transaction-icon bg-yellow-100 text-yellow-600">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="transaction-details">
+                        <h4>${p.full_name || 'N/A'}</h4>
+                        <span class="transaction-meta">Submitted: ${new Date(p.updated_at || Date.now()).toLocaleDateString()}</span>
+                    </div>
+                    <div class="transaction-status">
+                        <span class="badge ${badgeClass}">${statusLabel}</span>
+                        <a href="admin-kyc-review.html?id=${p.id}" class="btn btn-sm btn-primary mt-1">Review</a>
+                    </div>
+                </div>
+            `}).join('');
         }
 
         async function loadTransactions() {
@@ -152,30 +418,52 @@
                 return;
             }
 
-            const tbody = document.getElementById('transList');
-            tbody.innerHTML = transactions.map(t => {
-                let actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">View</a>`;
+            // Update Stats
+            const active = transactions?.filter(t => !['completed', 'cancelled', 'rejected'].includes(t.status)).length || 0;
+            const completed = transactions?.filter(t => t.status === 'completed').length || 0;
+            
+            document.getElementById('statsActiveTrans').textContent = active;
+            document.getElementById('statsCompletedTrans').textContent = completed;
+
+            const container = document.getElementById('transList');
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = `<div class="empty-state"><p>No transactions found.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = transactions.map(t => {
+                let actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-sm btn-secondary">View</a>`;
+                let statusClass = 'badge-gray';
                 
                 if (t.status === 'payment_uploaded') {
-                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Verify Payment</a>`;
+                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-sm btn-primary">Verify Payment</a>`;
+                    statusClass = 'badge-yellow';
                 } else if (t.status === 'product_delivered') {
-                    actionBtn = `<a href="product-inspection.html?id=${t.id}" class="btn btn-warning" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: #f59e0b; color: white;">Inspect Product</a>`;
+                    actionBtn = `<a href="product-inspection.html?id=${t.id}" class="btn btn-sm btn-warning" style="background: #f59e0b; color: white; border:none;">Inspect</a>`;
+                    statusClass = 'badge-blue';
                 } else if (t.status === 'inspection_passed') {
-                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.875rem; background: #16a34a; color: white;">Release Funds</a>`;
+                    actionBtn = `<a href="admin-transaction-review.html?id=${t.id}" class="btn btn-sm btn-success" style="background: #16a34a; color: white; border:none;">Release Funds</a>`;
+                    statusClass = 'badge-green';
+                } else if (t.status === 'completed') {
+                    statusClass = 'badge-green';
                 }
 
                 return `
-                    <tr>
-                        <td>${t.title}</td>
-                        <td><span class="status-badge status-${t.status}">${t.status.replace('_', ' ').toUpperCase()}</span></td>
-                        <td>${new Date(t.created_at).toLocaleDateString()}</td>
-                        <td>${actionBtn}</td>
-                    </tr>
+                    <div class="transaction-item">
+                        <div class="transaction-icon bg-blue-50 text-blue-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${t.title || 'Transaction'}</h4>
+                            <span class="transaction-meta">${new Date(t.created_at).toLocaleDateString()} • MWK ${t.amount?.toLocaleString() || '0'}</span>
+                        </div>
+                        <div class="transaction-status">
+                            <span class="badge ${statusClass}">${t.status.replace(/_/g, ' ').toUpperCase()}</span>
+                            <div style="margin-top: 0.25rem;">${actionBtn}</div>
+                        </div>
+                    </div>
                 `;
             }).join('');
-
-            document.getElementById('transLoading').classList.add('hidden');
-            document.getElementById('transTable').classList.remove('hidden');
         }
 
         init();

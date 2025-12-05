@@ -7,7 +7,7 @@ export async function createTransaction(title, description, buyerId) {
     const { data, error } = await supabase
         .from('transactions')
         .insert([{ title, description, buyer_id: buyerId, status: 'created' }])
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -27,7 +27,7 @@ export async function joinTransaction(transactionId, sellerId) {
         .from('transactions')
         .update({ seller_id: sellerId })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -87,7 +87,7 @@ export async function submitProduct(transactionId, productName, productDescripti
             product_description: productDescription,
             price
         }])
-        .select()
+        .select('*')
         .single()
 
     if (subError) return { error: subError }
@@ -123,7 +123,7 @@ export async function approveProduct(transactionId) {
         .from('transactions')
         .update({ status: 'product_approved' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -134,7 +134,7 @@ export async function rejectProduct(transactionId, reason) {
         .from('transactions')
         .update({ status: 'rejected' }) // Or 'created' to reset?
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -173,7 +173,7 @@ export async function verifyPayment(transactionId) {
         .from('transactions')
         .update({ status: 'payment_verified' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -183,7 +183,7 @@ export async function rejectPayment(transactionId) {
         .from('transactions')
         .update({ status: 'payment_rejected' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -193,7 +193,7 @@ export async function releaseFunds(transactionId) {
         .from('transactions')
         .update({ status: 'funds_released' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -220,7 +220,7 @@ export async function markProductDelivered(transactionId) {
         .from('transactions')
         .update({ status: 'product_delivered' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -230,7 +230,7 @@ export async function passInspection(transactionId) {
         .from('transactions')
         .update({ status: 'inspection_passed' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -240,7 +240,7 @@ export async function failInspection(transactionId) {
         .from('transactions')
         .update({ status: 'inspection_failed' })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }
@@ -253,7 +253,7 @@ export async function setDeliveryDetails(transactionId, method, branch) {
             delivery_branch: branch
         })
         .eq('id', transactionId)
-        .select()
+        .select('*')
         .single()
     return { data, error }
 }

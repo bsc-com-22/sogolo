@@ -7,7 +7,46 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 1rem;">
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" class="logo-icon">
+            </a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="nav-link">Sign Up</a>
+                <a href="support.html" class="nav-link">Support</a>
+            </nav>
+            
+            <div class="nav-actions" id="desktopAuthButtons">
+                <a href="signin.html" class="btn btn-login">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <div class="user-avatar-container hidden" id="userAvatarContainer">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                    <span id="desktopUserInitials">U</span>
+                </button>
+            </div>
+
+            <div class="mobile-controls">
+                <button class="user-avatar-btn hidden" id="userAvatarBtn">
+                    <span id="userInitials">U</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 1rem; margin-top: 72px;">
     
     <div style="width: 100%; max-width: 400px;">
         <!-- Logo -->
@@ -155,5 +194,20 @@
             }
         });
     </script>
+    <!-- Avatar Dropdown Menu -->
+    <div class="avatar-dropdown" id="avatarDropdown">
+        <div class="avatar-dropdown-header">
+            <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
+            <div class="avatar-dropdown-info">
+                <h4 id="dropdownUserName">User</h4>
+                <p id="dropdownUserEmail">Loading...</p>
+            </div>
+        </div>
+        <div class="avatar-dropdown-menu">
+            <!-- Populated by headerAuth.js -->
+        </div>
+    </div>
+    
+    <script type="module" src="./js/headerAuth.js"></script>
 </body>
 </html>

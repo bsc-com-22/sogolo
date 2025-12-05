@@ -11,10 +11,36 @@
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo" style="height: 42px;">
+                <img src="logo.png" alt="Sogolo" class="logo-icon">
             </a>
-            <div class="flex gap-4 items-center">
-                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="nav-link">Create Transaction</a>
+                <a href="support.html" class="nav-link">Support</a>
+            </nav>
+            
+            <div class="nav-actions" id="desktopAuthButtons">
+                <a href="signin.html" class="btn btn-login">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <div class="user-avatar-container hidden" id="userAvatarContainer">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                    <span id="desktopUserInitials">U</span>
+                </button>
+            </div>
+
+            <div class="mobile-controls">
+                <button class="user-avatar-btn hidden" id="userAvatarBtn">
+                    <span id="userInitials">U</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>

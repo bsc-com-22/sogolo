@@ -2,30 +2,48 @@ import { supabase } from './supabaseClient.js'
 
 // Login with Email and Password
 export async function loginWithEmail(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    })
-    return { data, error }
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        })
+        if (error) console.error('Login error:', error)
+        return { data, error }
+    } catch (e) {
+        console.error('Unexpected login exception:', e)
+        return { data: null, error: e }
+    }
 }
 
 // Login with Google
 export async function loginWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: window.location.origin + '/dashboard.html'
-        }
-    })
-    return { data, error }
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + '/dashboard.html'
+            }
+        })
+        if (error) console.error('Google login error:', error)
+        return { data, error }
+    } catch (e) {
+        console.error('Unexpected Google login exception:', e)
+        return { data: null, error: e }
+    }
 }
 
 // Send Password Reset Email
 export async function sendPasswordReset(email) {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password.html',
-    })
-    return { data, error }
+    try {
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html',
+        })
+        if (error) console.error('Password reset error:', error)
+        return { data, error }
+    } catch (e) {
+        console.error('Unexpected password reset exception:', e)
+        return { data: null, error: e }
+    }
 }
 
 // Logout
@@ -40,16 +58,22 @@ export async function logout() {
 
 // Sign Up
 export async function signUp(email, password, fullName) {
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-            data: {
-                full_name: fullName,
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: fullName,
+                },
             },
-        },
-    })
-    return { data, error }
+        })
+        if (error) console.error('Sign up error:', error)
+        return { data, error }
+    } catch (e) {
+        console.error('Unexpected sign up exception:', e)
+        return { data: null, error: e }
+    }
 }
 
 // Get Current User with Profile
@@ -113,7 +137,9 @@ export function initAuthStateListener(callback) {
 
         if (event === 'SIGNED_IN') {
             if (isAuthPage) {
-                window.location.href = '/dashboard.html'
+                const target = `${window.location.origin}/dashboard.html`;
+                console.log('Redirecting to', target);
+                window.location.href = target;
             }
         } else if (event === 'SIGNED_OUT') {
             if (isProtectedPage) {

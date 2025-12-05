@@ -5,68 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="auth-page flex items-center justify-center" style="min-height: 100vh; padding: 1rem;">
+<body style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 1rem;">
     
-    <div class="card auth-card" style="width: 100%; max-width: 420px; margin: 1rem; position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="index.html" style="display: inline-block; margin-bottom: 1rem;">
-                <img src="logo.png" alt="Sogolo" style="height: 60px;">
+    <div style="width: 100%; max-width: 400px;">
+        <!-- Logo -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <a href="index.html" style="display: inline-block;">
+                <img src="logo.png" alt="Sogolo" style="height: 48px;">
             </a>
-            <div style="margin-bottom: 1rem;">
-                <a href="index.html" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">← Back to Home</a>
-            </div>
-            <h1 style="font-size: clamp(1.5rem, 4vw, 1.875rem); margin-bottom: 0.5rem; font-weight: 700;">Create Account</h1>
-            <p style="color: var(--text-muted); font-size: clamp(0.875rem, 2vw, 1rem);">Join Sogolo today</p>
         </div>
 
-        <form id="signupForm">
-            <div class="form-group">
-                <label class="form-label" for="fullName">Full Name</label>
-                <input type="text" id="fullName" class="form-input" required placeholder="John Doe">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="email">Email Address</label>
-                <input type="email" id="email" class="form-input" required placeholder="you@example.com">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-with-icon">
-                    <input type="password" id="password" class="form-input" required placeholder="••••••••" minlength="6">
-                    <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
-                        <svg id="eyeIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="password-strength" id="passwordStrength">
-                    <div class="password-strength-bar"></div>
-                    <div class="password-strength-bar"></div>
-                    <div class="password-strength-bar"></div>
-                    <div class="password-strength-bar"></div>
-                </div>
-            </div>
-            
-            <div id="errorMsg" class="alert alert-error hidden"></div>
+        <!-- Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 600; color: #0a0a0a; margin-bottom: 0.5rem;">Create account</h1>
+            <p style="color: #737373; font-size: 0.9375rem;">Get started with Sogolo</p>
+        </div>
 
-            <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+        <!-- Form -->
+        <form id="signupForm" style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1.25rem;">
+                <label for="fullName" style="display: block; font-size: 0.875rem; font-weight: 500; color: #0a0a0a; margin-bottom: 0.5rem;">Full name</label>
+                <input 
+                    type="text" 
+                    id="fullName" 
+                    required 
+                    placeholder="John Doe"
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s; background: #fafafa;"
+                    onfocus="this.style.borderColor='#0a0a0a'; this.style.background='#ffffff';"
+                    onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label for="email" style="display: block; font-size: 0.875rem; font-weight: 500; color: #0a0a0a; margin-bottom: 0.5rem;">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    required 
+                    placeholder="name@example.com"
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s; background: #fafafa;"
+                    onfocus="this.style.borderColor='#0a0a0a'; this.style.background='#ffffff';"
+                    onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label for="password" style="display: block; font-size: 0.875rem; font-weight: 500; color: #0a0a0a; margin-bottom: 0.5rem;">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    required 
+                    placeholder="••••••••"
+                    minlength="6"
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s; background: #fafafa;"
+                    onfocus="this.style.borderColor='#0a0a0a'; this.style.background='#ffffff';"
+                    onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';">
+                <p style="margin-top: 0.5rem; font-size: 0.8125rem; color: #a3a3a3;">Must be at least 6 characters</p>
+            </div>
+
+            <div id="errorMsg" style="display: none; padding: 0.75rem 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; font-size: 0.875rem; margin-bottom: 1rem;"></div>
+            <div id="successMsg" style="display: none; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; color: #166534; font-size: 0.875rem; margin-bottom: 1rem;"></div>
+
+            <button 
+                type="submit" 
+                style="width: 100%; padding: 0.875rem; background: #0a0a0a; color: white; border: none; border-radius: 8px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='#262626';"
+                onmouseout="this.style.background='#0a0a0a';">
+                Create account
+            </button>
         </form>
 
-        <div class="flex items-center gap-4" style="margin: 1.5rem 0;">
-            <div style="flex: 1; height: 1px; background: var(--border);"></div>
-            <span style="color: var(--text-muted); font-size: 0.875rem;">or</span>
-            <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <!-- Divider -->
+        <div style="display: flex; align-items: center; margin: 1.5rem 0;">
+            <div style="flex: 1; height: 1px; background: #e5e5e5;"></div>
+            <span style="padding: 0 1rem; color: #a3a3a3; font-size: 0.875rem;">or</span>
+            <div style="flex: 1; height: 1px; background: #e5e5e5;"></div>
         </div>
 
-        <button id="googleSignupBtn" class="btn btn-secondary btn-full">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px;">
-            Sign up with Google
+        <!-- Google Button -->
+        <button 
+            id="googleSignupBtn"
+            style="width: 100%; padding: 0.875rem; background: white; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.75rem;"
+            onmouseover="this.style.background='#fafafa';"
+            onmouseout="this.style.background='white';">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+                <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
         </button>
 
-        <div style="text-align: center; margin-top: 1.5rem; font-size: clamp(0.813rem, 2vw, 0.875rem);">
-            Already have an account? <a href="signin.html">Sign in</a>
+        <!-- Footer Links -->
+        <div style="margin-top: 2rem; text-align: center; padding-top: 1.5rem; border-top: 1px solid #f5f5f5;">
+            <p style="color: #737373; font-size: 0.875rem;">
+                Already have an account? 
+                <a href="signin.html" style="color: #0a0a0a; font-weight: 500; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">Sign in</a>
+            </p>
         </div>
     </div>
 
@@ -78,53 +114,12 @@
         const form = document.getElementById('signupForm');
         const googleBtn = document.getElementById('googleSignupBtn');
         const errorMsg = document.getElementById('errorMsg');
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const strengthBars = document.querySelectorAll('.password-strength-bar');
-
-        // Password visibility toggle
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            
-            // Update icon
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (type === 'text') {
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                `;
-            } else {
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                `;
-            }
-        });
-
-        // Password strength indicator
-        passwordInput.addEventListener('input', () => {
-            const password = passwordInput.value;
-            let strength = 0;
-
-            if (password.length >= 6) strength++;
-            if (password.length >= 10) strength++;
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-            if (/[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) strength++;
-
-            strengthBars.forEach((bar, index) => {
-                bar.classList.remove('active', 'weak', 'medium', 'strong');
-                if (index < strength) {
-                    bar.classList.add('active');
-                    if (strength <= 1) bar.classList.add('weak');
-                    else if (strength <= 2) bar.classList.add('medium');
-                    else bar.classList.add('strong');
-                }
-            });
-        });
+        const successMsg = document.getElementById('successMsg');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorMsg.classList.add('hidden');
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
             
             const fullName = document.getElementById('fullName').value;
             const email = document.getElementById('email').value;
@@ -132,24 +127,23 @@
             const btn = form.querySelector('button[type="submit"]');
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="loading-spinner"></span>Creating Account...';
+            btn.textContent = 'Creating account...';
 
             const { data, error } = await signUp(email, password, fullName);
 
             if (error) {
                 errorMsg.textContent = error.message;
-                errorMsg.classList.remove('hidden');
+                errorMsg.style.display = 'block';
                 btn.disabled = false;
-                btn.textContent = 'Sign Up';
+                btn.textContent = 'Create account';
             } else if (data && !data.session && data.user) {
                 // Email confirmation required
-                errorMsg.className = 'alert alert-success'; // Reuse alert box for success message
-                errorMsg.textContent = 'Account created! Please check your email to confirm your account.';
-                errorMsg.classList.remove('hidden');
-                btn.textContent = 'Check Email';
+                successMsg.textContent = 'Account created! Please check your email to confirm your account.';
+                successMsg.style.display = 'block';
+                btn.textContent = 'Check your email';
             } else {
                 // Session established, auth listener will handle redirect
-                btn.innerHTML = '<span class="loading-spinner"></span>Redirecting...';
+                btn.textContent = 'Redirecting...';
             }
         });
 
@@ -157,7 +151,7 @@
             const { error } = await loginWithGoogle();
             if (error) {
                 errorMsg.textContent = error.message;
-                errorMsg.classList.remove('hidden');
+                errorMsg.style.display = 'block';
             }
         });
     </script>

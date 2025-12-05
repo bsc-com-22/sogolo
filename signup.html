@@ -77,15 +77,22 @@
             btn.disabled = true;
             btn.textContent = 'Creating Account...';
 
-            const { error } = await signUp(email, password, fullName);
+            const { data, error } = await signUp(email, password, fullName);
 
             if (error) {
                 errorMsg.textContent = error.message;
                 errorMsg.classList.remove('hidden');
                 btn.disabled = false;
                 btn.textContent = 'Sign Up';
+            } else if (data && !data.session && data.user) {
+                // Email confirmation required
+                errorMsg.className = 'alert alert-success'; // Reuse alert box for success message
+                errorMsg.textContent = 'Account created! Please check your email to confirm your account.';
+                errorMsg.classList.remove('hidden');
+                btn.textContent = 'Check Email';
             } else {
-                // Auth listener will handle redirect
+                // Session established, auth listener will handle redirect
+                btn.textContent = 'Redirecting...';
             }
         });
 

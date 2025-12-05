@@ -97,8 +97,12 @@
                         <div class="timeline-date">Item verified</div>
                     </div>
                     <div class="timeline-item" id="step_funds_released">
-                        <div class="timeline-title">Completed</div>
-                        <div class="timeline-date">Funds released to seller</div>
+                        <div class="timeline-title">Funds Released</div>
+                        <div class="timeline-date">Payment sent to seller</div>
+                    </div>
+                    <div class="timeline-item" id="step_completed">
+                        <div class="timeline-title">Transaction Completed</div>
+                        <div class="timeline-date">Dispatch receipt available</div>
                     </div>
                 </div>
             </div>
@@ -144,7 +148,7 @@
             const steps = [
                 'created', 'product_submitted', 'product_approved', 
                 'payment_uploaded', 'payment_verified', 'product_delivered',
-                'inspection_passed', 'funds_released'
+                'inspection_passed', 'funds_released', 'completed'
             ];
             
             let passed = true;
@@ -315,9 +319,38 @@
                 actionText.innerHTML = msg;
                 actionBtn.style.display = 'none';
             }
+            else if (t.status === 'completed') {
+                actionCard.classList.remove('hidden');
+                actionCard.style.background = '#f0fdf4';
+                actionCard.style.borderColor = '#16a34a';
+                
+                let msg = `<span class="badge badge-green">COMPLETED</span><br><br>Transaction has been successfully completed!`;
+                if (t.dispatch_receipt_url) {
+                    msg += `<br><br><a href="${t.dispatch_receipt_url}" target="_blank" class="btn btn-primary">Download Dispatch Receipt</a>`;
+                }
+                
+                actionText.innerHTML = msg;
+                actionBtn.style.display = 'none';
+            }
         }
 
         init();
     </script>
+    
+    <!-- Avatar Dropdown Menu -->
+    <div class="avatar-dropdown" id="avatarDropdown">
+        <div class="avatar-dropdown-header">
+            <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
+            <div class="avatar-dropdown-info">
+                <h4 id="dropdownUserName">User</h4>
+                <p id="dropdownUserEmail">Loading...</p>
+            </div>
+        </div>
+        <div class="avatar-dropdown-menu">
+            <!-- Populated by headerAuth.js -->
+        </div>
+    </div>
+    
+    <script type="module" src="./js/headerAuth.js"></script>
 </body>
 </html>

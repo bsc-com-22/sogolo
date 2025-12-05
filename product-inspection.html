@@ -14,6 +14,44 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Sogolo" class="logo-icon">
+            </a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="admin-dashboard.html" class="nav-link">Admin Dashboard</a>
+                <a href="admin-kyc-review.html" class="nav-link">KYC Review</a>
+                <a href="admin-transaction-review.html" class="nav-link">Transaction Review</a>
+            </nav>
+            
+            <div class="nav-actions" id="desktopAuthButtons">
+                <a href="signin.html" class="btn btn-login">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <div class="user-avatar-container hidden" id="userAvatarContainer">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                    <span id="desktopUserInitials">A</span>
+                </button>
+            </div>
+
+            <div class="mobile-controls">
+                <button class="user-avatar-btn hidden" id="userAvatarBtn">
+                    <span id="userInitials">A</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    
     <div class="container-md">
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -42,51 +80,80 @@
         }
 
         async function loadData() {
-            const { data: transaction } = await getTransaction(transactionId);
-            const { submission, images } = await getProductDetails(transactionId);
+            try {
+                const { data: transaction } = await getTransaction(transactionId);
+                const { submission, images } = await getProductDetails(transactionId);
 
-            if (!transaction) {
-                document.getElementById('content').textContent = 'Transaction not found.';
-                return;
+                if (!transaction) {
+                    document.getElementById('content').textContent = 'Transaction not found.';
+                    return;
+                }
+
+                // Debug logging to see what data we're getting
+                console.log('Transaction:', transaction);
+                console.log('Submission:', submission);
+                console.log('Images:', images);
+
+                // Handle different possible data structures
+                const productName = submission?.product_name || 
+                                  submission?.title || 
+                                  submission?.name || 
+                                  transaction?.title || 
+                                  'Product Name Not Available';
+                                  
+                const productDescription = submission?.product_description || 
+                                         submission?.description || 
+                                         submission?.details || 
+                                         transaction?.description || 
+                                         'Product Description Not Available';
+
+                let html = `
+                    <div class="alert alert-info mb-4">Verify the physical item matches the details below.</div>
+                    
+                    <h3 style="margin-bottom: 0.5rem;">Seller's Description</h3>
+                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <p><strong>Name:</strong> ${productName}</p>
+                        <p><strong>Description:</strong> ${productDescription}</p>
+                    </div>
+
+                    <h3 style="margin-bottom: 0.5rem;">Seller's Photos</h3>
+                    <div class="file-preview mb-4">
+                        ${images && images.length > 0 ? 
+                            images.map(img => `<div class="file-preview-item"><a href="${img.image_url}" target="_blank"><img src="${img.image_url}" alt="Product image"></a></div>`).join('') : 
+                            'No images available'}
+                    </div>
+
+                    <h3 style="margin-bottom: 0.5rem;">Inspection Checklist</h3>
+                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 2rem;">
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check1"> <label for="check1">Item matches description</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check2"> <label for="check2">No undisclosed damage</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check3"> <label for="check3">All accessories included</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check4"> <label for="check4">Functionality verified</label>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="handleFail()" class="btn btn-danger" style="flex: 1;">Fail Inspection</button>
+                        <button onclick="handlePass()" class="btn btn-primary" style="flex: 1;">Pass Inspection</button>
+                    </div>
+                `;
+
+                document.getElementById('content').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="alert alert-danger">
+                        Error loading product data: ${error.message}
+                    </div>
+                `;
             }
-
-            let html = `
-                <div class="alert alert-info mb-4">Verify the physical item matches the details below.</div>
-                
-                <h3 style="margin-bottom: 0.5rem;">Seller's Description</h3>
-                <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                    <p><strong>Name:</strong> ${submission?.product_name}</p>
-                    <p><strong>Description:</strong> ${submission?.product_description}</p>
-                </div>
-
-                <h3 style="margin-bottom: 0.5rem;">Seller's Photos</h3>
-                <div class="file-preview mb-4">
-                    ${images ? images.map(img => `<div class="file-preview-item"><a href="${img.image_url}" target="_blank"><img src="${img.image_url}"></a></div>`).join('') : 'No images'}
-                </div>
-
-                <h3 style="margin-bottom: 0.5rem;">Inspection Checklist</h3>
-                <div style="border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 2rem;">
-                    <div class="checklist-item">
-                        <input type="checkbox" id="check1"> <label for="check1">Item matches description</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="check2"> <label for="check2">No undisclosed damage</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="check3"> <label for="check3">All accessories included</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="check4"> <label for="check4">Functionality verified</label>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <button onclick="handleFail()" class="btn btn-danger" style="flex: 1;">Fail Inspection</button>
-                    <button onclick="handlePass()" class="btn btn-primary" style="flex: 1;">Pass Inspection</button>
-                </div>
-            `;
-
-            document.getElementById('content').innerHTML = html;
         }
 
         window.handlePass = async () => {
@@ -120,5 +187,21 @@
 
         init();
     </script>
+    
+    <!-- Avatar Dropdown Menu -->
+    <div class="avatar-dropdown" id="avatarDropdown">
+        <div class="avatar-dropdown-header">
+            <div class="avatar-dropdown-avatar" id="dropdownAvatar">A</div>
+            <div class="avatar-dropdown-info">
+                <h4 id="dropdownUserName">Admin</h4>
+                <p id="dropdownUserEmail">Loading...</p>
+            </div>
+        </div>
+        <div class="avatar-dropdown-menu">
+            <!-- Populated by headerAuth.js -->
+        </div>
+    </div>
+    
+    <script type="module" src="./js/headerAuth.js"></script>
 </body>
 </html>

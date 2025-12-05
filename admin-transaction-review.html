@@ -167,25 +167,27 @@
                     ${transaction.delivery_branch ? `<div class="detail-row"><span class="label">Branch</span><span class="value">${transaction.delivery_branch}</span></div>` : ''}
                 `;
 
-                if (transaction.status === 'funds_released' || transaction.status === 'dispatched') {
+                if (transaction.status === 'funds_released' || transaction.status === 'dispatched' || transaction.status === 'completed') {
                     html += `
                         <div class="section-title mt-4">Dispatch</div>
                     `;
                     
                     if (transaction.dispatch_receipt_url) {
                         html += `
-                            <div class="alert alert-success mb-4">Item Dispatched</div>
+                            <div class="alert alert-success mb-4">Item ${transaction.status === 'completed' ? 'Completed' : 'Dispatched'}</div>
                             <a href="${transaction.dispatch_receipt_url}" target="_blank" class="btn btn-secondary w-full text-center">View Receipt</a>
-                            <div class="mt-4 text-sm text-gray-500 text-center">Upload new receipt to replace:</div>
+                            ${transaction.status !== 'completed' ? `<div class="mt-4 text-sm text-gray-500 text-center">Upload new receipt to replace:</div>` : ''}
                         `;
                     }
 
-                    html += `
-                        <div class="mt-2">
-                            <input type="file" id="receiptFile" accept="application/pdf,image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                            <button onclick="handleDispatch()" class="btn btn-primary w-full mt-2">Upload Dispatch Receipt & Mark Dispatched</button>
-                        </div>
-                    `;
+                    if (transaction.status !== 'completed') {
+                        html += `
+                            <div class="mt-2">
+                                <input type="file" id="receiptFile" accept="application/pdf,image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                                <button onclick="handleDispatch()" class="btn btn-primary w-full mt-2">Upload Dispatch Receipt & Mark Dispatched</button>
+                            </div>
+                        `;
+                    }
                 }
             }
 

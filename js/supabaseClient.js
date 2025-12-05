@@ -1,5 +1,5 @@
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
 
 // TODO: Replace with your actual Supabase URL and Anon Key
 const SUPABASE_URL = (window.__env && window.__env.SUPABASE_URL) || 'https://kauosqegnisajlanwlpz.supabase.co';

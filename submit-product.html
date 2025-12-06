@@ -154,8 +154,34 @@
         });
     </script>
     
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content" id="mobileMenuContent">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    Sogolo
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
             <div class="avatar-dropdown-info">

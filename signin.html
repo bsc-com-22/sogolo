@@ -5,39 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo" class="logo-icon">
+                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
             </a>
-            
             <nav class="nav-menu">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="signin.html" class="nav-link">Sign In</a>
-                <a href="signup.html" class="nav-link">Sign Up</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#how-it-works" class="nav-link">How It Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#FAQs" class="nav-link">FAQs</a>
                 <a href="support.html" class="nav-link">Support</a>
             </nav>
-            
             <div class="nav-actions" id="desktopAuthButtons">
-                <a href="signin.html" class="btn btn-login">Sign In</a>
-                <a href="signup.html" class="btn btn-primary">Get Started</a>
+                <a href="signin.html#loginForm" class="btn btn-login">Login</a>
+                <a href="signin.html#signupForm" class="btn btn-primary">Get Started</a>
             </div>
-            
             <div class="user-avatar-container hidden" id="userAvatarContainer">
                 <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
-                    <span id="desktopUserInitials">U</span>
+                    <span id="desktopUserInitials">BC</span>
                 </button>
             </div>
-
             <div class="mobile-controls">
                 <button class="user-avatar-btn hidden" id="userAvatarBtn">
-                    <span id="userInitials">U</span>
+                    <span id="userInitials">BC</span>
                 </button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -46,91 +43,74 @@
         </div>
     </header>
     
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 1rem; margin-top: 72px;">
-    
-    <div style="width: 100%; max-width: 400px;">
-        <!-- Logo -->
-        <div style="text-align: center; margin-bottom: 3rem;">
-            <a href="index.html" style="display: inline-block;">
-                <img src="logo.png" alt="Sogolo" style="height: 48px;">
-            </a>
-        </div>
+    <!-- Auth Wrapper -->
+    <div class="auth-wrapper">
+        <div class="auth-container">
 
-        <!-- Header -->
-        <div style="margin-bottom: 2rem;">
-            <h1 style="font-size: 1.75rem; font-weight: 600; color: #0a0a0a; margin-bottom: 0.5rem;">Welcome back</h1>
-            <p style="color: #737373; font-size: 0.9375rem;">Enter your credentials to continue</p>
-        </div>
-
-        <!-- Form -->
-        <form id="signinForm" style="margin-bottom: 1.5rem;">
-            <div style="margin-bottom: 1.25rem;">
-                <label for="email" style="display: block; font-size: 0.875rem; font-weight: 500; color: #0a0a0a; margin-bottom: 0.5rem;">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    required 
-                    placeholder="name@example.com"
-                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s; background: #fafafa;"
-                    onfocus="this.style.borderColor='#0a0a0a'; this.style.background='#ffffff';"
-                    onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';">
+            <!-- Header -->
+            <div class="auth-header">
+                <h1>Welcome back</h1>
+                <p>Enter your credentials to continue</p>
             </div>
 
-            <div style="margin-bottom: 1.25rem;">
-                <label for="password" style="display: block; font-size: 0.875rem; font-weight: 500; color: #0a0a0a; margin-bottom: 0.5rem;">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    required 
-                    placeholder="••••••••"
-                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s; background: #fafafa;"
-                    onfocus="this.style.borderColor='#0a0a0a'; this.style.background='#ffffff';"
-                    onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';">
+            <!-- Form -->
+            <form id="signinForm" class="auth-form">
+                <div class="auth-form-group">
+                    <label for="email" class="auth-form-label">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="auth-form-input"
+                        required 
+                        placeholder="name@example.com">
+                </div>
+
+                <div class="auth-form-group">
+                    <label for="password" class="auth-form-label">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="auth-form-input"
+                        required 
+                        placeholder="••••••••">
+                </div>
+
+                <div id="errorMsg" class="auth-alert auth-alert-error"></div>
+
+                <button type="submit" class="auth-btn auth-btn-primary">
+                    Sign in
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <div class="auth-divider-line"></div>
+                <span class="auth-divider-text">or</span>
+                <div class="auth-divider-line"></div>
             </div>
 
-            <div id="errorMsg" style="display: none; padding: 0.75rem 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; font-size: 0.875rem; margin-bottom: 1rem;"></div>
-
-            <button 
-                type="submit" 
-                style="width: 100%; padding: 0.875rem; background: #0a0a0a; color: white; border: none; border-radius: 8px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; transition: all 0.2s;"
-                onmouseover="this.style.background='#262626';"
-                onmouseout="this.style.background='#0a0a0a';">
-                Sign in
+            <!-- Google Button -->
+            <button id="googleLoginBtn" class="auth-btn auth-btn-secondary">
+                <svg class="google-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                    <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+                    <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                    <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+                </svg>
+                Continue with Google
             </button>
-        </form>
 
-        <!-- Divider -->
-        <div style="display: flex; align-items: center; margin: 1.5rem 0;">
-            <div style="flex: 1; height: 1px; background: #e5e5e5;"></div>
-            <span style="padding: 0 1rem; color: #a3a3a3; font-size: 0.875rem;">or</span>
-            <div style="flex: 1; height: 1px; background: #e5e5e5;"></div>
-        </div>
+            <!-- Footer Links -->
+            <div class="auth-footer">
+                <a href="forgot-password.html" class="auth-link">Forgot password?</a>
+            </div>
 
-        <!-- Google Button -->
-        <button 
-            id="googleLoginBtn"
-            style="width: 100%; padding: 0.875rem; background: white; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.75rem;"
-            onmouseover="this.style.background='#fafafa';"
-            onmouseout="this.style.background='white';">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
-                <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
-                <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
-            </svg>
-            Continue with Google
-        </button>
-
-        <!-- Footer Links -->
-        <div style="margin-top: 2rem; text-align: center;">
-            <a href="forgot-password.html" style="color: #737373; font-size: 0.875rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#0a0a0a';" onmouseout="this.style.color='#737373';">Forgot password?</a>
-        </div>
-
-        <div style="margin-top: 1.5rem; text-align: center; padding-top: 1.5rem; border-top: 1px solid #f5f5f5;">
-            <p style="color: #737373; font-size: 0.875rem;">
-                Don't have an account? 
-                <a href="signup.html" style="color: #0a0a0a; font-weight: 500; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">Sign up</a>
-            </p>
+            <div class="auth-footer auth-footer-divider">
+                <p class="auth-footer-text">
+                    Don't have an account? 
+                    <a href="signup.html" class="auth-link-primary">Sign up</a>
+                </p>
+            </div>
         </div>
     </div>
 
@@ -155,12 +135,13 @@
 
             btn.disabled = true;
             btn.textContent = 'Signing in...';
+            errorMsg.classList.remove('show');
 
             const { error } = await loginWithEmail(email, password);
 
             if (error) {
                 errorMsg.textContent = error.message;
-                errorMsg.style.display = 'block';
+                errorMsg.classList.add('show');
                 btn.disabled = false;
                 btn.textContent = 'Sign in';
             }
@@ -168,16 +149,45 @@
         });
 
         googleBtn.addEventListener('click', async () => {
+            errorMsg.classList.remove('show');
             const { error } = await loginWithGoogle();
             if (error) {
                 errorMsg.textContent = error.message;
-                errorMsg.style.display = 'block';
+                errorMsg.classList.add('show');
             }
             // If successful, auth state listener will handle redirect
         });
     </script>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content" id="mobileMenuContent">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    Sogolo
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html#about" class="mobile-nav-link">About</a>
+                <a href="index.html#how-it-works" class="mobile-nav-link">How It Works</a>
+                <a href="index.html#features" class="mobile-nav-link">Features</a>
+                <a href="index.html#FAQs" class="mobile-nav-link">FAQs</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
             <div class="avatar-dropdown-info">

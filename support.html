@@ -4,129 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support - Sogolo</title>
+    <link rel="stylesheet" href="css/styles.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
             background-color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* Header */
-        .header {
-            background: #ffffff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            border-bottom: 1px solid #f3f4f6;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .header.scrolled {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .header .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 24px;
-            height: 72px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 82px;
-            height: 82px;
-            object-fit: contain;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #6b7280;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-link:hover {
-            color: #1f2937;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            text-decoration: none;
-        }
-
-        .btn-login {
-            background: transparent;
-            color: #6b7280;
-        }
-
-        .btn-login:hover {
-            color: #1f2937;
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
         }
 
         /* Hero Section */
         .support-hero {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            padding: 6rem 2rem 4rem;
+            padding: 8rem 0 4rem;
+            margin-top: 72px;
             text-align: center;
             color: white;
         }
@@ -147,7 +35,7 @@
 
         /* Contact Methods */
         .contact-methods {
-            padding: 6rem 2rem;
+            padding: 6rem 0;
             background: #f9fafb;
         }
 
@@ -173,28 +61,32 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-bottom: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
         .contact-card {
             background: white;
-            padding: 2rem;
-            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
             border: 1px solid #f3f4f6;
             text-align: center;
             transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .contact-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0,0.12);
+            border-color: #3b82f6;
         }
 
         .contact-icon {
-            width: 64px;
-            height: 64px;
-            background: #eff6ff;
-            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -202,60 +94,92 @@
         }
 
         .contact-icon svg {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             color: #3b82f6;
         }
 
         .contact-card h3 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
         }
 
         .contact-card p {
             color: #6b7280;
             margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
         .contact-info {
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
+            color: #3b82f6;
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+            word-break: break-word;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            background: #3b82f6;
+            color: white;
+            border-radius: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .contact-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
         }
 
         /* Contact Form */
         .contact-form-section {
-            padding: 6rem 2rem;
+            padding: 6rem 0;
             background: white;
         }
 
         .form-container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .form-card {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            border: 1px solid #f3f4f6;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
 
         .form-label {
             display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
+            font-size: 0.938rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
         }
 
         .form-input,
         .form-textarea,
         .form-select {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 1rem;
             transition: all 0.2s ease;
+            background: white;
+            font-family: inherit;
         }
 
         .form-input:focus,
@@ -263,328 +187,43 @@
         .form-select:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
 
         .form-textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 150px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
-        /* FAQ Section */
-        .faq-section {
-            padding: 6rem 2rem;
-            background: #f9fafb;
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            border: 1px solid #f3f4f6;
-            overflow: hidden;
-        }
-
-        .faq-question {
+        .submit-btn {
             width: 100%;
-            padding: 1.5rem 2rem;
-            background: none;
-            border: none;
-            text-align: left;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-question:hover {
-            color: #3b82f6;
-        }
-
-        .faq-icon {
-            width: 20px;
-            height: 20px;
-            color: #6b7280;
-            transition: transform 0.3s ease;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-            color: #3b82f6;
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-        }
-
-        .faq-answer-content {
-            padding: 0 2rem 1.5rem;
-            color: #6b7280;
-            line-height: 1.7;
-        }
-
-        /* Footer */
-        .footer {
-            background: #1f2937;
-            padding: 3rem 2rem 2rem;
+            padding: 1.125rem 2rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: #9ca3af;
-            text-decoration: none;
-            line-height: 1.6;
-            transition: color 0.2s ease;
-        }
-
-        .footer-section a:hover {
-            color: #3b82f6;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #374151;
-            padding-top: 2rem;
-            text-align: center;
-        }
-
-        .footer-credit {
-            color: #9ca3af;
-            font-size: 0.875rem;
-        }
-
-        .footer-credit a {
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .footer-credit a:hover {
-            color: #60a5fa;
-        }
-
-        .heart {
-            color: #ef4444;
-            margin: 0 2px;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1001;
-            background: white;
             border: none;
-            border-radius: 8px;
-            padding: 0.75rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .mobile-menu-btn svg {
-            width: 24px;
-            height: 24px;
-            color: #6b7280;
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .mobile-menu-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            padding: 2rem;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active .mobile-menu-content {
-            transform: translateX(0);
-        }
-
-        .mobile-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .mobile-menu-logo {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .mobile-menu-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .mobile-menu-close svg {
-            width: 20px;
-            height: 20px;
-            color: #6b7280;
-        }
-
-        .mobile-nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .mobile-nav-link {
-            color: #6b7280;
-            text-decoration: none;
+            border-radius: 10px;
             font-size: 1rem;
-            font-weight: 500;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f3f4f6;
-            transition: color 0.2s ease;
-        }
-
-        .mobile-nav-link:hover {
-            color: #3b82f6;
-        }
-
-        .mobile-auth-container {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .mobile-auth-title {
-            font-size: 1.125rem;
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
-        }
-
-        .mobile-auth-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .mobile-auth-btn {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            text-align: center;
+            cursor: pointer;
             transition: all 0.2s ease;
+            margin-top: 1rem;
         }
 
-        .mobile-auth-btn.primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .mobile-auth-btn.primary:hover {
-            background: #2563eb;
-        }
-
-        .mobile-auth-btn.secondary {
-            background: white;
-            color: #6b7280;
-            border: 1px solid #d1d5db;
-        }
-
-        .mobile-auth-btn.secondary:hover {
-            color: #3b82f6;
-            border-color: #3b82f6;
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .nav-menu,
-            .nav-actions {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
             .support-hero {
-                padding: 8rem 1.5rem 4rem;
-                text-align: left;
+                padding: 6rem 1.5rem 4rem;
             }
 
             .support-hero h1 {
@@ -596,121 +235,43 @@
             }
 
             .contact-methods,
-            .contact-form-section,
-            .faq-section {
-                padding: 4rem 1.5rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .footer {
-                padding: 2rem 1.5rem 1.5rem;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                text-align: left;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .contact-card {
-                padding: 1.5rem;
-                text-align: left;
-            }
-
-            .faq-question {
-                padding: 1.25rem 1.5rem;
-                font-size: 1rem;
-            }
-
-            .faq-answer-content {
-                padding: 0 1.5rem 1.25rem;
-                font-size: 0.938rem;
+            .contact-form-section {
+                padding: 4rem 0;
             }
 
             .section-title {
                 font-size: 2rem;
             }
 
-            .section-header {
-                text-align: left;
-                margin-bottom: 3rem;
+            .contact-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1.5rem;
             }
 
-            .form-container {
-                padding: 0;
+            .form-row {
+                grid-template-columns: 1fr;
             }
 
-            .contact-form-section .section-header {
-                text-align: center;
-            }
-
-            .faq-section .section-header {
-                text-align: center;
-            }
-
-            .btn {
-                padding: 0.875rem 1.5rem;
-                font-size: 0.938rem;
-            }
-
-            .contact-info {
-                font-size: 1rem;
-                margin-bottom: 1.25rem;
-            }
-
-            .contact-icon {
-                width: 56px;
-                height: 56px;
-                margin-bottom: 1.25rem;
-            }
-
-            .contact-icon svg {
-                width: 28px;
-                height: 28px;
-            }
-
-            .mobile-menu-content {
-                width: 300px;
+            .form-card {
+                padding: 2rem 1.5rem;
             }
         }
 
         @media (max-width: 480px) {
             .support-hero {
-                padding: 6rem 1rem 3rem;
+                padding: 5rem 1rem 3rem;
             }
 
-            .contact-methods,
-            .contact-form-section,
-            .faq-section {
-                padding: 3rem 1rem;
-            }
-
-            .contact-card {
-                padding: 1.25rem;
-            }
-
-            .footer {
-                padding: 1.5rem 1rem 1rem;
-            }
-
-            .mobile-menu-content {
-                width: 280px;
+            .support-hero h1 {
+                font-size: 1.75rem;
             }
 
             .section-title {
                 font-size: 1.75rem;
             }
 
-            .support-hero h1 {
-                font-size: 1.75rem;
+            .contact-card {
+                padding: 2rem 1.5rem;
             }
         }
     </style>
@@ -720,19 +281,19 @@
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="Sogolo Logo" class="logo-icon">
+                <img src="logo.png" alt="Sogolo" class="logo-icon">
             </a>
+            
             <nav class="nav-menu">
                 <a href="index.html#about" class="nav-link">About</a>
                 <a href="index.html#how-it-works" class="nav-link">How It Works</a>
                 <a href="index.html#features" class="nav-link">Features</a>
-                <a href="index.html#FAQs" class="nav-link">FAQs</a>
                 <a href="support.html" class="nav-link">Support</a>
             </nav>
             
             <div class="nav-actions" id="desktopAuthButtons">
-                <a href="signin.html#loginForm" class="btn btn-login">Login</a>
-                <a href="signin.html#signupForm" class="btn btn-primary">Get Started</a>
+                <a href="signin.html" class="btn btn-login">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Get Started</a>
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
@@ -745,7 +306,7 @@
                 <button class="user-avatar-btn hidden" id="userAvatarBtn">
                     <span id="userInitials">U</span>
                 </button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -754,35 +315,17 @@
         </div>
     </header>
 
-
-
     <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu" onclick="closeMobileMenu(event)">
+    <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-content">
-            <div class="mobile-menu-header">
-                <div class="mobile-menu-logo">Sogolo</div>
-                <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="mobile-nav-links">
-                <a href="index.html#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
-                <a href="index.html#how-it-works" class="mobile-nav-link" onclick="closeMobileMenu()">How It Works</a>
-                <a href="index.html#features" class="mobile-nav-link" onclick="closeMobileMenu()">Features</a>
-                <a href="index.html#FAQs" class="mobile-nav-link" onclick="closeMobileMenu()">FAQs</a>
-                <a href="support.html" class="mobile-nav-link">Support</a>
-            </div>
-
             <div class="mobile-auth-container">
-                <div class="mobile-auth-title">Get Started</div>
-                <div class="mobile-auth-buttons">
-                    <a href="signin.html" class="mobile-auth-btn primary">Sign Up</a>
-                    <a href="signin.html" class="mobile-auth-btn secondary">Login</a>
-                </div>
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html#about" class="mobile-nav-link">About</a>
+                <a href="index.html#how-it-works" class="mobile-nav-link">How It Works</a>
+                <a href="index.html#features" class="mobile-nav-link">Features</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
             </div>
         </div>
     </div>
@@ -799,23 +342,48 @@
     <section class="contact-methods">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Get in Touch</h2>
-                <p class="section-subtitle">Choose the best way to reach our support team</p>
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Choose the best way to reach us</p>
             </div>
 
             <div class="contact-grid">
+                <!-- Email Support -->
                 <div class="contact-card">
                     <div class="contact-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
                     </div>
                     <h3>Email Support</h3>
-                    <p>Send us a detailed message about your issue</p>
+                    <p>Send us an email and we'll respond within 24 hours</p>
                     <div class="contact-info">support@sogolo.com</div>
-                    <a href="mailto:support@sogolo.com" class="btn btn-primary">Send Email</a>
+                    <a href="mailto:support@sogolo.com" class="contact-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"></path>
+                        </svg>
+                        Send Email
+                    </a>
                 </div>
 
+                <!-- WhatsApp -->
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p>Chat with us directly for quick assistance</p>
+                    <div class="contact-info">+265 xxx xxx xxx</div>
+                    <a href="https://wa.me/265xxxxxxxxx" class="contact-btn" target="_blank">
+                        <svg fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M3.5 12a8.5 8.5 0 1117 0 8.5 8.5 0 01-17 0z"/>
+                        </svg>
+                        Chat Now
+                    </a>
+                </div>
+
+                <!-- Phone -->
                 <div class="contact-card">
                     <div class="contact-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -823,22 +391,14 @@
                         </svg>
                     </div>
                     <h3>Phone Support</h3>
-                    <p>Speak directly with our support team</p>
-                    <div class="contact-info">+265 1 234 567</div>
-                    <a href="tel:+2651234567" class="btn btn-primary">Call Now</a>
-                </div>
-
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <p>Call us during business hours (Mon-Fri, 9am-5pm)</p>
+                    <div class="contact-info">+265 xxx xxx xxx</div>
+                    <a href="tel:+265xxxxxxxxx" class="contact-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
-                    </div>
-                    <h3>Visit Our Office</h3>
-                    <p>Come see us in person for face-to-face support</p>
-                    <div class="contact-info">Blantyre, Malawi</div>
-                    <a href="https://maps.google.com/?q=Blantyre,Malawi" target="_blank" class="btn btn-primary">Get Directions</a>
+                        Call Us
+                    </a>
                 </div>
             </div>
         </div>
@@ -849,251 +409,83 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Send Us a Message</h2>
-                <p class="section-subtitle">Fill out the form below and we'll get back to you within 24 hours</p>
+                <p class="section-subtitle">Fill out the form below and we'll get back to you soon</p>
             </div>
 
             <div class="form-container">
-                <form id="contactForm">
+                <form class="form-card" id="contactForm">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="firstName">First Name</label>
-                            <input type="text" id="firstName" class="form-input" required>
+                            <input type="text" id="firstName" class="form-input" placeholder="John" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="lastName">Last Name</label>
-                            <input type="text" id="lastName" class="form-input" required>
+                            <input type="text" id="lastName" class="form-input" placeholder="Doe" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="email">Email Address</label>
-                            <input type="email" id="email" class="form-input" required>
+                            <input type="email" id="email" class="form-input" placeholder="john@example.com" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="phone">Phone Number</label>
-                            <input type="tel" id="phone" class="form-input">
+                            <input type="tel" id="phone" class="form-input" placeholder="+265 xxx xxx xxx">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="subject">Subject</label>
                         <select id="subject" class="form-select" required>
-                            <option value="">Select a topic</option>
+                            <option value="">Select a topic...</option>
+                            <option value="general">General Inquiry</option>
                             <option value="transaction">Transaction Issue</option>
-                            <option value="verification">Product Verification</option>
-                            <option value="payment">Payment Problem</option>
-                            <option value="account">Account Support</option>
-                            <option value="technical">Technical Issue</option>
+                            <option value="kyc">KYC Verification</option>
+                            <option value="payment">Payment Question</option>
+                            <option value="technical">Technical Support</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="message">Message</label>
-                        <textarea id="message" class="form-textarea" placeholder="Please describe your issue in detail..." required></textarea>
+                        <textarea id="message" class="form-textarea" placeholder="Tell us how we can help you..." required></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Send Message</button>
+                    <button type="submit" class="submit-btn">
+                        Send Message
+                    </button>
                 </form>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Frequently Asked Questions</h2>
-                <p class="section-subtitle">Quick answers to common questions</p>
-            </div>
-
-            <div class="faq-container">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How do I report a problem with my transaction?</span>
-                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            You can report transaction issues through our live chat, email support, or by calling our support line. Have your transaction ID ready for faster assistance.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What are your support hours?</span>
-                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            Our live chat is available 24/7. Phone support is available Monday to Friday, 8 AM to 6 PM (CAT). Email support responses are typically within 24 hours.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How can I escalate my support ticket?</span>
-                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            If you're not satisfied with the initial response, you can request to speak with a supervisor or send an email to escalations@sogolo.com with your ticket number.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Do you offer support in local languages?</span>
-                        <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            Yes! Our support team can assist you in English and Chichewa. Simply let us know your preferred language when contacting support.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Elfsight AI Chatbot | Sogolo AI Chatbot -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
-<div class="elfsight-app-e41befc6-25d0-4ad4-bd42-34b291485fe4" data-elfsight-app-lazy></div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <img src="logo2.png" alt="sogolo logo" height="50px">
-                <p>Making social media trading safer and more reliable for everyone in Malawi. Secure transactions,
-                    verified products, and complete buyer protection.</p>
-            </div>
-
-            <div class="footer-section">
-                <h3>Platform</h3>
-                <div class="footer-links">
-                    <a href="index.html#about">About Us</a>
-                    <a href="index.html#how-it-works">How It Works</a>
-                    <a href="index.html#features">Features</a>
-                    <a href="pricing.html">Pricing</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Support</h3>
-                <div class="footer-links">
-                    <a href="index.html#ai">Help Center</a>
-                    <a href="support.html">Contact Support</a>
-                    <a href="index.html#FAQs">FAQ</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Legal</h3>
-                <div class="footer-links">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#security">Security</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p class="footer-credit">
-                &copy; Sogolo.com <span id="currentYear">2025</span> All rights reserved.
-            </p>
-            <p class="footer-credit" style="margin-top: 0.5rem;">
-                Crafted with <span class="heart">♥</span> by <a href="https://nyasacreatives.netlify.app" target="_blank">Nyasa
-                    Creatives</a>
-            </p>
-        </div>
-    </footer>
-
     <script>
-        // FAQ Accordion functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const faqItems = document.querySelectorAll('.faq-item');
-            
-            faqItems.forEach(item => {
-                const question = item.querySelector('.faq-question');
-                
-                question.addEventListener('click', () => {
-                    const isActive = item.classList.contains('active');
-                    
-                    // Close all other FAQ items
-                    faqItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.classList.remove('active');
-                        }
-                    });
-                    
-                    // Toggle current item
-                    if (isActive) {
-                        item.classList.remove('active');
-                    } else {
-                        item.classList.add('active');
-                    }
-                });
-            });
-        });
-
-        // Contact form submission
+        // Contact Form Submission
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Thank you for your message! We\'ll get back to you within 24 hours.');
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            // Here you would send the data to your backend
+            console.log('Form submitted:', formData);
+            
+            alert('Thank you for contacting us! We\'ll get back to you within 24 hours.');
+            this.reset();
         });
-
-        // Mobile menu functions
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('active');
-        }
-
-        function closeMobileMenu(event) {
-            const mobileMenu = document.getElementById('mobileMenu');
-            if (event && event.target === mobileMenu) {
-                mobileMenu.classList.remove('active');
-            } else if (!event) {
-                mobileMenu.classList.remove('active');
-            }
-        }
-
-        // Update copyright year automatically
-        function updateCopyrightYear() {
-            const currentYear = new Date().getFullYear();
-            const yearElement = document.getElementById('currentYear');
-            if (yearElement) {
-                yearElement.textContent = currentYear;
-            }
-        }
-
-        // Header scroll effect
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // Initialize copyright year on page load
-        document.addEventListener('DOMContentLoaded', updateCopyrightYear);
     </script>
+
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
             <div class="avatar-dropdown-info">
@@ -1107,5 +499,6 @@
     </div>
     
     <script type="module" src="./js/headerAuth.js"></script>
+
 </body>
 </html>

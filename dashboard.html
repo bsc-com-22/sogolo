@@ -5,356 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #ffffff;
-        }
-
-        /* Dashboard Layout */
-        .dashboard-container {
-            margin-top: 100px;
-            padding-bottom: 4rem;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 2rem;
-        }
-
-        /* Profile Card */
-        .profile-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .profile-avatar-large {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0 auto 1rem;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .profile-email {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-
-        .profile-role {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: #f3f4f6;
-            color: #6b7280;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        /* KYC Status */
-        .kyc-status-container {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .kyc-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.813rem;
-            font-weight: 500;
-        }
-
-        .kyc-pending {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
-        }
-
-        .kyc-approved {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
-        }
-
-        .kyc-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-
-        /* Navigation */
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: #6b7280;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-link:hover {
-            background: #f9fafb;
-            color: #1f2937;
-        }
-
-        .sidebar-link.active {
-            background: #eff6ff;
-            color: #3b82f6;
-        }
-
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Main Content */
-        .dashboard-main {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .stat-icon svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .bg-blue-100 { background: #dbeafe; color: #1e40af; }
-        .bg-green-100 { background: #d1fae5; color: #065f46; }
-        .bg-yellow-100 { background: #fef3c7; color: #92400e; }
-
-        .stat-info h3 {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-info p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-        }
-
-        .section-header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-header-flex h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            color: #1f2937;
-        }
-
-        .btn-full {
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* Transaction List */
-        .transaction-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #f3f4f6;
-            transition: all 0.2s ease;
-        }
-
-        .transaction-item:hover {
-            background: #f3f4f6;
-            border-color: #e5e7eb;
-        }
-
-        .transaction-info h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-
-        .transaction-info p {
-            font-size: 0.75rem;
-            color: #6b7280;
-        }
-
-        .transaction-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-green { background: #d1fae5; color: #065f46; }
-        .badge-blue { background: #dbeafe; color: #1e40af; }
-        .badge-yellow { background: #fef3c7; color: #92400e; }
-        .badge-gray { background: #f3f4f6; color: #6b7280; }
-
-        .text-muted {
-            color: #6b7280;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .py-4 {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-card {
-                position: static;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-header-flex {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            /* Mobile button fixes */
-            .btn-secondary {
-                background: #3b82f6 !important;
-                color: white !important;
-                border: 1px solid #3b82f6 !important;
-            }
-
-            .btn-secondary:hover {
-                background: #2563eb !important;
-                color: white !important;
-            }
-
-            .transaction-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .transaction-meta {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/dashboard-redesign.css">
 </head>
 <body>
     <!-- Header -->
@@ -367,7 +18,7 @@
             <nav class="nav-menu">
                 <a href="index.html" class="nav-link">Home</a>
                 <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="create-transaction.html" class="nav-link">Create Transaction</a>
+                <a href="create-transaction.html" class="nav-link">New Transaction</a>
                 <a href="support.html" class="nav-link">Support</a>
             </nav>
             
@@ -398,17 +49,13 @@
     <div class="container dashboard-container">
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
-            <!-- Sidebar / Profile Summary -->
+            <!-- Sidebar -->
             <aside class="dashboard-sidebar">
-                <div class="card profile-card">
-                    <div class="profile-header">
-                        <div id="userAvatar" class="profile-avatar-large">U</div>
-                        <h2 id="userEmail" class="profile-email">Loading...</h2>
-                        <p class="profile-role">User</p>
+                <div class="card">
+                    <div id="kycStatusContainer" style="margin-bottom: 1.5rem;">
+                        <!-- KYC Status injected here -->
                     </div>
-                    <div id="kycStatusBadge" class="kyc-status-container">
-                        <!-- Injected via JS -->
-                    </div>
+                    
                     <nav class="sidebar-nav">
                         <a href="#" class="sidebar-link active">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -432,10 +79,16 @@
 
             <!-- Main Content -->
             <main class="dashboard-main">
-                <!-- Stats Row -->
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1>Welcome back!</h1>
+                    <p>Manage your secure transactions</p>
+                </div>
+
+                <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon bg-blue-100 text-blue-600">
+                        <div class="stat-icon bg-blue-100">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
                         <div class="stat-info">
@@ -444,7 +97,7 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon bg-green-100 text-green-600">
+                        <div class="stat-icon bg-green-100">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="stat-info">
@@ -453,7 +106,7 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon bg-yellow-100 text-yellow-600">
+                        <div class="stat-icon bg-yellow-100">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="stat-info">
@@ -463,18 +116,18 @@
                     </div>
                 </div>
 
-                <!-- Recent Transactions -->
+                <!-- Transactions List -->
                 <div class="card">
                     <div class="section-header-flex">
-                        <h3>Recent Transactions</h3>
+                        <h3>Your Transactions</h3>
                         <a href="create-transaction.html" class="btn btn-primary btn-sm">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                             New Transaction
                         </a>
                     </div>
 
-                    <div id="transactionList" class="transaction-list">
-                        <p class="text-muted text-center py-4">Loading transactions...</p>
+                    <div id="transactionList" class="list">
+                        <p class="text-center text-muted py-4">Loading transactions...</p>
                     </div>
                 </div>
             </main>
@@ -497,9 +150,8 @@
     </div>
 
     <script type="module">
-        import { logout, getCurrentUser, initAuthStateListener } from './js/auth.js';
+        import { getCurrentUser, initAuthStateListener } from './js/auth.js';
         import { supabase } from './js/supabaseClient.js';
-        import './js/headerAuth.js';
 
         initAuthStateListener();
 
@@ -507,59 +159,25 @@
             const user = await getCurrentUser();
             if (!user) return; // Auth listener will redirect
 
-            // 1. User Info
-            document.getElementById('userEmail').textContent = user.email;
-            if (user.profile?.full_name) {
-                document.querySelector('.profile-role').textContent = user.profile.full_name;
-            }
-            
-            // Avatar
-            const avatarEl = document.getElementById('userAvatar');
-            if (user.profile?.selfie_url) {
-                const { data } = supabase.storage.from('kyc-documents').getPublicUrl(user.profile.selfie_url);
-                avatarEl.innerHTML = `<img src="${data.publicUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-                avatarEl.style.background = 'transparent';
-                avatarEl.textContent = '';
-            } else {
-                const initials = user.profile?.full_name 
-                    ? user.profile.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-                    : user.email.substring(0, 2).toUpperCase();
-                avatarEl.textContent = initials;
-            }
-
-            // 2. KYC Status
+            // KYC Status in Sidebar
             const kycStatus = user.profile?.kyc_status || 'pending';
-            const kycBadge = document.getElementById('kycStatusBadge');
+            const kycContainer = document.getElementById('kycStatusContainer');
             
             if (kycStatus === 'approved') {
-                kycBadge.innerHTML = `<div class="kyc-status success"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Verified</div>`;
-            } else if (kycStatus === 'under_review') {
-                kycBadge.innerHTML = `<div class="kyc-status warning">Under Review</div>`;
-            } else if (kycStatus === 'rejected') {
-                kycBadge.innerHTML = `<div class="kyc-status danger">Rejected</div><a href="kyc.html" class="btn btn-sm btn-secondary mt-2">Retry</a>`;
+                kycContainer.innerHTML = `
+                    <div style="padding: 0.75rem; background: #d1fae5; border-radius: 8px; text-align: center; color: #065f46; font-size: 0.875rem; font-weight: 500;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;display:inline-block;margin-right:4px;vertical-align:middle;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        KYC Verified
+                    </div>
+                `;
             } else {
-                kycBadge.innerHTML = `<a href="kyc.html" class="btn btn-primary btn-full">Verify Identity</a>`;
+                kycContainer.innerHTML = `<a href="kyc.html" class="btn btn-primary" style="width: 100%; justify-content: center;">Complete KYC Verification</a>`;
             }
 
-            // 3. Load Transactions
+            // Load Transactions
             loadTransactions(user.id);
-
-            // 4. Admin Link in Mobile Menu
-            if (user.profile?.role === 'admin') {
-                const mobileNavLinks = document.querySelector('.mobile-nav-links');
-                const adminLink = document.createElement('a');
-                adminLink.href = 'admin-dashboard.html';
-                adminLink.className = 'mobile-nav-link';
-                adminLink.textContent = 'Admin Dashboard';
-                
-                // Insert before the divider
-                const divider = mobileNavLinks.querySelector('.mobile-nav-divider');
-                if (divider) {
-                    mobileNavLinks.insertBefore(adminLink, divider);
-                } else {
-                    mobileNavLinks.appendChild(adminLink);
-                }
-            }
         }
 
         async function loadTransactions(userId) {
@@ -572,7 +190,7 @@
             const listContainer = document.getElementById('transactionList');
             
             if (error) {
-                listContainer.innerHTML = `<div class="alert alert-error">Error loading transactions: ${error.message}</div>`;
+                listContainer.innerHTML = `<div class="alert alert-danger">Error loading transactions: ${error.message}</div>`;
                 return;
             }
 
@@ -588,11 +206,12 @@
             if (!transactions || transactions.length === 0) {
                 listContainer.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </div>
-                        <p>No transactions yet.</p>
-                        <a href="create-transaction.html" class="btn btn-primary mt-4">Start your first transaction</a>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                        <h3>No transactions yet</h3>
+                        <p>Start your first secure transaction with Sogolo</p>
+                        <a href="create-transaction.html" class="btn btn-primary">Create Transaction</a>
                     </div>
                 `;
                 return;
@@ -609,86 +228,31 @@
                 if (t.status === 'pending' || t.status === 'payment_pending') statusClass = 'badge-yellow';
 
                 return `
-                    <div class="transaction-item">
-                        <div class="transaction-icon ${isBuyer ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBuyer ? 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' : 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg>
+                    <div class="list-item">
+                        <div class="list-icon ${isBuyer ? 'bg-blue-100' : 'bg-green-100'}">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBuyer ? 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' : 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
+                            </svg>
                         </div>
-                        <div class="transaction-details">
+                        <div class="list-info">
                             <h4>${t.title || t.product_name || 'Transaction'}</h4>
-                            <span class="transaction-meta">${role} • ${new Date(t.created_at).toLocaleDateString()}</span>
+                            <p>${role} • ${new Date(t.created_at).toLocaleDateString()}</p>
                         </div>
-                        <div class="transaction-status">
+                        <div class="list-meta">
                             <span class="badge ${statusClass}">${t.status.replace(/_/g, ' ').toUpperCase()}</span>
-                            <span class="transaction-amount">MWK ${t.amount?.toLocaleString() || '0'}</span>
+                            <span class="list-amount">MWK ${t.amount?.toLocaleString() || '0'}</span>
+                            <a href="transaction-status.html?id=${t.id}" class="btn btn-sm btn-secondary">View</a>
                         </div>
-                        <a href="transaction-status.html?id=${t.id}" class="btn btn-sm btn-secondary">View</a>
                     </div>
                 `;
             }).join('');
         }
 
         loadDashboard();
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard(); // Renamed from initDashboard to loadDashboard
-
-            // Mobile Sidebar Toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-            const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
-            const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
-            
-            function toggleMenu() {
-                mobileMenuOverlay.classList.toggle('active');
-                mobileMenuDrawer.classList.toggle('active');
-                document.body.style.overflow = mobileMenuDrawer.classList.contains('active') ? 'hidden' : '';
-            }
-
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleMenu();
-                });
-            }
-
-            if (mobileMenuCloseBtn) {
-                mobileMenuCloseBtn.addEventListener('click', toggleMenu);
-            }
-
-            if (mobileMenuOverlay) {
-                mobileMenuOverlay.addEventListener('click', toggleMenu);
-            }
-        });
     </script>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
-
-    <!-- Mobile Menu Drawer -->
-    <div class="mobile-menu-drawer" id="mobileMenuDrawer">
-        <div class="mobile-menu-header">
-            <div class="mobile-menu-logo">
-                <div class="mobile-menu-logo-icon">S</div>
-                Sogolo
-            </div>
-            <button class="mobile-menu-close" id="mobileMenuCloseBtn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-
-        <div class="mobile-nav-links">
-            <a href="#" class="mobile-nav-link">Overview</a>
-            <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
-            <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
-            <a href="support.html" class="mobile-nav-link">Support</a>
-            <div class="mobile-nav-divider"></div>
-            <button onclick="logout()" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Logout</button>
-        </div>
-    </div>
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
             <div class="avatar-dropdown-info">
@@ -697,21 +261,11 @@
             </div>
         </div>
         <div class="avatar-dropdown-menu">
-            <a href="#" class="avatar-dropdown-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                Manage account
-            </a>
-            <div class="avatar-dropdown-divider"></div>
-            <button class="avatar-dropdown-item" onclick="logout()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                Sign out
-            </button>
+            <!-- Populated by headerAuth.js -->
         </div>
     </div>
+    
+    <script type="module" src="./js/headerAuth.js"></script>
+
 </body>
 </html>

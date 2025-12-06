@@ -420,12 +420,6 @@
             <!-- Sidebar -->
             <aside class="dashboard-sidebar">
                 <div class="card profile-card">
-                    <div class="profile-header">
-                        <div id="adminAvatar" class="profile-avatar-large" style="background: var(--primary-dark);">A</div>
-                        <h2 id="adminEmail" class="profile-email">Loading...</h2>
-                        <p class="profile-role" style="color: var(--primary); font-weight: 600;">Administrator</p>
-                    </div>
-                    
                     <nav class="sidebar-nav">
                         <button onclick="switchView('overview')" class="sidebar-link active" id="nav-overview">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -516,30 +510,32 @@
         </div>
     </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
-
-    <!-- Mobile Menu Drawer -->
-    <div class="mobile-menu-drawer" id="mobileMenuDrawer">
-        <div class="mobile-menu-header">
-            <div class="mobile-menu-logo">
-                <div class="mobile-menu-logo-icon">S</div>
-                Sogolo Admin
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content" id="mobileMenuContent">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    Sogolo Admin
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            <button class="mobile-menu-close" id="mobileMenuCloseBtn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
 
-        <div class="mobile-nav-links">
-            <button onclick="switchView('overview')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Overview</button>
-            <button onclick="switchView('kyc')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">KYC Management</button>
-            <button onclick="switchView('transactions')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Transactions</button>
-            <button onclick="switchView('users')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Users</button>
-            <div class="mobile-nav-divider"></div>
-            <button onclick="logout()" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Logout</button>
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+
+            <div class="mobile-nav-links">
+                <div class="mobile-nav-divider"></div>
+                <button onclick="switchView('overview')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Overview</button>
+                <button onclick="switchView('kyc')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">KYC Management</button>
+                <button onclick="switchView('transactions')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Transactions</button>
+                <button onclick="switchView('users')" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Users</button>
+            </div>
         </div>
     </div>
 
@@ -578,18 +574,27 @@
                 usersSection.classList.remove('hidden');
                 loadUsers();
             }
+            
+            // Close mobile menu
+            document.getElementById('mobileMenu').classList.remove('active');
         };
 
-        window.toggleMobileMenu = () => {
-             const menu = document.getElementById('mobileMenu');
-             if(menu) menu.classList.toggle('active');
-        };
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
 
-        // Mobile Menu Event Listeners
-        document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleMobileMenu);
-        document.getElementById('mobileMenu')?.addEventListener('click', (e) => {
-            if (e.target.id === 'mobileMenu') toggleMobileMenu();
-        });
+        function toggleMenu() {
+            mobileMenu.classList.toggle('active');
+        }
+
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
+        if (mobileMenuCloseBtn) mobileMenuCloseBtn.addEventListener('click', toggleMenu);
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu) toggleMenu();
+            });
+        }
 
         async function init() {
             const user = await getCurrentUser();
@@ -597,35 +602,6 @@
                 alert('Access Denied');
                 window.location.href = 'index.html';
                 return;
-            }
-
-            document.getElementById('adminEmail').textContent = user.email;
-            
-            // Mobile Sidebar Toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-            const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
-            const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
-            
-            function toggleMenu() {
-                mobileMenuOverlay.classList.toggle('active');
-                mobileMenuDrawer.classList.toggle('active');
-                document.body.style.overflow = mobileMenuDrawer.classList.contains('active') ? 'hidden' : '';
-            }
-
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleMenu();
-                });
-            }
-
-            if (mobileMenuCloseBtn) {
-                mobileMenuCloseBtn.addEventListener('click', toggleMenu);
-            }
-
-            if (mobileMenuOverlay) {
-                mobileMenuOverlay.addEventListener('click', toggleMenu);
             }
 
             // Initial Load
@@ -835,7 +811,7 @@
         init();
     </script>
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
             <div class="avatar-dropdown-avatar" id="dropdownAvatar">A</div>
             <div class="avatar-dropdown-info">
@@ -844,21 +820,11 @@
             </div>
         </div>
         <div class="avatar-dropdown-menu">
-            <a href="#" class="avatar-dropdown-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                Manage account
-            </a>
-            <div class="avatar-dropdown-divider"></div>
-            <button class="avatar-dropdown-item" onclick="logout()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                Sign out
-            </button>
+            <!-- Populated by headerAuth.js -->
         </div>
     </div>
+    
+    <script type="module" src="./js/headerAuth.js"></script>
+
 </body>
 </html>

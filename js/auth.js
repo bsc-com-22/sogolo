@@ -78,17 +78,32 @@ export async function signUp(email, password, fullName) {
 
 // Get Current User with Profile
 export async function getCurrentUser() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+    try {
+        const { data: { user }, error } = await supabase.auth.getUser()
 
-    // Fetch profile data
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
+        // Silently handle expected errors (403 when not authenticated)
+        if (error) {
+            // Only log unexpected errors (not 403/401)
+            if (error.status !== 403 && error.status !== 401) {
+                console.error('Unexpected error getting user:', error);
+            }
+            return null;
+        }
 
-    return { ...user, profile }
+        if (!user) return null
+
+        // Fetch profile data
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        return { ...user, profile }
+    } catch (error) {
+        // Silently handle network errors or session issues on auth pages
+        return null;
+    }
 }
 
 // Upload KYC Document

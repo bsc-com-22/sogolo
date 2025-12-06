@@ -183,12 +183,37 @@
 
         init();
     </script>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content" id="mobileMenuContent">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    Sogolo Admin
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="admin-dashboard.html" class="mobile-nav-link">Admin Dashboard</a>
+                <a href="admin-kyc-review.html" class="mobile-nav-link active">KYC Review</a>
+                <a href="admin-transaction-review.html" class="mobile-nav-link">Transaction Review</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown">
+    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
         <div class="avatar-dropdown-header">
-            <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
+            <div class="avatar-dropdown-avatar" id="dropdownAvatar">A</div>
             <div class="avatar-dropdown-info">
-                <h4 id="dropdownUserName">User</h4>
+                <h4 id="dropdownUserName">Admin</h4>
                 <p id="dropdownUserEmail">Loading...</p>
             </div>
         </div>

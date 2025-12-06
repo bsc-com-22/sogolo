@@ -101,48 +101,27 @@ function updateHeaderForUser(user) {
         if (logoutBtn) logoutBtn.addEventListener('click', logout);
     }
 
-    // 4. Update Mobile Menu Auth Container
+    // 4. Update Mobile Menu Auth Container (Show Profile instead of buttons)
     const mobileAuthContainer = document.querySelector('.mobile-auth-container');
     if (mobileAuthContainer) {
         mobileAuthContainer.innerHTML = `
-            <div style="padding: 1.25rem 1.5rem; background: #f9fafb; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; gap: 0.875rem;">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; overflow: hidden; flex-shrink: 0;">
-                    ${avatarUrl ? `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">` : initials}
+            <div class="mobile-user-profile">
+                <div class="mobile-user-avatar">
+                    ${avatarUrl ? `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` : initials}
                 </div>
-                <div>
-                    <h3 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0;">${user.profile?.full_name || 'User'}</h3>
-                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">${user.email}</p>
+                <div class="mobile-user-info">
+                    <h4>${user.profile?.full_name || 'User'}</h4>
+                    <p>${user.email}</p>
                 </div>
             </div>
-            <div class="mobile-nav-links">
-                <a href="dashboard.html" class="mobile-nav-link">
-                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    Dashboard
-                </a>
-                ${isAdmin ? `
-                <a href="admin-dashboard.html" class="mobile-nav-link">
-                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                    </svg>
-                    Admin Dashboard
-                </a>
-                ` : ''}
-                <div class="mobile-nav-divider"></div>
-                <button id="mobileMenuLogoutBtn" class="mobile-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; color: #ef4444;">
-                    <svg class="mobile-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #ef4444;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                    Logout
-                </button>
-            </div>
+            <button id="mobileLogoutBtn" class="mobile-logout-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Sign Out
+            </button>
         `;
 
-        const mobileMenuLogoutBtn = document.getElementById('mobileMenuLogoutBtn');
-        if (mobileMenuLogoutBtn) {
-            mobileMenuLogoutBtn.addEventListener('click', () => logout());
-        }
+        const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
     }
 }
 

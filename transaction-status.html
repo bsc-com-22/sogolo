@@ -27,9 +27,22 @@
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
-                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu" data-target="avatarDropdown">
                     <span id="desktopUserInitials">U</span>
                 </button>
+            </div>
+
+            <div class="avatar-dropdown" id="avatarDropdown">
+                <div class="avatar-dropdown-header">
+                    <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
+                    <div class="avatar-dropdown-info">
+                        <h4 id="dropdownUserName">User</h4>
+                        <p id="dropdownUserEmail">Loading...</p>
+                    </div>
+                </div>
+                <div class="avatar-dropdown-menu">
+                    <!-- Populated by headerAuth.js -->
+                </div>
             </div>
 
             <div class="mobile-controls">
@@ -45,28 +58,30 @@
         </div>
     </header>
 
-    <div class="container" style="margin-top: 100px; padding-bottom: 4rem;">
-        <div class="flex flex-col gap-4">
+    <div class="container dashboard-container">
+        <div class="dashboard-main" style="max-width: 800px; margin: 0 auto;">
             <!-- Header Card -->
             <div class="card">
-                <h1 id="transTitle" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Loading...</h1>
-                <p id="transDesc" style="color: var(--text-muted);">Loading details...</p>
-                <div class="mt-4">
-                    <span id="statusBadge" class="badge badge-gray">Loading...</span>
+                <div class="section-header-flex">
+                    <div>
+                        <h1 id="transTitle" style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Loading...</h1>
+                        <p id="transDesc" class="text-muted">Loading details...</p>
+                    </div>
+                    <span id="statusBadge" class="badge badge-gray" style="font-size: 0.875rem;">Loading...</span>
                 </div>
             </div>
 
             <!-- Action Card (Dynamic) -->
-            <div id="actionCard" class="card hidden" style="border-color: var(--primary); background: #eff6ff;">
-                <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Action Required</h3>
-                <p id="actionText" style="margin-bottom: 1rem;"></p>
+            <div id="actionCard" class="card hidden" style="border-color: #3b82f6; background: #eff6ff;">
+                <h3 style="font-weight: 600; margin-bottom: 0.5rem; color: #1e40af;">Action Required</h3>
+                <p id="actionText" style="margin-bottom: 1.5rem; color: #1f2937;"></p>
                 <a id="actionBtn" href="#" class="btn btn-primary">Take Action</a>
                 <button id="actionBtnDynamic" class="btn btn-primary hidden"></button>
             </div>
 
             <!-- Timeline -->
             <div class="card">
-                <h3 style="font-weight: 600; margin-bottom: 1.5rem;">Transaction Progress</h3>
+                <h3 style="font-weight: 600; margin-bottom: 1.5rem; color: #1f2937;">Transaction Progress</h3>
                 <div class="timeline">
                     <div class="timeline-item" id="step_created">
                         <div class="timeline-title">Transaction Created</div>
@@ -109,6 +124,32 @@
         </div>
     </div>
 
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    <span>Sogolo</span>
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <!-- Populated by headerAuth.js -->
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">Create Transaction</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { getTransaction, subscribeToTransaction, markProductDelivered, setDeliveryDetails } from './js/transaction.js';
         import { getCurrentUser, initAuthStateListener } from './js/auth.js';
@@ -142,7 +183,16 @@
             // 1. Header
             document.getElementById('transTitle').textContent = t.title;
             document.getElementById('transDesc').textContent = t.description || 'No description.';
-            document.getElementById('statusBadge').textContent = t.status.replace('_', ' ').toUpperCase();
+            
+            let statusClass = 'badge-gray';
+            if (t.status === 'funds_released' || t.status === 'completed') statusClass = 'badge-green';
+            if (t.status === 'payment_verified' || t.status === 'in_transit') statusClass = 'badge-blue';
+            if (t.status === 'rejected' || t.status === 'disputed') statusClass = 'badge-red';
+            if (t.status === 'pending' || t.status === 'payment_pending') statusClass = 'badge-yellow';
+
+            const badge = document.getElementById('statusBadge');
+            badge.className = `badge ${statusClass}`;
+            badge.textContent = t.status.replace(/_/g, ' ').toUpperCase();
 
             // 2. Timeline
             const steps = [
@@ -224,7 +274,7 @@
                         <div id="deliveryForm" class="mt-4">
                             <div class="mb-3">
                                 <label class="block text-sm font-medium text-gray-700">Delivery Option</label>
-                                <select id="deliveryMethod" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                <select id="deliveryMethod" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; width: 100%;">
                                     <option value="">Select Option...</option>
                                     <option value="pickup">Office Walk-In Pickup</option>
                                     <option value="courier_cts">CTS Courier</option>
@@ -234,7 +284,7 @@
                             
                             <div id="branchField" class="mb-3 hidden">
                                 <label class="block text-sm font-medium text-gray-700">Select Branch</label>
-                                <select id="deliveryBranch" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                <select id="deliveryBranch" class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; width: 100%;">
                                     <!-- Populated by JS -->
                                 </select>
                             </div>
@@ -337,45 +387,7 @@
         init();
     </script>
     
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-content" id="mobileMenuContent">
-            <div class="mobile-menu-header">
-                <div class="mobile-menu-logo">
-                    <div class="mobile-menu-logo-icon">S</div>
-                    Sogolo
-                </div>
-                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="mobile-auth-container">
-                <!-- Populated by headerAuth.js -->
-            </div>
-            <div class="mobile-nav-links">
-                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
-                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
-                <a href="kyc.html" class="mobile-nav-link">KYC Verification</a>
-                <a href="support.html" class="mobile-nav-link">Support</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
-        <div class="avatar-dropdown-header">
-            <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
-            <div class="avatar-dropdown-info">
-                <h4 id="dropdownUserName">User</h4>
-                <p id="dropdownUserEmail">Loading...</p>
-            </div>
-        </div>
-        <div class="avatar-dropdown-menu">
-            <!-- Populated by headerAuth.js -->
-        </div>
-    </div>
+    <script type="module" src="./js/mobile-menu.js"></script>
     
     <script type="module" src="./js/headerAuth.js"></script>
 </body>

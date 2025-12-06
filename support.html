@@ -297,7 +297,7 @@
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
-                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu" data-target="avatarDropdown">
                     <span id="desktopUserInitials">U</span>
                 </button>
             </div>
@@ -318,6 +318,17 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    <span>Sogolo</span>
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
             <div class="mobile-auth-container">
                 <!-- Populated by headerAuth.js -->
             </div>
@@ -499,6 +510,7 @@
     </div>
     
     <script type="module" src="./js/headerAuth.js"></script>
+    <script type="module" src="./js/mobile-menu.js"></script>
 
 </body>
 </html>

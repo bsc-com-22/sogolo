@@ -6,374 +6,6 @@
     <title>Admin Dashboard - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #ffffff;
-        }
-
-        /* Dashboard Layout */
-        .dashboard-container {
-            margin-top: 100px;
-            padding-bottom: 4rem;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 2rem;
-        }
-
-        /* Profile Card */
-        .profile-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
-
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .profile-avatar-large {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0 auto 1rem;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-        }
-
-        .profile-email {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-
-        .profile-role {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: #fef2f2;
-            color: #dc2626;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Navigation */
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: #6b7280;
-            text-decoration: none;
-            border: none;
-            background: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-        }
-
-        .sidebar-link:hover {
-            background: #f9fafb;
-            color: #1f2937;
-        }
-
-        .sidebar-link.active {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Main Content */
-        .dashboard-main {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .stat-icon svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .bg-blue-100 { background: #dbeafe; color: #1e40af; }
-        .bg-green-100 { background: #d1fae5; color: #065f46; }
-        .bg-yellow-100 { background: #fef3c7; color: #92400e; }
-        .bg-red-100 { background: #fee2e2; color: #991b1b; }
-        .bg-purple-100 { background: #f3e8ff; color: #7c3aed; }
-
-        .stat-info h3 {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-info p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
-        }
-
-        .section-header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-header-flex h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        /* Lists */
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #f3f4f6;
-            transition: all 0.2s ease;
-        }
-
-        .list-item:hover {
-            background: #f3f4f6;
-            border-color: #e5e7eb;
-        }
-
-        .list-info h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.25rem;
-        }
-
-        .list-info p {
-            font-size: 0.75rem;
-            color: #6b7280;
-        }
-
-        .list-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        /* Buttons */
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            color: #1f2937;
-        }
-
-        .btn-action {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-review {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-review:hover {
-            background: #2563eb;
-        }
-
-        .btn-approve {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-approve:hover {
-            background: #059669;
-        }
-
-        .btn-reject {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background: #dc2626;
-        }
-
-        /* Badges */
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-green { background: #d1fae5; color: #065f46; }
-        .badge-blue { background: #dbeafe; color: #1e40af; }
-        .badge-yellow { background: #fef3c7; color: #92400e; }
-        .badge-red { background: #fee2e2; color: #991b1b; }
-        .badge-gray { background: #f3f4f6; color: #6b7280; }
-
-        .text-muted {
-            color: #6b7280;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .py-4 {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-
-        /* View Sections */
-        .view-section {
-            display: none;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-card {
-                position: static;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-header-flex {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            /* Mobile button fixes */
-            .btn-secondary {
-                background: #dc2626 !important;
-                color: white !important;
-                border: 1px solid #dc2626 !important;
-            }
-
-            .btn-secondary:hover {
-                background: #b91c1c !important;
-                color: white !important;
-            }
-
-            .list-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .list-meta {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Header -->
@@ -396,9 +28,34 @@
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
-                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu" data-target="avatarDropdown">
                     <span id="desktopUserInitials">A</span>
                 </button>
+            </div>
+
+            <div class="avatar-dropdown" id="avatarDropdown">
+                <div class="avatar-dropdown-header">
+                    <div class="avatar-dropdown-avatar" id="dropdownAvatar">A</div>
+                    <div class="avatar-dropdown-info">
+                        <h4 id="dropdownUserName">Admin</h4>
+                        <p id="dropdownUserEmail">admin@example.com</p>
+                    </div>
+                </div>
+                <div class="avatar-dropdown-menu">
+                    <a href="admin-dashboard.html" class="avatar-dropdown-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Admin Dashboard
+                    </a>
+                    <a href="dashboard.html" class="avatar-dropdown-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        User Dashboard
+                    </a>
+                    <div class="avatar-dropdown-divider"></div>
+                    <button class="avatar-dropdown-item" id="dropdownLogoutBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Logout
+                    </button>
+                </div>
             </div>
 
             <div class="mobile-controls">
@@ -413,6 +70,36 @@
             </div>
         </div>
     </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    <span>Sogolo</span>
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <div class="mobile-auth-title">Get started with Sogolo</div>
+                <div class="mobile-auth-buttons">
+                    <a href="signin.html#signupForm" class="mobile-auth-btn primary">Sign Up</a>
+                    <a href="signin.html#loginForm" class="mobile-auth-btn secondary">Login</a>
+                </div>
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="admin-dashboard.html" class="mobile-nav-link">Admin Dashboard</a>
+                <a href="admin-kyc-review.html" class="mobile-nav-link">KYC Review</a>
+                <a href="admin-transaction-review.html" class="mobile-nav-link">Transaction Review</a>
+            </div>
+        </div>
+    </div>
 
     <div class="container dashboard-container">
         <!-- Dashboard Grid -->
@@ -480,7 +167,7 @@
                         <h3>All KYC Applications</h3>
                         <button onclick="loadKYCList()" class="btn btn-sm btn-secondary">Refresh</button>
                     </div>
-                    <div id="kycList" class="transaction-list">
+                    <div id="kycList" class="list-container">
                         <p class="text-muted text-center py-4">Loading...</p>
                     </div>
                 </div>
@@ -491,7 +178,7 @@
                         <h3>All Transactions</h3>
                         <button onclick="loadTransactions()" class="btn btn-sm btn-secondary">Refresh</button>
                     </div>
-                    <div id="transList" class="transaction-list">
+                    <div id="transList" class="list-container">
                         <p class="text-muted text-center py-4">Loading...</p>
                     </div>
                 </div>
@@ -502,7 +189,7 @@
                         <h3>All Users</h3>
                         <button onclick="loadUsers()" class="btn btn-sm btn-secondary">Refresh</button>
                     </div>
-                    <div id="usersList" class="transaction-list">
+                    <div id="usersList" class="list-container">
                         <p class="text-muted text-center py-4">Loading...</p>
                     </div>
                 </div>
@@ -579,22 +266,7 @@
             document.getElementById('mobileMenu').classList.remove('active');
         };
 
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileMenuCloseBtn = document.getElementById('mobileMenuCloseBtn');
 
-        function toggleMenu() {
-            mobileMenu.classList.toggle('active');
-        }
-
-        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
-        if (mobileMenuCloseBtn) mobileMenuCloseBtn.addEventListener('click', toggleMenu);
-        if (mobileMenu) {
-            mobileMenu.addEventListener('click', (e) => {
-                if (e.target === mobileMenu) toggleMenu();
-            });
-        }
 
         async function init() {
             const user = await getCurrentUser();
@@ -675,17 +347,19 @@
                 if (u.kyc_status === 'rejected') kycBadge = '<span class="badge badge-red">Rejected</span>';
 
                 return `
-                    <div class="transaction-item">
-                        <div class="transaction-icon bg-blue-50 text-blue-600" style="font-weight:600; font-size:1rem;">
-                            ${initials}
+                    <div class="list-item">
+                        <div class="list-content">
+                            <div class="list-icon bg-blue-50 text-blue-600" style="font-weight:600; font-size:1rem;">
+                                ${initials}
+                            </div>
+                            <div class="list-info">
+                                <h4>${u.full_name || 'No Name'}</h4>
+                                <p>Role: ${u.role} • Joined: ${new Date(u.created_at || Date.now()).toLocaleDateString()}</p>
+                            </div>
                         </div>
-                        <div class="transaction-details">
-                            <h4>${u.full_name || 'No Name'}</h4>
-                            <span class="transaction-meta">Role: ${u.role} • Joined: ${new Date(u.created_at || Date.now()).toLocaleDateString()}</span>
-                        </div>
-                        <div class="transaction-status">
+                        <div class="list-meta">
                             ${kycBadge}
-                            <div style="margin-top: 0.25rem;">
+                            <div style="margin-left: 1rem;">
                                 <a href="admin-kyc-review.html?id=${u.id}" class="btn btn-sm btn-secondary">View Profile</a>
                             </div>
                         </div>
@@ -736,17 +410,19 @@
                 }
 
                 return `
-                <div class="transaction-item">
-                    <div class="transaction-icon bg-yellow-100 text-yellow-600">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <div class="list-item">
+                    <div class="list-content">
+                        <div class="list-icon bg-yellow-100 text-yellow-600">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <div class="list-info">
+                            <h4>${p.full_name || 'N/A'}</h4>
+                            <p>Submitted: ${new Date(p.updated_at || Date.now()).toLocaleDateString()}</p>
+                        </div>
                     </div>
-                    <div class="transaction-details">
-                        <h4>${p.full_name || 'N/A'}</h4>
-                        <span class="transaction-meta">Submitted: ${new Date(p.updated_at || Date.now()).toLocaleDateString()}</span>
-                    </div>
-                    <div class="transaction-status">
+                    <div class="list-meta">
                         <span class="badge ${badgeClass}">${statusLabel}</span>
-                        <a href="admin-kyc-review.html?id=${p.id}" class="btn btn-sm btn-primary mt-1">Review</a>
+                        <a href="admin-kyc-review.html?id=${p.id}" class="btn btn-sm btn-primary" style="margin-left: 1rem;">Review</a>
                     </div>
                 </div>
             `}).join('');
@@ -791,17 +467,19 @@
                 }
 
                 return `
-                    <div class="transaction-item">
-                        <div class="transaction-icon bg-blue-50 text-blue-600">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <div class="list-item">
+                        <div class="list-content">
+                            <div class="list-icon bg-blue-50 text-blue-600">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <div class="list-info">
+                                <h4>${t.title || 'Transaction'}</h4>
+                                <p>${new Date(t.created_at).toLocaleDateString()} • MWK ${t.amount?.toLocaleString() || '0'}</p>
+                            </div>
                         </div>
-                        <div class="transaction-details">
-                            <h4>${t.title || 'Transaction'}</h4>
-                            <span class="transaction-meta">${new Date(t.created_at).toLocaleDateString()} • MWK ${t.amount?.toLocaleString() || '0'}</span>
-                        </div>
-                        <div class="transaction-status">
+                        <div class="list-meta">
                             <span class="badge ${statusClass}">${t.status.replace(/_/g, ' ').toUpperCase()}</span>
-                            <div style="margin-top: 0.25rem;">${actionBtn}</div>
+                            <div style="margin-left: 1rem;">${actionBtn}</div>
                         </div>
                     </div>
                 `;
@@ -810,21 +488,8 @@
 
         init();
     </script>
-    <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
-        <div class="avatar-dropdown-header">
-            <div class="avatar-dropdown-avatar" id="dropdownAvatar">A</div>
-            <div class="avatar-dropdown-info">
-                <h4 id="dropdownUserName">Admin</h4>
-                <p id="dropdownUserEmail">Loading...</p>
-            </div>
-        </div>
-        <div class="avatar-dropdown-menu">
-            <!-- Populated by headerAuth.js -->
-        </div>
-    </div>
-    
     <script type="module" src="./js/headerAuth.js"></script>
+    <script type="module" src="./js/mobile-menu.js"></script>
 
 </body>
 </html>

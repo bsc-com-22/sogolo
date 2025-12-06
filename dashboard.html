@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sogolo</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/dashboard-redesign.css">
 </head>
 <body>
     <!-- Header -->
@@ -28,9 +27,30 @@
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
-                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu" data-target="avatarDropdown">
                     <span id="desktopUserInitials">U</span>
                 </button>
+            </div>
+
+            <div class="avatar-dropdown" id="avatarDropdown">
+                <div class="avatar-dropdown-header">
+                    <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
+                    <div class="avatar-dropdown-info">
+                        <h4 id="dropdownUserName">User</h4>
+                        <p id="dropdownUserEmail">user@example.com</p>
+                    </div>
+                </div>
+                <div class="avatar-dropdown-menu">
+                    <a href="dashboard.html" class="avatar-dropdown-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        Dashboard
+                    </a>
+                    <div class="avatar-dropdown-divider"></div>
+                    <button class="avatar-dropdown-item" id="dropdownLogoutBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Logout
+                    </button>
+                </div>
             </div>
 
             <div class="mobile-controls">
@@ -45,6 +65,36 @@
             </div>
         </div>
     </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <div class="mobile-menu-logo-icon">S</div>
+                    <span>Sogolo</span>
+                </div>
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mobile-auth-container">
+                <div class="mobile-auth-title">Get started with Sogolo</div>
+                <div class="mobile-auth-buttons">
+                    <a href="signin.html#signupForm" class="mobile-auth-btn primary">Sign Up</a>
+                    <a href="signin.html#loginForm" class="mobile-auth-btn secondary">Login</a>
+                </div>
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="create-transaction.html" class="mobile-nav-link">New Transaction</a>
+                <a href="support.html" class="mobile-nav-link">Support</a>
+            </div>
+        </div>
+    </div>
 
     <div class="container dashboard-container">
         <!-- Dashboard Grid -->
@@ -229,14 +279,16 @@
 
                 return `
                     <div class="list-item">
-                        <div class="list-icon ${isBuyer ? 'bg-blue-100' : 'bg-green-100'}">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBuyer ? 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' : 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
-                            </svg>
-                        </div>
-                        <div class="list-info">
-                            <h4>${t.title || t.product_name || 'Transaction'}</h4>
-                            <p>${role} • ${new Date(t.created_at).toLocaleDateString()}</p>
+                        <div class="list-content">
+                            <div class="list-icon ${isBuyer ? 'bg-blue-100' : 'bg-green-100'}">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBuyer ? 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' : 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
+                                </svg>
+                            </div>
+                            <div class="list-info">
+                                <h4>${t.title || t.product_name || 'Transaction'}</h4>
+                                <p>${role} • ${new Date(t.created_at).toLocaleDateString()}</p>
+                            </div>
                         </div>
                         <div class="list-meta">
                             <span class="badge ${statusClass}">${t.status.replace(/_/g, ' ').toUpperCase()}</span>
@@ -251,21 +303,8 @@
         loadDashboard();
     </script>
 
-    <!-- Avatar Dropdown Menu -->
-    <div class="avatar-dropdown" id="avatarDropdown" style="display: none;">
-        <div class="avatar-dropdown-header">
-            <div class="avatar-dropdown-avatar" id="dropdownAvatar">U</div>
-            <div class="avatar-dropdown-info">
-                <h4 id="dropdownUserName">User</h4>
-                <p id="dropdownUserEmail">Loading...</p>
-            </div>
-        </div>
-        <div class="avatar-dropdown-menu">
-            <!-- Populated by headerAuth.js -->
-        </div>
-    </div>
-    
     <script type="module" src="./js/headerAuth.js"></script>
+    <script type="module" src="./js/mobile-menu.js"></script>
 
 </body>
 </html>

@@ -27,7 +27,7 @@
             </div>
             
             <div class="user-avatar-container hidden" id="userAvatarContainer">
-                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu">
+                <button class="user-avatar-btn" id="desktopUserAvatarBtn" aria-label="User menu" data-target="avatarDropdown">
                     <span id="desktopUserInitials">U</span>
                 </button>
             </div>
@@ -156,7 +156,7 @@
                     <div class="mobile-menu-logo-icon">S</div>
                     Sogolo
                 </div>
-                <button class="mobile-menu-close" id="mobileMenuCloseBtn">
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -189,5 +189,6 @@
     </div>
     
     <script type="module" src="./js/headerAuth.js"></script>
+    <script type="module" src="./js/mobile-menu.js"></script>
 </body>
 </html>
